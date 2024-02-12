@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="plg_wishboxcdek_j4" default="make" basedir=".">
+    <property name="build" value="build" />
+    <property name="prefix" value="pkg" />
+    <property name="extension" value="wishboxcdek" />
+    <property name="version" value="1.0.0" />
+
+    <target name="make" description="Builds the extension release package for a version.">
+        <delete quiet="yes">
+            <fileset dir=".">
+                <include name="pkg_wishboxcdek_j4.zip" />
+            </fileset>
+        </delete>
+
+        <zip destfile="com_wishboxcdek/com_wishboxcdek.zip">
+            <fileset dir="./com_wishboxcdek">
+                <include name="administrator/**" />
+                <include name="media/**" />
+                <include name="site/**" />
+                <include name="wishboxcdek.xml" />
+            </fileset>
+        </zip>
+
+        <zip destfile="plg_task_wishboxcdek/plg_task_wishboxcdek.zip">
+            <fileset dir="./plg_task_wishboxcdek">
+                <include name="forms/**" />
+                <include name="language/**" />
+                <include name="services/**" />
+                <include name="src/**" />
+                <include name="wishboxcdek.xml" />
+            </fileset>
+        </zip>
+
+        <zip destfile="pkg_wishboxcdek_j4.zip">
+            <fileset dir="./com_wishboxcdek">
+                <include name="com_wishboxcdek.zip" />
+            </fileset>
+            <fileset dir="./plg_task_wishboxcdek">
+                <include name="plg_task_wishboxcdek.zip" />
+            </fileset>
+            <fileset dir="./">
+                <include name="pkg_wishboxcdek.xml" />
+            </fileset>
+        </zip>
+        <delete quiet="yes">
+            <fileset dir=".">
+                <include name="com_wishboxcdek/com_wishboxcdek.zip" />
+            </fileset>
+        </delete>
+        <delete quiet="yes">
+            <fileset dir=".">
+                <include name="plg_task_wishboxcdek/plg_task_wishboxcdek.zip" />
+            </fileset>
+        </delete>
+    </target>
+</project>
