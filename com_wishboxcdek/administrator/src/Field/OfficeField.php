@@ -107,7 +107,7 @@ class OfficeField extends ListField
 			}
 		}
 
-		if ($this->value && $this->value !== '-1')
+		if (!count($options) && $this->value && $this->value !== '-1')
 		{
 			/** @var OfficeTable $officeTable */
 			$officeTable = $app->bootComponent('com_wishboxcdek')

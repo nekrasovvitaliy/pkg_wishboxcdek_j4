@@ -12,8 +12,6 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @package     Joomla\Component\Jshopping\Site\Table
- *
  * @since       1.0.0
  *
  * @noinspection PhpUnused

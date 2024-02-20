@@ -7,6 +7,7 @@ namespace Joomla\Component\Wishboxcdek\Site\Service;
 
 use AntistressStore\CdekSDK2\Entity\Requests\Contact;
 use AntistressStore\CdekSDK2\Entity\Requests\Item;
+use AntistressStore\CdekSDK2\Entity\Requests\Location;
 use AntistressStore\CdekSDK2\Entity\Requests\Order;
 use AntistressStore\CdekSDK2\Entity\Requests\Package;
 use AntistressStore\CdekSDK2\Entity\Requests\Seller;
@@ -14,6 +15,7 @@ use AntistressStore\CdekSDK2\Entity\Responses\OrderResponse;
 use AntistressStore\CdekSDK2\Entity\Responses\PackagesResponse;
 use AntistressStore\CdekSDK2\Exceptions\CdekV2RequestException;
 use Exception;
+use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
 use function defined;
@@ -190,20 +192,30 @@ class Registrator
 		$tariffCode            = $this->delegate->getTariffCode();
 		$deliveryRecipientCost = $this->delegate->getDeliveryRecipientCost();
 		$shipmentPoint         = $this->delegate->getShipmentPoint();
-		$deliveryPoint         = $this->delegate->getDeliveryPoint();
 
 		$order->setNumber($orderNumber)
 			->setType(1)
 			->setComment($orderComment)
 			->setTariffCode($tariffCode)
 			->setDeliveryRecipientCost($deliveryRecipientCost['value'], 0)
-			->setShipmentPoint($shipmentPoint)
-			->setDeliveryPoint($deliveryPoint)
-			// Запрос создать файл накладной вместе с заказом
-			->setPrint('waybill');
+			->setShipmentPoint($shipmentPoint);
+
+		if (WishboxcdekHelper::isTariffToPoint($tariffCode))
+		{
+			$deliveryPoint = $this->delegate->getDeliveryPoint();
+			$order->setDeliveryPoint($deliveryPoint);
+		}
+		else
+		{
+			$deliveryAddress = $this->delegate->getDeliveryAddress();
+			$location = (new Location)->setAddress($deliveryAddress);
+			$order->setToLocation($location);
+		}
+
+		// Запрос создать файл накладной вместе с заказом
+		$order->setPrint('waybill');
 
 		// Добавление информации о продавце
-
 		$sellerName          = $this->delegate->getSellerName();
 		$sellerInn           = $this->delegate->getSellerInn();
 		$sellerPhone         = $this->delegate->getSellerPhone();

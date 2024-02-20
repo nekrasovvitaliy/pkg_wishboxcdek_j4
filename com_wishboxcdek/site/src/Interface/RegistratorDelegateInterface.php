@@ -156,6 +156,13 @@ interface RegistratorDelegateInterface
 	public function getDeliveryPoint(): string;
 
 	/**
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 */
+	public function getDeliveryAddress(): string;
+
+	/**
 	 * @param   string  $trackingNumber  Tracking number
 	 *
 	 * @return void
