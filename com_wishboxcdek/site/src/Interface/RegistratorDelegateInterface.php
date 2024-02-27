@@ -170,4 +170,13 @@ interface RegistratorDelegateInterface
 	 * @since 1.0.0
 	 */
 	public function setTrackingNumber(string $trackingNumber): void;
+
+	/**
+	 * @param   float  $shippingPriceTariff  Shipping price tariff
+	 *
+	 * @return void
+	 *
+	 * @since 1.0.0
+	 */
+	public function setShippingPriceTariff(float $shippingPriceTariff): void;
 }

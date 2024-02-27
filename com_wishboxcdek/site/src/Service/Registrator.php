@@ -86,7 +86,10 @@ class Registrator
 
 			sleep(1);
 			$orderResponse = $apiClient->getOrderInfoByImNumber($orderNumber);
+			$deliverySum = $orderResponse->getDeliveryDetail()->getDeliverySum();
 
+
+			$this->delegate->setShippingPriceTariff($deliverySum);
 			$this->delegate->setTrackingNumber($orderResponse->getCdekNumber());
 		}
 		catch (CdekV2RequestException $e)
