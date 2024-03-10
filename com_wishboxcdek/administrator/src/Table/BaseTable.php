@@ -83,24 +83,27 @@ class BaseTable extends Table
 			$src['params'] = (string) $registry;
 		}
 
-		if (!$user->authorise('core.admin', 'com_wishboxcdek'))
+		if ($app->isClient('administrator'))
 		{
-			$actions = Access::getActionsFromFile(
-				JPATH_ADMINISTRATOR . '/components/com_wishboxcdek/access.xml',
-				"/access/section[@name='classtype']/"
-			);
-			$defaultActions = Access::getAssetRules('com_wishboxcdek')->getData();
-			$arrayJaccess   = [];
-
-			foreach ($actions as $action)
+			if (!$user->authorise('core.admin', 'com_wishboxcdek'))
 			{
-				if (key_exists($action->name, $defaultActions))
-				{
-					$arrayJaccess[$action->name] = $defaultActions[$action->name];
-				}
-			}
+				$actions        = Access::getActionsFromFile(
+					JPATH_ADMINISTRATOR . '/components/com_wishboxcdek/access.xml',
+					"/access/section[@name='classtype']/"
+				);
+				$defaultActions = Access::getAssetRules('com_wishboxcdek')->getData();
+				$arrayJaccess   = [];
 
-			$src['rules'] = $this->JAccessRulestoArray($arrayJaccess);
+				foreach ($actions as $action)
+				{
+					if (key_exists($action->name, $defaultActions))
+					{
+						$arrayJaccess[$action->name] = $defaultActions[$action->name];
+					}
+				}
+
+				$src['rules'] = $this->JAccessRulestoArray($arrayJaccess);
+			}
 		}
 
 		// Bind the rules for ACL where supported.

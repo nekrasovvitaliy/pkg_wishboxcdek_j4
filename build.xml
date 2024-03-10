@@ -39,7 +39,9 @@
                 <include name="plg_task_wishboxcdek.zip" />
             </fileset>
             <fileset dir="./">
+                <include name="language/**" />
                 <include name="pkg_wishboxcdek.xml" />
+                <include name="language/**" />
             </fileset>
         </zip>
         <delete quiet="yes">

@@ -156,6 +156,13 @@ interface RegistratorDelegateInterface
 	public function getDeliveryPoint(): string;
 
 	/**
+	 * @return integer
+	 *
+	 * @since 1.0.0
+	 */
+	public function getCityCode(): int;
+
+	/**
 	 * @return string
 	 *
 	 * @since 1.0.0

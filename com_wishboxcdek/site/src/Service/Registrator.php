@@ -88,9 +88,11 @@ class Registrator
 			$orderResponse = $apiClient->getOrderInfoByImNumber($orderNumber);
 			$deliverySum = $orderResponse->getDeliveryDetail()->getDeliverySum();
 
-
 			$this->delegate->setShippingPriceTariff($deliverySum);
 			$this->delegate->setTrackingNumber($orderResponse->getCdekNumber());
+
+			$order->setDeliveryRecipientCost($this->delegate->getDeliveryRecipientCost()['value'], 0);
+			$apiClient->updateOrder($order);
 		}
 		catch (CdekV2RequestException $e)
 		{
@@ -190,11 +192,11 @@ class Registrator
 			$order->setUuid($existingOrderResponse->getUuid());
 		}
 
-		$orderNumber           = $this->delegate->getOrderNumber();
-		$orderComment          = $this->delegate->getOrderComment();
-		$tariffCode            = $this->delegate->getTariffCode();
-		$deliveryRecipientCost = $this->delegate->getDeliveryRecipientCost();
-		$shipmentPoint         = $this->delegate->getShipmentPoint();
+		$orderNumber            = $this->delegate->getOrderNumber();
+		$orderComment           = $this->delegate->getOrderComment();
+		$tariffCode             = $this->delegate->getTariffCode();
+		$deliveryRecipientCost  = $this->delegate->getDeliveryRecipientCost();
+		$shipmentPoint          = $this->delegate->getShipmentPoint();
 
 		$order->setNumber($orderNumber)
 			->setType(1)
@@ -210,8 +212,10 @@ class Registrator
 		}
 		else
 		{
+			$cityCode = $this->delegate->getCityCode();
 			$deliveryAddress = $this->delegate->getDeliveryAddress();
-			$location = (new Location)->setAddress($deliveryAddress);
+			$location = (new Location)->setAddress($deliveryAddress)
+				->setCode($cityCode);
 			$order->setToLocation($location);
 		}
 
