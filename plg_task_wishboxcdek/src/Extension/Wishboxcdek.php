@@ -2,8 +2,7 @@
 /**
  * @package     Joomla.Plugin
  * @subpackage  Task.Wishboxretailcrm
- *
- * @copyright   (C) 2021 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright   (C) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Task\Wishboxcdek\Extension;

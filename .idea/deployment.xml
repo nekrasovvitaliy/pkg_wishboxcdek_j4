@@ -10,13 +10,6 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="academy.fresh-trend.com">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
       <paths name="classes.test1.ru">
         <serverdata>
           <mappings>
@@ -45,6 +38,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="goorin.test1.ru">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="hohloms.ru">
         <serverdata>
           <mappings>
@@ -58,6 +58,14 @@
             <mapping deploy="administrator\components\com_wishboxcdek" local="$PROJECT_DIR$/com_wishboxcdek/administrator" web="/" />
             <mapping deploy="components\com_wishboxcdek" local="$PROJECT_DIR$/com_wishboxcdek/site" web="/" />
             <mapping deploy="plugins\task\wishboxcdek" local="$PROJECT_DIR$/plg_task_wishboxcdek" web="/" />
+            <mapping deploy="plugins\console\wishboxcdek" local="$PROJECT_DIR$/plg_console_wishboxcdek" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="joomla503.test1.ru">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -84,6 +92,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="playandlearn.test.ru">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="shop.silkfantasy.az">
         <serverdata>
           <mappings>
@@ -99,6 +114,13 @@
         </serverdata>
       </paths>
       <paths name="testphp8optom.semena-tut.ru">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="yootheme.test1.ru">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

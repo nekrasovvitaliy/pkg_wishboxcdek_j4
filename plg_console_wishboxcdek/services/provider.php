@@ -1,8 +1,9 @@
 <?php
 /**
  * @package     Joomla.Plugin
- * @subpackage  Task.Wishboxcdek
- * @copyright   (C) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @subpackage  Console.Wishboxcdek
+ *
+ * @copyright   (C) 2023 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 use Joomla\CMS\Extension\PluginInterface;
@@ -11,7 +12,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Plugin\Task\Wishboxcdek\Extension\Wishboxcdek;
+use Joomla\Plugin\Console\Wishboxcdek\Extension\Wishboxcdek;
 
 defined('_JEXEC') or die;
 

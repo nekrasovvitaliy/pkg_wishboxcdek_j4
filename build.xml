@@ -21,12 +21,23 @@
             </fileset>
         </zip>
 
+        <zip destfile="plg_console_wishboxcdek/plg_console_wishboxcdek.zip">
+            <fileset dir="./plg_console_wishboxcdek">
+                <include name="language/**" />
+                <include name="services/**" />
+                <include name="src/**" />
+                <include name="script.php" />
+                <include name="wishboxcdek.xml" />
+            </fileset>
+        </zip>
+
         <zip destfile="plg_task_wishboxcdek/plg_task_wishboxcdek.zip">
             <fileset dir="./plg_task_wishboxcdek">
                 <include name="forms/**" />
                 <include name="language/**" />
                 <include name="services/**" />
                 <include name="src/**" />
+                <include name="script.php" />
                 <include name="wishboxcdek.xml" />
             </fileset>
         </zip>
@@ -34,6 +45,9 @@
         <zip destfile="pkg_wishboxcdek_j4.zip">
             <fileset dir="./com_wishboxcdek">
                 <include name="com_wishboxcdek.zip" />
+            </fileset>
+            <fileset dir="./plg_console_wishboxcdek">
+                <include name="plg_console_wishboxcdek.zip" />
             </fileset>
             <fileset dir="./plg_task_wishboxcdek">
                 <include name="plg_task_wishboxcdek.zip" />

@@ -6,6 +6,7 @@
 namespace Joomla\Component\Wishboxcdek\Administrator\Field;
 
 use Exception;
+use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Wishboxcdek\Administrator\Table\OfficeTable;
@@ -116,7 +117,7 @@ class OfficeField extends ListField
 
 			if (!$officeTable->load(['code' => $this->value]))
 			{
-				throw new Exception('Cdek office with code ' . $this->value . 'not found', 500);
+				$app->enqueueMessage('Cdek office with code ' . $this->value . 'is not exists', CMSApplicationInterface::MSG_CRITICAL);
 			}
 
 			$options[] = HTMLHelper::_(

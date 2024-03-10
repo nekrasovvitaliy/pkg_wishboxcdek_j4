@@ -15,6 +15,7 @@
     </languages>
     <files>
         <file type="component" id="com_wishboxcdek">com_wishboxcdek.zip</file>
+        <file type="plugin" group="console" id="wishboxcdek">plg_console_wishboxcdek.zip</file>
         <file type="plugin" group="task" id="wishboxcdek">plg_task_wishboxcdek.zip</file>
     </files>
 </extension>
