@@ -3,11 +3,11 @@
  * @copyright 2013-2024 Nekrasov Vitaliy
  * @license     GNU General Public License version 2 or later
  */
-namespace Joomla\Plugin\RadicalMartShipping\Wishboxcdek\Exception;
+namespace Joomla\Component\Wishboxcdek\Exception;
 
-use AntistressStore\CdekSDK2\Entity\Responses\OrderResponse;
 use Exception;
 use Joomla\CMS\Language\Text;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
 
 /**
  * @since 1.0.0
@@ -15,20 +15,20 @@ use Joomla\CMS\Language\Text;
 class OrderExistsException extends Exception
 {
 	/**
-	 * @var OrderResponse $orderResponse Order response
+	 * @var OrdersGetResponse $ordersGetResponse Order response
 	 *
 	 * @since 1.0.0
 	 */
-	protected OrderResponse $orderResponse;
+	protected OrdersGetResponse $ordersGetResponse;
 
 	/**
-	 * @param   OrderResponse  $orderResponse  Uuid
+	 * @param   OrdersGetResponse  $ordersGetResponse  Uuid
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct(OrderResponse $orderResponse)
+	public function __construct(OrdersGetResponse $ordersGetResponse)
 	{
-		$this->orderResponse = $orderResponse;
+		$this->ordersGetResponse = $ordersGetResponse;
 		$message = Text::sprintf(
 			'PLG_RADICALMART_SHIPPING_WISHBOXCDEK_MESSAGE_ORDER_EXISTS'
 		);
@@ -37,12 +37,12 @@ class OrderExistsException extends Exception
 	}
 
 	/**
-	 * @return OrderResponse
+	 * @return OrdersGetResponse
 	 *
 	 * @since 1.0.0
 	 */
-	public function getOrderResponse(): OrderResponse
+	public function getOrdersGetResponse(): OrdersGetResponse
 	{
-		return $this->orderResponse;
+		return $this->ordersGetResponse;
 	}
 }

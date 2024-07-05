@@ -1,43 +1,54 @@
 <?php
 /**
- * @copyright 2023 Nekrasov Vitaliy
- * @license   GNU General Public License version 2 or later
+ * @copyright  2013-2024 Nekrasov Vitaliy
+ * @license    GNU General Public License version 2 or later
  */
-namespace Joomla\Component\Jshopping\Site\Model\Wishbox\Cdek\Offices;
+namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
+
+use Exception;
+use InvalidArgumentException;
+use Joomla\CMS\Factory;
+use Joomla\Component\Wishboxcdek\Site\Entity\DimensionsEntity;
+use Joomla\Database\DatabaseDriver;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-\JLoader::register('JShoppingModelWishBoxCdekOfficesData', __DIR__ .'/WishboxcdekofficesdataModel.php');
-\JLoader::register('JShoppingModelWishBoxCdekOfficesData', __DIR__ .'/Wishboxcdekofficesdatainterface.php');
-
 /**
+ * @since 1.0.0
  *
+ * @noinspection PhpUnused
  */
 class DatacityModel extends DataModel implements DataInterface
 {
 	/**
-	* Method returns array of offices use city
-	*
-	* @param	int 	city_code
-	* @return	array
-	*/
-	public function getOffices(int $city_code, ?array $order_dimensions = null): array
+	 * Method returns array of offices use city
+	 *
+	 * @param   integer     $cityCode         City code
+	 * @param   array|null  $orderDimensions  Min dimension
+	 *
+	 * @return    array
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 */
+	public function getOffices(int $cityCode, ?array $orderDimensions = null): array
 	{
-		// Если нет id города
-		if ($city_code <= 0)
+		if ($cityCode <= 0)
 		{
-			throw new \InvalidArgumentException('city_code must be greater than zero', 500);
+			throw new InvalidArgumentException('city_code must be greater than zero', 500);
 		}
 
-		$offices = [];
+		$app = Factory::getApplication();
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
-		$query = $this->db->getQuery(true)
+		$query = $db->getQuery(true)
 			->select(
 				[
 					'o.id AS id',
-					'o.name AS name',
+					'o.address AS name',
 					'o.code AS value',
 					'o.code AS code',
 					'o.address AS address',
@@ -51,35 +62,45 @@ class DatacityModel extends DataModel implements DataInterface
 					'o.have_cashless AS havecashless',
 					'o.allowed_cod AS allowed_code',
 					'TRIM(o.nearest_station) AS nearest_station',
-					'o.metro_station AS metro_station',
+					'o.nearest_metro_station AS metro_station',
 					'o.city_code AS city_id',
 					'o.dimensions AS dimensions']
 			)
-			->from('#__jshopping_shipping_method_wishboxcdek_offices AS o')
-			->where('o.city_code = '.$cityCode)
-			->order('o.name ASC');
+			->from('#__wishboxcdek_offices AS o')
+			->where('o.city_code = ' . $cityCode)
+			->order('o.address ASC');
 
-		$this->db->setQuery($query);
-		$offices = $this->db->loadObjectList();
+		$db->setQuery($query);
+		$offices = $db->loadObjectList();
 
 		if (count($offices))
 		{
-			$wishboxcdekcityTable = JSFactory::getTable('wishboxcdekcity');
-			$wishboxcdekcity_table->load(['code' => $city_code]);
+			$wishboxcdekcityTable = $app->bootComponent('com_wishboxcdek')
+				->getMVCFactory()
+				->createTable('city', 'Administrator');
+
+			$wishboxcdekcityTable->load(['code' => $cityCode]);
 
 			foreach ($offices as $k => $office)
 			{
-				$offices[$k]->city = $wishboxcdekcity_table->cityname;
+				$offices[$k]->city = $wishboxcdekcityTable->cityname;
 
-				if ($order_dimensions && $offices[$k]->type == 'POSTAMAT')
+				if ($orderDimensions && $offices[$k]->type == 'POSTAMAT')
 				{
 					$offices[$k]->dimensions = json_decode($offices[$k]->dimensions, true);
 
+					if ($offices[$k]->dimensions[0] == [])
+					{
+						unset($offices[$k]->dimensions[0]);
+					}
+
+					$offices[$k]->dimensions = array_values($offices[$k]->dimensions);
+
 					if (is_array($offices[$k]->dimensions) && count($offices[$k]->dimensions))
 					{
-						$office_dimensions = \WishBoxDimencion::arrayFromAccos($offices[$k]->dimensions);
+						$officeDimensions = DimensionsEntity::arrayFromAccos($offices[$k]->dimensions);
 
-						if (!\WishBoxDimencion::arrayInArray($order_dimensions, $office_dimensions))
+						if (!DimensionsEntity::arrayInArray($orderDimensions, $officeDimensions))
 						{
 							unset($offices[$k]);
 						}

@@ -1,8 +1,6 @@
 <?php
 /**
- * @package     Joomla.Plugin
- * @subpackage  Console.Wishboxcdek
- * @copyright   (C) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Console\Wishboxcdek\Extension;
@@ -10,11 +8,19 @@ namespace Joomla\Plugin\Console\Wishboxcdek\Extension;
 use Exception;
 use Joomla\Application\ApplicationEvents;
 use Joomla\CMS\Application\ConsoleApplication;
+use Joomla\CMS\Console\Loader\WritableLoaderInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\DispatcherInterface;
+use Joomla\Event\Event;
+use Joomla\Event\SubscriberInterface;
 use Joomla\Plugin\Console\Wishboxcdek\Console\UpdatecitiesCommand;
 use Joomla\Plugin\Console\Wishboxcdek\Console\UpdateofficesCommand;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Output\ConsoleSectionOutput;
+use WishboxCdekSDK2\Model\Response\Location\CitiesGet\CityResponse;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -23,14 +29,17 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class Wishboxcdek extends CMSPlugin
+class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 {
+	use MVCFactoryAwareTrait;
+	use DatabaseAwareTrait;
+
 	/**
-	 * @var ConsoleApplication $app CMSApplication
+	 * @var ConsoleSectionOutput|null
 	 *
 	 * @since 1.0.0
 	 */
-	protected $app;
+	protected ?ConsoleSectionOutput $pageSection = null;
 
 	/**
 	 * @param   DispatcherInterface  $subject  The object to observe
@@ -43,13 +52,6 @@ class Wishboxcdek extends CMSPlugin
 	public function __construct(&$subject, $config = [])
 	{
 		parent::__construct($subject, $config);
-
-		if (!$this->app->isClient('cli'))
-		{
-			return;
-		}
-
-		$this->registerCLICommands();
 	}
 
 	/**
@@ -61,29 +63,84 @@ class Wishboxcdek extends CMSPlugin
 	 */
 	public static function getSubscribedEvents(): array
 	{
-		$app = Factory::getApplication();
-
-		if ($app->isClient('cli'))
-		{
-			return [
-				ApplicationEvents::BEFORE_EXECUTE => 'registerCLICommands',
-			];
-		}
-
-		return [];
+		return [
+			ApplicationEvents::BEFORE_EXECUTE   => 'registerCommands',
+			'onAfterLoadWishboxCdekCities'      => 'onAfterLoadWishboxCdekCities'
+		];
 	}
 
 	/**
 	 * @return void
 	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function registerCLICommands(): void
+	public function registerCommands(): void
 	{
-		$updateCitiesCommand = new UpdatecitiesCommand;
-		$this->app->addCommand($updateCitiesCommand);
+		// Test command
+		Factory::getContainer()->share(
+			'wishboxcdek.updateCities',
+			function (ContainerInterface $container) {
+				return new UpdatecitiesCommand;
+			},
+			true
+		);
 
-		$updateOfficesCommand = new UpdateofficesCommand;
-		$this->app->addCommand($updateOfficesCommand);
+		// Add test command to joomla.php cli script
+		Factory::getContainer()->get(WritableLoaderInterface::class)
+			->add('wishboxcdek:updateCities', 'wishboxcdek.updateCities');
+
+		// Second test command
+		Factory::getContainer()->share(
+			'wishboxcdek.updateOffices',
+			function (ContainerInterface $container) {
+				return new UpdateofficesCommand;
+			},
+			true
+		);
+
+		// Add second test command to joomla.php cli script
+		Factory::getContainer()->get(WritableLoaderInterface::class)
+			->add('wishboxcdek:updateOffices', 'wishboxcdek.updateOffices');
+	}
+
+	/**
+	 * @param   Event  $event  Event
+	 *
+	 * @return void
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function onAfterLoadWishboxCdekCities(Event $event): void
+	{
+		/** @var CityResponse[] $cityResponses */
+		$cityResponses = $event->getArgument(0);
+
+		/** @var integer $page */
+		$page = $event->getArgument(1);
+
+		/** @var integer $limit */
+		$limit = $event->getArgument(2);
+
+		/** @var ConsoleApplication $app */
+		$app = Factory::getApplication();
+
+		if (!$this->pageSection)
+		{
+			$consoleOutput = $app->getConsoleOutput();
+			$this->pageSection = $consoleOutput->section();
+		}
+
+		$this->pageSection->overwrite('Page ' . $page . ' loaded');
+
+		$event->setArgument(0, $cityResponses);
+		$event->setArgument(1, $page);
+		$event->setArgument(2, $limit);
 	}
 }

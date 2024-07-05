@@ -29,11 +29,11 @@ class OfficeTable extends BaseTable
 	public ?string $code;
 
 	/**
-	 * @var string|null $name Name
+	 * @var string|null
 	 *
 	 * @since 1.0.0
 	 */
-	public ?string $name;
+	public ?string $addres;
 
 	/**
 	 * @param   DatabaseDriver $_db Database driver
@@ -60,12 +60,12 @@ class OfficeTable extends BaseTable
 			->select(
 				[
 					'o.code',
-					'o.name'
+					'o.address AS name'
 				]
 			)
 			->from('#__wishboxcdek_offices AS o')
 			->where('o.city_code = ' . $cityCode)
-			->order('name');
+			->order('address');
 		$db->setQuery($query);
 
 		return $db->loadObJectList();

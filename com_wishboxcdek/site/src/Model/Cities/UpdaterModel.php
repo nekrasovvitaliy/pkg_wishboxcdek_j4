@@ -5,15 +5,14 @@
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Cities;
 
-require_once JPATH_SITE . '/vendor/autoload.php';
-
-use AntistressStore\CdekSDK2\CdekClientV2;
-use AntistressStore\CdekSDK2\Entity\Requests\Location;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseModel;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Database\DatabaseDriver;
+use WishboxCdekSDK2\CdekClientV2;
+use WishboxCdekSDK2\Model\Request\Location\CitiesGetRequest;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -76,12 +75,13 @@ class UpdaterModel extends BaseModel
 	 */
 	public function loadCities(int $page = 0, int $limit = 1000): int
 	{
+		$app = Factory::getApplication();
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
 
 		$countryCodes = $componentParams->get('country_codes', []);
 
-		$request = (new Location)
+		$request = (new CitiesGetRequest)
 			->setCountryCodes(implode(',', $countryCodes))
 			->setPage($page)
 			->setSize($limit);
@@ -109,24 +109,32 @@ class UpdaterModel extends BaseModel
 						$db->qn('oblname'),
 						$db->qn('countrycode'),
 						$db->qn('nalsumlimit'),
-						$db->qn('postcodelist'),
 						$db->qn('longitude'),
 						$db->qn('latitude')
 					]
 				);
 
-			foreach ($citiesResponses as $citiesResponse)
+			foreach ($citiesResponses as $cityResponse)
 			{
 				$id = 0;
-				$code = $citiesResponse->getCode();
+				$code = $cityResponse->getCode();
 
 				if (in_array($code, $codes))
 				{
 					continue;
 				}
 
-				$countrycode = $citiesResponse->getCountryCode();
-				$region = trim($citiesResponse->getRegion());
+
+//				try
+//				{
+					$countrycode = $cityResponse->getCountryCode();
+//				}
+//				catch (\Exception | \Error)
+//				{
+//					print_r($cityResponse);
+//					die;
+//				}
+				$region = trim($cityResponse->getRegion());
 
 				if (!empty($region))
 				{
@@ -137,36 +145,25 @@ class UpdaterModel extends BaseModel
 					$oblname = '';
 				}
 
-				$subRegion = trim($citiesResponse->getSubRegion() ?? '');
+				$subRegion = trim($cityResponse->getSubRegion() ?? '');
 
 				// Если подрегион не совпадает с областью и не совпадает с городом
 				if (mb_strtoupper($subRegion) == mb_strtoupper($oblname)
-					|| mb_strtoupper($subRegion) == mb_strtoupper(trim($citiesResponse->getCity()))
+					|| mb_strtoupper($subRegion) == mb_strtoupper(trim($cityResponse->getCity()))
 				)
 				{
 					$subRegion = '';
 				}
 
-				$cityname = $citiesResponse->getCity();
+				$cityname = $cityResponse->getCity();
 				$fullname = [$cityname, $subRegion, $oblname];
 				$fullname = array_diff($fullname, ['']);
 				$fullname = array_unique($fullname);
 				$fullname = implode(', ', $fullname);
 				$nalsumlimit = 0;
 
-				$postalCode = $citiesResponse->getPostalCode();
-
-				if ($postalCode)
-				{
-					$postcodelist = $postalCode;
-				}
-				else
-				{
-					$postcodelist = '';
-				}
-
-				$longitude = $citiesResponse->getLongitude();
-				$latitude = $citiesResponse->getLatitude();
+				$longitude = $cityResponse->getLongitude();
+				$latitude = $cityResponse->getLatitude();
 				$codes[] = $code;
 				$query->values(
 					implode(
@@ -180,7 +177,6 @@ class UpdaterModel extends BaseModel
 							$db->q($oblname),
 							$db->q($countrycode),
 							$db->q($nalsumlimit),
-							$db->q($postcodelist),
 							$longitude,
 							$latitude
 						]
@@ -190,6 +186,8 @@ class UpdaterModel extends BaseModel
 
 			$db->setQuery($query);
 			$db->execute();
+			PluginHelper::importPlugin('wishboxcdek');
+			$app->triggerEvent('onAfterLoadWishboxCdekCities', [&$citiesResponses, $page, $limit]);
 		}
 
 		return count($citiesResponses);

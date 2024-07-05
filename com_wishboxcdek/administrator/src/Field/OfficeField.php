@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright (c) 2023 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 or later;
+ * @copyright  (c) 2013-2024 Nekrasov Vitaliy
+ * @license    GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\Field;
 
@@ -123,7 +123,7 @@ class OfficeField extends ListField
 			$options[] = HTMLHelper::_(
 				'select.option',
 				$officeTable->code,
-				$officeTable->name
+				$officeTable->address
 			);
 		}
 

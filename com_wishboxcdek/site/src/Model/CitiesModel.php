@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright 2023 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 or later
+ * @copyright  2013-2024 Nekrasov Vitaliy
+ * @license    GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model;
 
@@ -50,11 +50,14 @@ class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
 			}
 
 			$query = $db->getQuery(true)
-				->select('city.code as id')
-				->select('city.cityname')
-				->select('city.sub_region')
-				->select('city.oblname')
-				->select('city.postcodelist')
+				->select(
+					[
+						'city.code as id',
+						'city.cityname',
+						'city.sub_region',
+						'city.oblname'
+					]
+				)
 				->from($db->quoteName('#__wishboxcdek_cities', 'city'))
 				->where('city.cityname LIKE ' . $db->q($nameStartsWith . '%'));
 			$db->setQuery($query);
@@ -71,7 +74,6 @@ class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
 					$values[] = $item->sub_region; // phpcs:ignore
 					$values[] = $item->oblname;
 					$values = array_diff($values, ['']);
-					$postcodelist = explode(',', $item->postcodelist);
 					$result->cityname = $item->cityname;
 
 					if (!empty($item->sub_region) && !mb_strpos($item->sub_region, $result->cityname)) // phpcs:ignore
@@ -81,7 +83,6 @@ class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
 
 					$result->name = implode(', ', $values);
 					$result->oblname = $item->oblname;
-					$result->postcode = $postcodelist[0];
 
 					$data[] = $result;
 				}
@@ -125,7 +126,6 @@ class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
 				->select('city.cityname')
 				->select('city.sub_region')
 				->select('city.oblname')
-				->select('city.postcodelist')
 				->from($db->quoteName('#__wishboxcdek_cities', 'city'))
 				->where('city.cityname LIKE ' . $db->q($nameStartsWith . '%'));
 			$db->setQuery($query);

@@ -1,21 +1,18 @@
 <?php
 /**
- * @copyright 2023 Nekrasov Vitaliy
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy
  * @license     GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Service;
 
-require_once JPATH_SITE . '/vendor/autoload.php';
-
-use AntistressStore\CdekSDK2\Entity\Requests\Package;
-use AntistressStore\CdekSDK2\Entity\Requests\Tariff;
-use AntistressStore\CdekSDK2\Entity\Responses\TariffListResponse;
 use Exception;
 use InvalidArgumentException;
+use Joomla\Component\Wishboxcdek\Site\Interface\CalculatorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
 use UnexpectedValueException;
-use Wishbox\ShippingService\Cdek\Interface\CalculatorDelegateInterface;
 use Wishbox\ShippingService\ShippingTariff;
+use WishboxCdekSDK2\Model\Request\Calculator\TariffListPostRequest;
+use WishboxCdekSDK2\Model\Response\Calculator\TariffListPost\TariffCodeResponse;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -111,11 +108,11 @@ class Calculator
 	 *
 	 * @param   array $tariffs  Tariffs
 	 *
-	 * @return TariffListResponse
+	 * @return TariffCodeResponse
 	 *
 	 * @since 1.0.0
 	 */
-	private function getMinTariff(array $tariffs): TariffListResponse
+	private function getMinTariff(array $tariffs): TariffCodeResponse
 	{
 		if (!count($tariffs))
 		{
@@ -153,7 +150,7 @@ class Calculator
 			throw new UnexpectedValueException('$weight must be greater than zero');
 		}
 
-		$tariff = new Tariff;
+		$tariffListPostRequest = new TariffListPostRequest;
 
 		$receiverCityCode = $this->delegate->getReceiverCityCode();
 
@@ -162,80 +159,31 @@ class Calculator
 			return [];
 		}
 
-		$tariff->setCityCodes($this->delegate->getSenderCityCode(), $receiverCityCode);
-		$tariff->setPackageWeight($weight);
-		$packages = $this->getPackages();
+		$senderCityCode = $this->delegate->getSenderCityCode();
 
-		foreach ($packages as $package)
-		{
-			$tariff->setPackages($package);
-		}
+		$tariffListPostRequest->setCityCodes($senderCityCode, $receiverCityCode);
+		$tariffListPostRequest->setPackageWeight($weight);
+		$packages = $this->delegate->getPackages();
+		$tariffListPostRequest->setPackages($packages);
 
 		$apiClient = $this->getApiClient();
 
-		$tariffs = $apiClient->calculateTariffList($tariff);
+		$tariffListPostResponse = $apiClient->calculateTariffList($tariffListPostRequest);
+		$tariffCodes = $tariffListPostResponse->getTariffCodes();
 
-		$tariffCodes = $this->delegate->getTariffCodes();
+		$requiredTariffCodes = $this->delegate->getTariffCodes();
 
 		if (count($tariffCodes))
 		{
-			foreach ($tariffs as $k => $tariff)
+			foreach ($tariffCodes as $k => $tariff)
 			{
-				if (!in_array($tariff->getTariffCode(), $tariffCodes))
+				if (!in_array($tariff->getTariffCode(), $requiredTariffCodes))
 				{
-					unset($tariffs[$k]);
+					unset($tariffCodes[$k]);
 				}
 			}
 		}
 
-		return array_values($tariffs);
-	}
-
-	/**
-	 * Metod returns array of packages
-	 *
-	 * @return   array
-	 *
-	 * @since 1.0.0
-	 */
-	private function getPackages(): array
-	{
-		$packages = [];
-
-		if ($this->delegate->getCalculationMethod() == 'without_parcels')
-		{
-			$package = (new Package)
-				->setNumber('1')
-				->setWeight($this->delegate->getTotalWeight())
-				->setWidth($this->delegate->getPackageWidth())
-				->setHeight($this->delegate->getPackageHeight())
-				->setLength($this->delegate->getPackageLength());
-			$packages[] = $package;
-		}
-		elseif ($this->delegate->getCalculationMethod() == 'with_parcels')
-		{
-			$products = $this->delegate->getProducts();
-
-			foreach ($products as $prod)
-			{
-				for ($k = 0; $k < $prod['quantity']; $k++)
-				{
-					$package = new Package;
-					$package->setNumber(count($packages) + 1);
-					$package->setWeight(floatval($prod['weight']) * 1000);
-
-					if ($this->delegate->useDimencions())
-					{
-						$package->setWidth($prod['dimensions']['width'])
-							->setHeight(['dimensions']['height'])
-							->setLength(['dimensions']['length']);
-					}
-
-					$packages[] = $package;
-				}
-			}
-		}
-
-		return $packages;
+		return array_values($tariffCodes);
 	}
 }

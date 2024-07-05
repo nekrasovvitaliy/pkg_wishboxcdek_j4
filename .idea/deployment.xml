@@ -59,6 +59,8 @@
             <mapping deploy="components\com_wishboxcdek" local="$PROJECT_DIR$/com_wishboxcdek/site" web="/" />
             <mapping deploy="plugins\task\wishboxcdek" local="$PROJECT_DIR$/plg_task_wishboxcdek" web="/" />
             <mapping deploy="plugins\console\wishboxcdek" local="$PROJECT_DIR$/plg_console_wishboxcdek" web="/" />
+            <mapping deploy="libraries\wishboxcdek\src" local="$PROJECT_DIR$/lib_wishboxcdek/src" web="/" />
+            <mapping deploy="layouts\components\wishboxcdek" local="$PROJECT_DIR$/com_wishboxcdek/layouts" web="/" />
           </mappings>
         </serverdata>
       </paths>

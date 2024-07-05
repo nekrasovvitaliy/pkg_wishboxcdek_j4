@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<extension type="library" method="upgrade">
+	<name>lib_wishboxcdek</name>
+	<libraryname>wishboxcdek</libraryname>
+	<creationDate>May 2024</creationDate>
+	<author>Nekrasov Vitaliy</author>
+	<version>1.0.0</version>
+	<namespace path="src">WishboxCdekSDK2</namespace>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/lib_wishboxcdek.sys.ini</language>
+		<language tag="ru-RU">ru-RU/lib_wishboxcdek.sys.ini</language>
+	</languages>
+	<files>
+		<folder>src</folder>
+	</files>
+</extension>

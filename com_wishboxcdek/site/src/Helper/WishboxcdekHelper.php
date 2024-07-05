@@ -7,6 +7,7 @@ namespace Joomla\Component\Wishboxcdek\Site\Helper;
 
 use Exception;
 use Joomla\CMS\Factory;
+use Wishbox\ShippingService\ShippingTariff;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -14,8 +15,6 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Wishboxcdek Helper Class
- *
  * @since  1.0.0
  */
 abstract class WishboxcdekHelper
@@ -45,5 +44,22 @@ abstract class WishboxcdekHelper
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param   string   $shopName          Shop name
+	 * @param   integer  $shippingMethodId  Shipping method id
+	 *
+	 * @return ShippingTariff|null
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 */
+	public static function getShippingTariff(string $shopName, int $shippingMethodId): ?ShippingTariff
+	{
+		$className = '\\Joomla\\Plugin\\Wishboxcdek\\' . ucfirst($shopName) . '\\Helper\\ShippingTariffHelper';
+
+		return forward_static_call([$className, 'getShippingTariff'], $shippingMethodId);
 	}
 }

@@ -5,14 +5,19 @@
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
 
-require_once JPATH_SITE . '/vendor/autoload.php';
-
-use AntistressStore\CdekSDK2\CdekClientV2;
-use AntistressStore\CdekSDK2\Entity\Requests\DeliveryPoints;
+use Exception;
+use Joomla\CMS\Application\CliApplication;
+use Joomla\CMS\Application\ConsoleApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseModel;
 use Joomla\Database\DatabaseDriver;
+use ReflectionException;
+use WishboxCdekSDK2\CdekClientV2;
+use WishboxCdekSDK2\Exceptions\CdekV2AuthException;
+use WishboxCdekSDK2\Exceptions\CdekV2RequestException;
+use WishboxCdekSDK2\Model\Request\DeliveryPoints\DeliveryPointsGetRequest;
+use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPointResponse;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -26,38 +31,57 @@ defined('_JEXEC') or die;
 class UpdaterModel extends BaseModel
 {
 	/**
+	 * @param   integer  $limit  Limit
+	 *
 	 * @return boolean
+	 *
+	 * @throws CdekV2AuthException
+	 * @throws CdekV2RequestException
+	 * @throws ReflectionException
+	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */
-	public function update(): bool
+	public function update(int $limit = 5000): bool
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$this->deleteAll();
 
-		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
+		$page = 0;
 
-		/** @noinspection SqlWithoutWhere */
-		$query = 'DELETE FROM #__wishboxcdek_offices;';
-		$db->setQuery($query);
-		$db->execute();
+		while (true)
+		{
+			$count = $this->loadOffices($page, $limit);
 
-		$query = 'ALTER TABLE #__wishboxcdek_offices AUTO_INCREMENT = 1';
+			if ($count == $limit)
+			{
+				$page++;
+			}
+			else
+			{
+				break;
+			}
+		}
 
-		$db->setQuery($query);
-		$db->execute();
+		return true;
+	}
 
-		$countryCodes = $componentParams->get('country_codes', []);
-		$requestPvz = (new DeliveryPoints)
-			->setType('ALL')
-			->setCountryCodes($countryCodes);
+	/**
+	 * @param   integer  $page   Page
+	 * @param   integer  $limit  Limit
+	 *
+	 * @return integer
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 */
+	public function loadOffices(int $page = 0, int $limit = 1000): int
+	{
+		$app = Factory::getApplication();
+		$db  = Factory::getContainer()->get(DatabaseDriver::class);
 
-		$apiClient = new CdekClientV2(
-			$componentParams->get('account', ''),
-			$componentParams->get('secure', ''),
-			60.0
-		);
+		$deliveryPointResponses = $this->getDeliveryPointsResponses($page, $limit);
 
-		$responsePvz = $apiClient->getDeliveryPoints($requestPvz);
 		static $codes = [];
 		$query = $db->getQuery(true)
 			->insert($db->quoteName('#__wishboxcdek_offices'))
@@ -65,7 +89,6 @@ class UpdaterModel extends BaseModel
 				[
 					$db->qn('id'),
 					$db->qn('code'),
-					$db->qn('name'),
 					$db->qn('country_code'),
 					$db->qn('region_code'),
 					$db->qn('city_code'),
@@ -83,7 +106,7 @@ class UpdaterModel extends BaseModel
 					$db->qn('have_cashless'),
 					$db->qn('allowed_cod'),
 					$db->qn('nearest_station'),
-					$db->qn('metro_station'),
+					$db->qn('nearest_metro_station'),
 					$db->qn('site'),
 					$db->qn('office_images_list'),
 					$db->qn('work_time_list'),
@@ -93,7 +116,7 @@ class UpdaterModel extends BaseModel
 				]
 			);
 
-		foreach ($responsePvz as $item)
+		foreach ($deliveryPointResponses as $item)
 		{
 			$id = 0;
 			$code = $item->getCode();
@@ -103,10 +126,7 @@ class UpdaterModel extends BaseModel
 				continue;
 			}
 
-			$name = $item->getName();
-
 			$countryCode = $item->getLocation()->getCountryCode();
-
 			$regionCode = $item->getLocation()->getRegionCode();
 			$cityCode = $item->getLocation()->getCityCode();
 			$city = $item->getLocation()->getCity();
@@ -136,13 +156,12 @@ class UpdaterModel extends BaseModel
 			$locationLatitude = $item->getLocation()->getLatitude();
 			$type = $item->getType();
 			$ownerCode = $item->getOwnerCode();
-
 			$isDressingRoom = $item->getIsDressingRoom();
 			$haveCashless = $item->getHaveCashless();
 			$allowedCod = $item->getAllowedCod();
 			$nearestStation = $item->getNearestStation() ?? '';
-			$metroStation = $item->getNearestMetroStation() ? $item->getNearestMetroStation() : '';
-			$site = $item->getSite() ? $item->getSite() : '';
+			$metroStation = $item->getNearestMetroStation() ?? '';
+			$site = $item->getSite() ?? '';
 			$officeImagesList = json_encode($item->getOfficeImageList());
 			$workTimeList = json_encode($item->getWorkTimeList());
 			$weightMin = $item->getWeightMin() ?? 0;
@@ -161,7 +180,6 @@ class UpdaterModel extends BaseModel
 					[
 							$db->q($id),
 							$db->q($code),
-							$db->q($name),
 							$db->q($countryCode),
 							$db->q($regionCode),
 							$db->q($cityCode),
@@ -191,9 +209,78 @@ class UpdaterModel extends BaseModel
 			);
 		}
 
+		try
+		{
+			$db->setQuery($query);
+			$db->execute();
+		}
+		catch (Exception $e)
+		{
+			echo str_replace('#__', $app->get('dbprefix'), (string) $query);
+
+			die;
+		}
+
+		return count($deliveryPointResponses);
+	}
+
+	/**
+	 * @param   integer  $page   Page
+	 * @param   integer  $limit  Limit
+	 *
+	 * @return DeliveryPointResponse[]
+	 *
+	 * @throws ReflectionException
+	 *
+	 * @since 1.0.0
+	 */
+	private function getDeliveryPointsResponses(int $page = 0, int $limit = 1000): array
+	{
+		$deliveryPointResponses = [];
+		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
+
+		$apiClient = new CdekClientV2(
+			$componentParams->get('account', ''),
+			$componentParams->get('secure', ''),
+			60.0
+		);
+
+		$countryCodes = $componentParams->get('country_codes', []);
+
+		foreach ($countryCodes as $countryCode)
+		{
+			$requestPvz = (new DeliveryPointsGetRequest)
+				->setType('ALL')
+				->setCountryCode($countryCode)
+				->setPage($page)
+				->setSize($limit);
+
+			$deliveryPointResponses = array_merge(
+				$deliveryPointResponses,
+				$apiClient->getDeliveryPoints($requestPvz)
+			);
+		}
+
+		return $deliveryPointResponses;
+	}
+
+	/**
+	 * @return void
+	 *
+	 * @since 1.0.0
+	 */
+	private function deleteAll(): void
+	{
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
+
+		/** @noinspection SqlWithoutWhere */
+		$query = 'DELETE FROM #__wishboxcdek_offices;';
 		$db->setQuery($query);
 		$db->execute();
 
-		return true;
+		$query = 'ALTER TABLE #__wishboxcdek_offices AUTO_INCREMENT = 1';
+
+		$db->setQuery($query);
+		$db->execute();
 	}
 }

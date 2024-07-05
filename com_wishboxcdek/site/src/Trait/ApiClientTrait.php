@@ -1,12 +1,12 @@
 <?php
 /**
- * @copyright (c) 2023 Nekrasov Vitaliy
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Trait;
 
-use AntistressStore\CdekSDK2\CdekClientV2;
 use Joomla\CMS\Component\ComponentHelper;
+use WishboxCdekSDK2\CdekClientV2;
 
 /**
  * @since 1.0.0

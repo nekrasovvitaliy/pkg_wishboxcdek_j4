@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright (c) 2023 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 or later;
+ * @copyright  (c) 2013-2024 Nekrasov Vitaliy
+ * @license    GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\Extension;
 
@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Cache\CacheControllerFactoryAwareInterface;
+use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormFactoryAwareInterface;
 use Joomla\CMS\Router\SiteRouterAwareInterface;
@@ -138,7 +139,7 @@ class WishboxcdekComponent extends MVCComponent implements RouterServiceInterfac
 			try
 			{
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$model->setCacheControllerFactory($mvcFactory->getCacheControllerFactory());
+				$model->setCacheControllerFactory(Factory::getContainer()->get(CacheControllerFactoryInterface::class));
 			}
 
 			/** @noinspection PhpUnusedLocalVariableInspection */

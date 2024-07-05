@@ -1,16 +1,18 @@
 <?php
 /**
- * @copyright 2023 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 or later
+ * @copyright  (c) 2013-2024 Nekrasov Vitaliy
+ * @license    GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Jshopping\Site\Model\Wishbox\Cdek;
+namespace Joomla\Component\Wishboxcdek\Site\Model;
 
+use Exception;
 use InvalidArgumentException;
-use Joomla\CMS\Layout\FileLayout;
-use Joomla\Component\Jshopping\Site\Lib\JSFactory;
-use Joomla\Component\Jshopping\Site\Model\Wishbox\Shippingcalculator\CdekModel;
-use Joomla\Registry\Registry;
-use Wishbox\JShopping\Model\Base;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
+use Joomla\Component\Wishboxcdek\Site\Model\Offices\DataInterface;
 use Wishbox\ShippingService\Cdek\Dimensions;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -18,78 +20,116 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @property Registry  $addonParams
- * @property mixed     $advUser
- *
  * @since 1.0.0
  */
-class OfficesModel extends Base
+class OfficesModel extends BaseDatabaseModel
 {
 	/**
-	 * @var string $addonAlias Addon alias
+	 * @var DataInterface $wishboxcdekofficesdata Data
 	 *
 	 * @since 1.0.0
 	 */
-	protected string $addonAlias = 'wishboxcdek';
+	protected DataInterface $dataModel;
 
 	/**
-	 * @var Offices\DataInterface $wishboxcdekofficesdata Data
+	 * @throws Exception
 	 *
-	 * @since 1.0.0
-	 */
-	protected Offices\DataInterface $wishboxcdekofficesdata;
-
-	/**
 	 * @since 1.0.0
 	 */
 	public function __construct()
 	{
 		parent::__construct();
 
-		$this->wishboxcdekofficesdata = JSFactory::getModel(
-			'data' . $this->addonParams->get('office_list_type', 'city'),
-			'Site\\Wishbox\\Cdek\\Offices'
-		);
+		$app = Factory::getApplication();
+
+		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
+		$officeListType = $componentParams->get('office_list_type', 'city');
+
+		$this->dataModel = $app->bootComponent('com_wishboxcdek')
+			->createModel(
+				'data' . $officeListType,
+				'Site\\Model\\Offices'
+			);
 	}
 
+	/**
+	 * Method to autopopulate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @return void
+	 *
+	 * @throws Exception
+	 *
+	 * @since   1.0.0
+	 *
+	 * @noinspection PhpMissingReturnTypeInspection
+	 */
+	protected function populateState()
+	{
+		$app = Factory::getApplication();
+
+		// Load state from the request.
+		$cityCode = $app->getInput()->getInt('city_code');
+		$this->setState('filter.cityCode', $cityCode);
+
+		$shippingMethodId = $app->getInput()->getInt('shipping_method_id');
+		$this->setState('shipping_method_id', $shippingMethodId);
+
+		$shopName = $app->getInput()->get('shop_name');
+		$this->setState('shop_name', $shopName);
+
+		// Load the parameters.
+		$params = $app->getParams();
+		$this->setState('params', $params);
+	}
 
 	/**
-	 * Method
-	 *
-	 * @param   integer  $cityId        City id
-	 * @param   integer  $shPrMethodId  Shipping price method id
+	 * @param   string|null   $shopName          Shop name
+	 * @param   integer|null  $shippingMethodId  Shipping method id
 	 *
 	 * @return   array
 	 *
+	 * @throws Exception
+	 *
 	 * @since 1.0.0
 	 */
-	public function getOfficesDataForMap(int $cityId, int $shPrMethodId = 0): array
+	public function getMapData(
+		?string $shopName = null,
+		?int $shippingMethodId = 0
+	): array
 	{
-		if ($shPrMethodId == 0)
+		$shopName = $shopName ?: $this->getState('shop_name');
+
+		if (empty($shopName))
 		{
-			throw new InvalidArgumentException('param $sh_pr_method_id must be more than zero', 500);
+			throw new InvalidArgumentException('param $shopName must not be empty', 500);
+		}
+
+		$shippingMethodId = (int) ($shippingMethodId ?: $this->getState('shipping_method_id'));
+
+		if ($shippingMethodId == 0)
+		{
+			throw new InvalidArgumentException('param $shippingMethodId must be more than zero', 500);
 		}
 
 		$data = [];
 		$data['type'] = 'FeatureCollection';
 		$data['features'] = [];
-		$offices = $this->getOffices($cityId);
+		$items = $this->getItems();
 
-		if (count($offices))
+		if (count($items))
 		{
-			/** @var CdekModel $wishboxshippingcalculatorcdekModel */
-			$wishboxshippingcalculatorcdekModel = JSFactory::getModel('cdek', 'Site\\Wishbox\\Shippingcalculator');
+			$shippingTariff = WishboxcdekHelper::getShippingTariff($shopName, $shippingMethodId);
 
-			$shippingTariff = $wishboxshippingcalculatorcdekModel->getTariff($shPrMethodId);
-
-			foreach ($offices as $item)
+			foreach ($items as $item)
 			{
 				$feature = [];
 				$feature['type'] = 'Feature';
 				$feature['id'] = $item->code;
 				$feature['geometry'] = [
-					'type' => 'Point',
-					'coordinates' => [
+					'type'          => 'Point',
+					'coordinates'   => [
 						$item->location_latitude, // phpcs:ignore
 						$item->location_longitude // phpcs:ignore
 					]
@@ -98,20 +138,15 @@ class OfficesModel extends Base
 				$feature['options']['iconLayout'] = 'default#image';
 				$feature['properties'] = [];
 				$feature['properties']['iconLayout'] = 'default#image';
-				$layoutPaths = [
-					JPATH_SITE . '/components/com_jshopping/addons/wishboxcdek/layouts/wishboxcdekchangeoffice/yandexmap/balooncontent'
-				];
-				$renderer = new FileLayout('d');
-				$renderer->setIncludePaths($layoutPaths);
-
-				// Data array
-				$displayData = [
-					'office' => $item,
-					'shipping_tariff' => $shippingTariff,
-					'adv_user' => $this->advUser,
-					'sh_pr_method_id' => $shPrMethodId
-				];
-				$feature['properties']['balloonContent'] = $renderer->render($displayData);
+				$feature['properties']['balloonContent'] = LayoutHelper::render(
+					'components.wishboxcdek.changeoffice/yandexmap/balooncontent.d',
+					[
+						'office'            => $item,
+						'shippingTariff'    => $shippingTariff,
+						'advUser'           => $this->advUser,
+						'shippingMethodId'  => $shippingMethodId
+					]
+				);
 				$feature['properties']['clusterCaption'] = 'hj-';
 				$feature['properties']['hintContent'] = '<strong>' . $item->code . '</strong>';
 				$feature['properties']['shipping_service'] = 'Сдек';
@@ -128,14 +163,19 @@ class OfficesModel extends Base
 	}
 
 	/**
-	 * @param   integer  $cityCode  City code
-	 *
 	 * @return array
 	 *
 	 * @since 1.0.0
 	 */
-	public function getOffices(int $cityCode): array
+	public function getItems(): array
 	{
-		return $this->wishboxcdekofficesdata->getOffices($cityCode, [new Dimensions(1000, 900, 800)]);
+		$cityCode = $this->getState('filter.cityCode');
+
+		if ($cityCode == 0)
+		{
+			throw new InvalidArgumentException('param $cityCode must be more than zero', 500);
+		}
+
+		return $this->dataModel->getOffices($cityCode, [new Dimensions(1000, 900, 800)]);
 	}
 }

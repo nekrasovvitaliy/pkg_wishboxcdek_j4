@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright 2023 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 or later
+ * @copyright  2013-2024 Nekrasov Vitaliy
+ * @license    GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Entity;
 

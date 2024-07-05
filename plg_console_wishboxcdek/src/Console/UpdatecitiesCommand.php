@@ -11,6 +11,7 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
 use Joomla\Console\Command\AbstractCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -108,6 +109,8 @@ class UpdatecitiesCommand extends AbstractCommand
 	{
 		$this->configureIO($input, $output);
 
+		$this->ioStyle->title('Updating cities');
+
 		if (!ini_set('memory_limit', '256000000'))
 		{
 			throw new Exception('ini_set("memory_limit", "512MB") return false', 500);
@@ -129,6 +132,6 @@ class UpdatecitiesCommand extends AbstractCommand
 			throw new Exception('Update return false', 500);
 		}
 
-		return 1;
+		return  Command::SUCCESS;
 	}
 }

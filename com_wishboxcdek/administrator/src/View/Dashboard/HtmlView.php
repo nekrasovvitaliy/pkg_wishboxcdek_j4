@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright (c) 2023 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 or later;
+ * @copyright  (c) 2013-2024 Nekrasov Vitaliy
+ * @license    GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\View\Dashboard;
 
@@ -41,6 +41,24 @@ class HtmlView extends BaseHtmlView
 	{
 		$this->addToolbar();
 		$this->sidebar = Sidebar::render();
+
+		$citiesCount = $this->get('CitiesCount');
+		$officesCount = $this->get('OfficesCount');
+
+		ToolbarHelper::custom(
+			'cities.update',
+			'refresh',
+			'refresh_f2.png',
+			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_CITIES') . '(' . $citiesCount . ')',
+			false
+		);
+		ToolbarHelper::custom(
+			'offices.update',
+			'refresh',
+			'refresh_f2.png',
+			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_OFFICES') . '(' . $officesCount . ')',
+			false
+		);
 
 		parent::display($tpl);
 	}

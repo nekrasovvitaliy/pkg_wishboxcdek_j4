@@ -21,6 +21,14 @@
             </fileset>
         </zip>
 
+        <zip destfile="lib_wishboxcdek/lib_wishboxcdek.zip">
+            <fileset dir="./lib_wishboxcdek">
+                <include name="language/**" />
+                <include name="src/**" />
+                <include name="lib_wishboxcdek.xml" />
+            </fileset>
+        </zip>
+
         <zip destfile="plg_console_wishboxcdek/plg_console_wishboxcdek.zip">
             <fileset dir="./plg_console_wishboxcdek">
                 <include name="language/**" />
@@ -46,6 +54,9 @@
             <fileset dir="./com_wishboxcdek">
                 <include name="com_wishboxcdek.zip" />
             </fileset>
+            <fileset dir="./lib_wishboxcdek">
+                <include name="lib_wishboxcdek.zip" />
+            </fileset>
             <fileset dir="./plg_console_wishboxcdek">
                 <include name="plg_console_wishboxcdek.zip" />
             </fileset>
@@ -61,6 +72,16 @@
         <delete quiet="yes">
             <fileset dir=".">
                 <include name="com_wishboxcdek/com_wishboxcdek.zip" />
+            </fileset>
+        </delete>
+        <delete quiet="yes">
+            <fileset dir=".">
+                <include name="lib_wishboxcdek/lib_wishboxcdek.zip" />
+            </fileset>
+        </delete>
+        <delete quiet="yes">
+            <fileset dir=".">
+                <include name="plg_console_wishboxcdek/plg_console_wishboxcdek.zip" />
             </fileset>
         </delete>
         <delete quiet="yes">
