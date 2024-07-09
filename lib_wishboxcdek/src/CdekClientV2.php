@@ -11,8 +11,6 @@ use Joomla\CMS\Factory;
 use Joomla\Http\Response as HttpResponse;
 use Joomla\Uri\Uri;
 use Psr\Http\Message\StreamInterface;
-use WishboxCdekSDK2\Exceptions\CdekV2AuthException;
-use WishboxCdekSDK2\Exceptions\CdekV2RequestException;
 use Joomla\CMS\Http\Http;
 use Joomla\CMS\Http\HttpFactory;
 use WishboxCdekSDK2\Factory\ResponsePipelineFactory;
@@ -28,6 +26,7 @@ use WishboxCdekSDK2\Model\Response\Location\CitiesGet\CityResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersPatchResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersPostResponse;
+use WishboxCdekSDK2\Model\ResponseData;
 
 /**
  * Class CdekClientV2 - клиент взаимодействия с api cdek 2.0.
@@ -128,9 +127,6 @@ final class CdekClientV2
 	 *
 	 * @return TariffListPostResponse
 	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
-	 *
 	 * @since 1.0.0
 	 *
 	 */
@@ -140,9 +136,7 @@ final class CdekClientV2
 		$response = $this->getResponse(
 			Constants::CALC_TARIFFLIST_URL,
 			TariffListPostResponse::class,
-			$request->prepareRequest(),
-			'POST',
-			true
+			$request->prepareRequest()
 		);
 
 		return $response;
@@ -150,24 +144,26 @@ final class CdekClientV2
 
 	/**
 	 * @param   string      $path    Path
-	 * @param   string      $type    Type
 	 * @param   array|null  $data    Data
 	 * @param   string      $method  Method
 	 *
-	 * @return array
-	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
+	 * @return ResponseData
 	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnnecessaryLocalVariableInspection
 	 */
-	public function getData(string $path, string $type, array $data = null, string $method = 'POST'): array
+	public function getResponseData(string $path, array $data = null, string $method = 'POST'): ResponseData
 	{
 		$response = $this->getHttpResponse($path, $data, $method);
 
-		$this->handleClientErrors($path, $type, $response);
+		$responseData = new ResponseData(
+			$response->code,
+			$response->headers,
+			$response->body
+		);
 
-		return json_decode($response->body, true);
+		return $responseData;
 	}
 
 	/**
@@ -178,9 +174,6 @@ final class CdekClientV2
 	 * @param   string   $method  URL path запроса
 	 *
 	 * @return HttpResponse|StreamInterface
-	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
 	 *
 	 * @since 1.0.0
 	 */
@@ -264,8 +257,6 @@ final class CdekClientV2
 	 *
 	 * @return void
 	 *
-	 * @throws CdekV2AuthException
-	 *
 	 * @since 1.0.0
 	 */
 	private function authorize(): void
@@ -283,18 +274,13 @@ final class CdekClientV2
 			$headers
 		);
 
+		$responseData = new ResponseData($response->code, $response->headers, $response->body);
+
 		$handler = ResponsePipelineFactory::createDefaultPipeline();
-		$handler->handle(Constants::OAUTH_URL, '',  $response);
+		$handler->handle(Constants::OAUTH_URL, $responseData);
 
-		if ($response->getStatusCode() == 200)
-		{
-			$tokenInfo   = json_decode($response->getBody(), true);
-			$this->token = $tokenInfo['access_token'] ?? '';
-
-			return;
-		}
-
-		throw new CdekV2AuthException(Constants::AUTH_FAIL);
+		$tokenInfo   = json_decode($response->getBody(), true);
+		$this->token = $tokenInfo['access_token'] ?? '';
 	}
 
 	/**
@@ -361,35 +347,17 @@ final class CdekClientV2
 	/**
 	 * Проверка ответа на ошибки.
 	 *
-	 * @param   string        $path      Path
-	 * @param   string        $type      Type
-	 * @param   HttpResponse  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response
 	 *
 	 * @return void
 	 *
 	 * @since 1.0.0
 	 */
-	private function handleClientErrors(string $path, string $type, HttpResponse $response): void
+	private function handleErrors(string $path, ResponseData $responseData): void
 	{
 		$handler = ResponsePipelineFactory::createDefaultPipeline();
-		$handler->handle($path, $type, $response);
-	}
-
-	/**
-	 * Проверка ответа на ошибки.
-	 *
-	 * @param   string             $path      Path
-	 * @param   string             $type      Type
-	 * @param   ResponseInterface  $response  Response
-	 *
-	 * @return void
-	 *
-	 * @since 1.0.0
-	 */
-	private function handleApiErrors(string $path, int $httpResponseCode, ResponseInterface $response): void
-	{
-		$handler = ResponsePipelineFactory::createApiPipeline();
-		$handler->handle($path, $type, $response);
+		$handler->handle($path, $responseData);
 	}
 
 	/**
@@ -445,9 +413,6 @@ final class CdekClientV2
 	 *
 	 * @return OrdersPostResponse
 	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
-	 *
 	 * @since 1.0.0
 	 */
 	public function createOrder(OrdersPostRequest $request): OrdersPostResponse
@@ -470,10 +435,6 @@ final class CdekClientV2
 	 * @param   OrdersPatchRequest  $request  Параметры заказа
 	 *
 	 * @return OrdersPatchResponse
-	 *
-	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
 	 *
 	 * @since 1.0.0
 	 */
@@ -498,10 +459,9 @@ final class CdekClientV2
 	 *
 	 * @return OrdersGetResponse
 	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
-	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnused
 	 */
 	public function getOrderInfoByCdekNumber(string $cdekNumber): OrdersGetResponse
 	{
@@ -522,10 +482,6 @@ final class CdekClientV2
 	 * @param   string  $imNumber  Номер заказа
 	 *
 	 * @return OrdersGetResponse
-	 *
-	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
 	 *
 	 * @since 1.0.0
 	 */
@@ -549,10 +505,9 @@ final class CdekClientV2
 	 *
 	 * @return OrdersGetResponse
 	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
-	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnused
 	 */
 	public function getOrderInfoByUuid(string $uuid): OrdersGetResponse
 	{
@@ -598,15 +553,16 @@ final class CdekClientV2
 				]
 			);
 
-		$data = $cacheController->get(
-			[$this, 'getData'],
-			[$path, $type, $data, $method],
+		/** @var ResponseData $responseData */
+		$responseData = $cacheController->get(
+			[$this, 'getResponseData'],
+			[$path, $data, $method],
 		);
 
-		/** @var ResponseInterface $response */
-		$response = new $type($data);
+		$this->handleErrors($path, $responseData);
 
-		$this->handleApiErrors($path, $response);
+		/** @var ResponseInterface $response */
+		$response = new $type(json_decode($responseData->getBody(), true));
 
 		return $response;
 	}
@@ -642,8 +598,9 @@ final class CdekClientV2
 				]
 			);
 
+		/** @var ResponseData $data */
 		$data = $cacheController->get(
-			[$this, 'getData'],
+			[$this, 'getResponseData'],
 			[$path, $type, $data, $method],
 		);
 

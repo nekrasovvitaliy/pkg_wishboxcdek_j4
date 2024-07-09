@@ -5,8 +5,8 @@
  */
 namespace WishboxCdekSDK2\Handler\Response;
 
-use Joomla\Http\Response;
-use WishboxCdekSDK2\ApiClientException;
+use WishboxCdekSDK2\Exception\ClientException;
+use WishboxCdekSDK2\Model\ResponseData;
 
 /**
  * @since 1.0.0
@@ -14,21 +14,20 @@ use WishboxCdekSDK2\ApiClientException;
 class ServiceUnavailableHandler extends AbstractResponseHandler
 {
 	/**
-	 * @param   string    $path      Path
-	 * @param   string    $type      Type
-	 * @param   Response  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response data
 	 *
 	 * @return boolean
 	 *
-	 * @throws ApiClientException
+	 * @throws ClientException
 	 *
 	 * @since 1.0.0
 	 */
-	protected function handleResponse(string $path, string $type, Response $response): bool
+	protected function handleResponse(string $path, ResponseData $responseData): bool
 	{
-		if ($response->code >= 500)
+		if ($responseData->getCode() >= 500)
 		{
-			$message = $response->body;
+			$message = $responseData->getBody();
 
 			if (preg_match('/<body[^>]*>(.*?)<\/body>/is', $message, $matches))
 			{
@@ -37,9 +36,9 @@ class ServiceUnavailableHandler extends AbstractResponseHandler
 
 			$message = strip_tags($message);
 
-			throw new ApiClientException($message, $response->code);
+			throw new ClientException($message, $responseData->getCode());
 		}
 
-		return $this->next($path, $type, $response);
+		return $this->next($path, $responseData);
 	}
 }

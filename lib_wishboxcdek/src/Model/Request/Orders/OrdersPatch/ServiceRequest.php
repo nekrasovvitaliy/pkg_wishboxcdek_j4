@@ -42,15 +42,19 @@ class ServiceRequest extends AbstractRequest
 	/**
 	 * 19.1. Тип дополнительной услуги (подробнее см. приложение 3)
 	 *
-	 * @return string
+	 * @param   string  $code  Code
+	 *
+	 * @return self
 	 *
 	 * @since 1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getCode(): string
+	public function setCode(string $code): self
 	{
-		return $this->code;
+		$this->code = $code;
+
+		return $this;
 	}
 
 	/**
@@ -65,14 +69,18 @@ class ServiceRequest extends AbstractRequest
 	 *
 	 *        Актуальность доступных доп. услуг рекомендуем уточнить у закреплённого менеджера.
 	 *
-	 * @return float|null
+	 * @param   integer|null  $parameter  Parameter
+	 *
+	 * @return self
 	 *
 	 * @since 1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParameter(): ?string
+	public function setParameter(?int $parameter): self
 	{
-		return $this->parameter;
+		$this->parameter = $parameter;
+
+		return $this;
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2013-2024 Nekrasov Vitaliy
+ * @copyright   2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
 namespace WishboxCdekSDK2;
@@ -43,6 +43,8 @@ class Constants
 	 * Аккаунт для тестовой среды.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const TEST_ACCOUNT = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI';
 
@@ -50,33 +52,17 @@ class Constants
 	 * Секретный ключ для тестовой среды.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const TEST_SECURE = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG';
-	/**
-	 * Хук: статусы.
-	 *
-	 * @var string
-	 */
-	public const HOOK_TYPE_STATUS = 'ORDER_STATUS';
-
-	/**
-	 * Хук: задел на будущее.
-	 *
-	 * @var string
-	 */
-	public const HOOK_TYPE_OTHER = 'ANYTHING_OTHER';
-
-	/**
-	 * Ошибка авторизации.
-	 *
-	 * @var string
-	 */
-	public const AUTH_FAIL = 'Аутентификация не удалась, пожалуйста, проверьте переданные логин и пароль';
 
 	/**
 	 * Параметр типа аутентификации.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const AUTH_PARAM_CREDENTIAL = 'client_credentials';
 
@@ -84,6 +70,8 @@ class Constants
 	 * Ключ авторизации: тип аутентификации, доступное значение: client_credentials.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const AUTH_KEY_TYPE = 'grant_type';
 
@@ -91,6 +79,8 @@ class Constants
 	 * Ключ авторизации: идентификатор клиента, равен Account.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const AUTH_KEY_CLIENT_ID = 'client_id';
 
@@ -98,6 +88,8 @@ class Constants
 	 * Ключ авторизации: секретный ключ клиента, равен Secure password.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const AUTH_KEY_SECRET = 'client_secret';
 
@@ -105,6 +97,8 @@ class Constants
 	 * URL для поиска списка ПВЗ.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const DELIVERY_POINTS_URL = 'deliverypoints';
 
@@ -112,34 +106,17 @@ class Constants
 	 * URL для получения детальной информации о регионах.
 	 *
 	 * @var string
-	 */
-	public const CALC_TARIFF_URL = 'calculator/tariff';
-
-	/**
-	 * URL для получения детальной информации о регионах.
 	 *
-	 * @var string
+	 * @since 1.0.0
 	 */
 	public const CALC_TARIFFLIST_URL = 'calculator/tarifflist';
-
-	/**
-	 * URL для запросов к API договоренностей по времени доставки\приезда курьера, а так же изменять адрес доставки.
-	 *
-	 * @var string
-	 */
-	public const COURIER_AGREEMENTS_URL = 'delivery';
-
-	/**
-	 * URL для запросов к API Регистрация заявки на вызов курьера.
-	 *
-	 * @var string
-	 */
-	public const INTAKES_URL = 'intakes';
 
 	/**
 	 * URL для создания\поиска\удаления заказов.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const ORDERS_URL = 'orders';
 
@@ -147,41 +124,17 @@ class Constants
 	 * URL для получения детальной информации о населенных пунктах.
 	 *
 	 * @var string
+	 *
+	 * @since 1.0.0
 	 */
 	public const CITIES_URL = 'location/cities';
-
-	/**
-	 * URL для получения детальной информации о регионах.
-	 *
-	 * @var string
-	 */
-	public const REGIONS_URL = 'location/regions';
-
-	/**
-	 * URL для запросов к API на формирование ШК.
-	 *
-	 * @var string
-	 */
-	public const BARCODES_URL = 'print/barcodes';
-
-	/**
-	 * URL для запросов к API на формирование квитанции.
-	 *
-	 * @var string
-	 */
-	public const INVOICE_URL = 'print/orders';
-
-	/**
-	 * URL для запросов к API.
-	 *
-	 * @var string
-	 */
-	public const WEBHOOKS_URL = 'webhooks';
 
 	/**
 	 * Список корректных параметров, которые разрешено передавать для поиска офисов.
 	 *
 	 * @var array
+	 *
+	 * @since 1.0.0
 	 */
 	public const DELIVERY_POINTS_FILTER = [
 		'postal_code' => '',
@@ -204,6 +157,8 @@ class Constants
 	 * Список корректных параметров, которые разрешено передавать для поиска населенных пунктов.
 	 *
 	 * @var array
+	 *
+	 * @since 1.0.0
 	 */
 	public const CITIES_FILTER = [
 		'country_codes' => '',
@@ -224,6 +179,8 @@ class Constants
 	 * Список корректных параметров, которые разрешено передавать для поиска регионов.
 	 *
 	 * @var array
+	 *
+	 * @since 1.0.0
 	 */
 	public const REGIONS_FILTER = [
 		'country_codes' => '',
@@ -232,41 +189,6 @@ class Constants
 		'fias_region_guid' => '',
 		'size' => '',
 		'lang' => '',
-	];
-
-	/**
-	 * Сопоставление полей ответа и классов.
-	 *
-	 * @var array
-	 */
-	public const SDK_CLASSES = [
-		'to_location' => 'Location',
-		'from_location' => 'Location',
-		'location' => 'Location',
-		'delivery_recipient_cost' => 'Money',
-		'delivery_detail' => 'DeliveryDetail',
-		'sender' => 'Contact',
-		'seller' => 'Seller',
-		'recipient' => 'Contact',
-		'payment' => 'Money',
-	];
-
-	/**
-	 * Сопоставление полей ответа содержаших массивы классов.
-	 *
-	 * @var array
-	 */
-	public const SDK_ARRAY_RESPONSE_CLASSES = [
-		'delivery_recipient_cost_adv' => 'Threshold',
-		'statuses' => 'Statuses',
-		'services' => 'Services',
-		'packages' => 'Packages',
-		'items' => 'Items',
-		'office_image_list' => 'OfficeImage',
-		'work_time_list' => 'WorkTimeList',
-		'requests' => 'Requests',
-		'phones' => 'Phone',
-		'check_info' => 'Check',
 	];
 
 	public const SERVICE_CODES = [
@@ -318,6 +240,8 @@ class Constants
 	 * Список ошибок.
 	 *
 	 * @var array
+	 *
+	 * @since 1.0.0
 	 */
 	public const ERRORS = [
 		'v2_internal_error' => 'Запрос выполнился с системной ошибкой',
@@ -344,7 +268,6 @@ class Constants
 		'v2_entity_not_found_im_number' => 'Сущность с указанным идентификатором не существует, либо удалена',
 		'v2_order_location_from_and_shipment_point_empty' => 'Адрес отправителя и ПВЗ отправителя пустые',
 		'v2_order_location_to_and_delivery_point_empty' => 'Адрес получателя и ПВЗ получателя пустые',
-		'v2_number_items_is_more_126' => 'Позиций в товаре более 126',
 		'v2_package_id_is_empty' => 'Не передан идентификатор уже существующей упаковки заказа',
 		'v2_required_param_empty' => 'Не заполнено обязательное поле',
 		'v2_city_can_not_be_changed' => 'Передан новый город в адресе доставки (для регистрации договоренности)',
@@ -352,10 +275,7 @@ class Constants
 		'v2_intake_exists_by_order' => 'К переданному заказу уже привязана заявка',
 		'v2_intake_exists_by_date_address' => 'На переданную дату и в переданный адрес уже есть заявка',
 		'v2_webhook_type_incorrect' => 'Передан некорректный тип события',
-		'v2_entity_empty' => 'Все заказы с указанными номерами и идентификаторами некорректны',
 		'v2_wrong_interval' => 'Передан некорректный промежуток времени',
-		'v2_entity_expired' => 'Истек срок хранения квитанции с указанным идентификатором',
-		'v2_entity_empty' => 'Квитанция с указанным идентификатором не сформировалась, так как все заказы некорректны',
 		'v2_entity_expired' => 'Истек срок хранения печатной формы с указанным идентификатором',
 		'v2_entity_empty' => 'Печатная форма с указанным идентификатором не сформировалась, так как все заказы некорректны',
 		'v2_unable_add_service' => 'Не удалось добавить услугу к заказу.',

@@ -11,8 +11,6 @@ use WishboxCdekSDK2\Model\Response\Orders\OrdersPatch\RequestResponse;
 
 /**
  * @since 1.0.0
- *
- * @noinspection PhpUnused
  */
 class OrdersPatchResponse extends AbstractResponse
 {

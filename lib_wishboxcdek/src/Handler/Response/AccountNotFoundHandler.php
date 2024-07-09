@@ -5,8 +5,9 @@
  */
 namespace WishboxCdekSDK2\Handler\Response;
 
-use Joomla\Http\Response;
-use WishboxCdekSDK2\ApiClientException;
+use WishboxCdekSDK2\Exception\Api\Error\NoValidKeySpecifiedException;
+use WishboxCdekSDK2\Exception\ApiException;
+use WishboxCdekSDK2\Model\ResponseData;
 
 /**
  * Class AccountNotFoundHandler
@@ -16,24 +17,22 @@ use WishboxCdekSDK2\ApiClientException;
 class AccountNotFoundHandler extends AbstractResponseHandler
 {
 	/**
-	 * @param   string    $path      Path
-	 * @param   Response  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response data
 	 *
 	 * @return boolean
 	 *
-	 * @throws ApiClientException
+	 * @throws ApiException
 	 *
 	 * @since 1.0.0
 	 */
-	protected function handleResponse(string $path, Response $response): bool
+	protected function handleResponse(string $path, ResponseData $responseData): bool
 	{
-		if ($response->code >= 400 && $response->body == 'No valid key specified')
+		if ($responseData->getCode() >= 400 && $responseData->getBody() == 'No valid key specified')
 		{
-			$responseBody = $response->body;
-			print_r($responseBody);
-			throw new ApiClientException($response->body, $response->code);
+			throw new NoValidKeySpecifiedException($responseData);
 		}
 
-		return $this->next($path, $response);
+		return $this->next($path, $responseData);
 	}
 }

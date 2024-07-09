@@ -10,10 +10,4 @@ namespace WishboxCdekSDK2\Interface;
  */
 interface ResponseInterface
 {
-	/**
-	 * @return ErrorResponseInterface[]
-	 *
-	 * @since 1.0.0
-	 */
-	public function getErrors(): array;
 }

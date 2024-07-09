@@ -5,14 +5,14 @@
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersGet;
 
-use WishboxCdekSDK2\Entity\Responses\Source;
+use WishboxCdekSDK2\Model\Response\AbstractResponse;
 
 /**
  * Связанная с заказом сущность
  *
  * @since 1.0.0
  */
-class RelatedEntity extends Source
+class RelatedEntity extends AbstractResponse
 {
 	/**
 	 * 3.1 Тип сущности, связанной с заказом

@@ -5,7 +5,7 @@
  */
 namespace WishboxCdekSDK2\Interface;
 
-use Joomla\Http\Response as HttpResponse;
+use WishboxCdekSDK2\Model\ResponseData;
 
 /**
  * @since 1.0.0
@@ -22,12 +22,12 @@ interface HandlerInterface
 	public function setNext(HandlerInterface $handler): HandlerInterface;
 
 	/**
-	 * @param   string        $path      Path
-	 * @param   HttpResponse  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response data
 	 *
 	 * @return boolean
 	 *
 	 * @since 1.0.0
 	 */
-	public function handle(string $path, HttpResponse $response): bool;
+	public function handle(string $path, ResponseData $responseData): bool;
 }

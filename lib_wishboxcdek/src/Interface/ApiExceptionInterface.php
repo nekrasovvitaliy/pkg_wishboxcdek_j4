@@ -6,6 +6,7 @@
 namespace WishboxCdekSDK2\Interface;
 
 use Throwable;
+use WishboxCdekSDK2\Model\ResponseData;
 
 /**
  * Interface ApiExceptionInterface
@@ -26,11 +27,11 @@ interface ApiExceptionInterface extends Throwable
 	/**
 	 * Returns Response.
 	 *
-	 * @return ResponseInterface
+	 * @return ResponseData
 	 *
 	 * @since 1.0.0
 	 */
-	public function getResponse(): ResponseInterface;
+	public function getResponseData(): ResponseData;
 
 	/**
 	 * API exception must implement valid __toString() method.

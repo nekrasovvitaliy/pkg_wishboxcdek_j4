@@ -24,7 +24,7 @@ interface ApiHandlerInterface
 	/**
 	 * @param   string             $path              Path
 	 * @param   integer            $httpResponseCode  HTTP response code
-	 * @param   ResponseInterface  $response          Response
+	 * @param   Response           $response          Response
 	 *
 	 * @return boolean
 	 *

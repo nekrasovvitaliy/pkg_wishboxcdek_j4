@@ -1,17 +1,17 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
 namespace WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet;
 
-use WishboxCdekSDK2\Model\Entity\ErrorResponse;
-use WishboxCdekSDK2\Model\Entity\OfficeImageResponse;
-use WishboxCdekSDK2\Model\Entity\PhoneResponse;
-use WishboxCdekSDK2\Model\Entity\WorkTimeExceptionResponse;
-use WishboxCdekSDK2\Model\Entity\WorkTimeResponse;
 use WishboxCdekSDK2\Model\Response\AbstractResponse;
+use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\OfficeImageResponse;
+use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\PhoneResponse;
+use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\WorkTimeExceptionResponse;
+use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\WorkTimeResponse;
 use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\DimensionsResponse;
+use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\ErrorResponse;
 use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\LocationResponse;
 
 /**
@@ -90,7 +90,7 @@ class DeliveryPointResponse extends AbstractResponse
 	/**
 	 * 9. Номера телефона.
 	 *
-	 * @var \WishboxCdekSDK2\Model\Entity\PhoneResponse[]
+	 * @var \WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\PhoneResponse[]
 	 *
 	 * @since 1.0.0
 	 */
@@ -246,7 +246,7 @@ class DeliveryPointResponse extends AbstractResponse
 	/**
 	 * 25. Все фото офиса (кроме фото как доехать).
 	 *
-	 * @var \WishboxCdekSDK2\Model\Entity\OfficeImageResponse[]
+	 * @var \WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\OfficeImageResponse[]
 	 *
 	 * @since 1.0.0
 	 */
@@ -300,7 +300,7 @@ class DeliveryPointResponse extends AbstractResponse
 	/**
 	 * 31. Список ошибок
 	 *
-	 * @var \WishboxCdekSDK2\Model\Entity\ErrorResponse[]|null
+	 * @var \WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\ErrorResponse[]|null
 	 *
 	 * @since 1.0.0
 	 */

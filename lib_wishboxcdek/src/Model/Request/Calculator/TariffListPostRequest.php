@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2013-2024 Nekrasov Vitaliy
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
 namespace WishboxCdekSDK2\Model\Request\Calculator;
@@ -42,11 +42,12 @@ class TariffListPostRequest extends AbstractRequest
 
 	/**
 	 * 3. Дополнительный тип заказа:
-	 *    2 - для сборного груза (LTL)
-	 *    4 - для Forward
-	 *    6 - для "Фулфилмент. Приход"
-	 *    7 - для "Фулфилмент. Отгрузка"
-	 *    10 - для доставки шин по тарифу "Экономичный экспресс"
+	 *
+	 * 2 - для сборного груза (LTL)
+	 * 4 - для Forward
+	 * 6 - для "Фулфилмент. Приход"
+	 * 7 - для "Фулфилмент. Отгрузка"
+	 * 10 - для доставки шин по тарифу "Экономичный экспресс"
 	 *
 	 * @var integer[]|null
 	 *

@@ -5,12 +5,12 @@
  */
 namespace WishboxCdekSDK2\Model\Request\Orders\OrdersPost\Package\Item;
 
-use WishboxCdekSDK2\Entity\Requests\Source;
+use WishboxCdekSDK2\Model\Request\AbstractRequest;
 
 /**
  * @since 1.0.0
  */
-class MoneyRequest extends Source
+class MoneyRequest extends AbstractRequest
 {
 	/**
 	 * Сумма в валюте.

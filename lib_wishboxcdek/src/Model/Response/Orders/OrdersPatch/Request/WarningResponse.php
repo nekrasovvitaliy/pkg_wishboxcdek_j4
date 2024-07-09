@@ -5,14 +5,14 @@
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersPatch\Request;
 
-use WishboxCdekSDK2\Entity\Requests\Source;
+use WishboxCdekSDK2\Model\Request\AbstractRequest;
 
 /**
  * Предупреждения, возникшие в ходе выполнения запроса
  *
  * @since 1.0.0
  */
-class WarningResponse extends Source
+class WarningResponse extends AbstractRequest
 {
 	/**
 	 * 2.6.1. Код предупреждения

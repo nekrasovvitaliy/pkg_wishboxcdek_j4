@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright   2013-2024 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 или позже
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license     GNU General Public License version 2 or later
  */
 namespace WishboxCdekSDK2\Model\Request\Calculator\TariffListPost;
 
@@ -13,7 +13,7 @@ use WishboxCdekSDK2\Model\Request\AbstractRequest;
 class LocationRequest extends AbstractRequest
 {
 	/**
-	 * 6.1 Код населенного пункта СДЭК (метод "Список населенных пунктов")
+	 * 6.1. Код населенного пункта СДЭК (метод "Список населенных пунктов")
 	 *
 	 * @var integer|null
 	 *
@@ -22,7 +22,7 @@ class LocationRequest extends AbstractRequest
 	protected ?int $code = null;
 
 	/**
-	 * 6.2 Почтовый индекс
+	 * 6.2. Почтовый индекс
 	 *
 	 * @var string|null
 	 *
@@ -31,7 +31,7 @@ class LocationRequest extends AbstractRequest
 	protected ?string $postal_code = null; // phpcs:ignore
 
 	/**
-	 * 6.3 Код страны в формате ISO_3166-1_alpha-2 (по умолчанию RU)
+	 * 6.3. Код страны в формате ISO_3166-1_alpha-2 (по умолчанию RU)
 	 *
 	 * @var string|null
 	 *
@@ -42,7 +42,7 @@ class LocationRequest extends AbstractRequest
 	protected ?string $country_code = null; // phpcs:ignore
 
 	/**
-	 * 6.4 Название города
+	 * 6.4. Название города
 	 *
 	 * @var string|null
 	 *
@@ -51,7 +51,7 @@ class LocationRequest extends AbstractRequest
 	protected ?string $city = null;
 
 	/**
-	 * 6.5 Полная строка адреса
+	 * 6.5. Полная строка адреса
 	 *
 	 * @var string|null
 	 *
@@ -60,7 +60,7 @@ class LocationRequest extends AbstractRequest
 	protected ?string $address = null;
 
 	/**
-	 * 6.1 Установить код населенного пункта СДЭК (метод "Список населенных пунктов")
+	 * 6.1. Установить код населенного пункта СДЭК (метод "Список населенных пунктов")
 	 *
 	 * @param   integer|null  $code  Code
 	 *
@@ -78,7 +78,7 @@ class LocationRequest extends AbstractRequest
 	}
 
 	/**
-	 * 6.2 Установить почтовый индекс
+	 * 6.2. Установить почтовый индекс
 	 *
 	 * @param   string|null  $postalCode  Postal code
 	 *
@@ -96,7 +96,7 @@ class LocationRequest extends AbstractRequest
 	}
 
 	/**
-	 * 6.3 Установить код страны в формате ISO_3166-1_alpha-2 (по умолчанию RU)
+	 * 6.3. Установить код страны в формате ISO_3166-1_alpha-2 (по умолчанию RU)
 	 *
 	 * @param   string|null  $countryCode  Country code
 	 *
@@ -114,7 +114,7 @@ class LocationRequest extends AbstractRequest
 	}
 
 	/**
-	 * 6.4 Установить название города
+	 * 6.4. Установить название города
 	 *
 	 * @param   string|null  $city  City
 	 *
@@ -132,7 +132,7 @@ class LocationRequest extends AbstractRequest
 	}
 
 	/**
-	 * 6.5 Установить полную строку адреса
+	 * 6.5. Установить полную строку адреса
 	 *
 	 * @param   string|null  $address  Address
 	 *

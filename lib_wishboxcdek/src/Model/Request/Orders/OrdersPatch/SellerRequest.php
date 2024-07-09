@@ -13,7 +13,7 @@ use WishboxCdekSDK2\Model\Request\AbstractRequest;
 class SellerRequest extends AbstractRequest
 {
 	/**
-	 * Наименование истинного продавца.
+	 * 10.1. Наименование истинного продавца.
 	 *
 	 * @var string|null
 	 *
@@ -22,7 +22,7 @@ class SellerRequest extends AbstractRequest
 	protected ?string $name = null;
 
 	/**
-	 * ИНН истинного продавца.
+	 * 10.2. ИНН истинного продавца.
 	 *
 	 * @var integer|null
 	 *
@@ -31,7 +31,7 @@ class SellerRequest extends AbstractRequest
 	protected ?int $inn = null;
 
 	/**
-	 * Телефон истинного продавца.
+	 * 10.3. Телефон истинного продавца.
 	 *
 	 * @var string|null
 	 *
@@ -40,7 +40,7 @@ class SellerRequest extends AbstractRequest
 	protected ?string $phone = null;
 
 	/**
-	 * Код формы собственности.
+	 * 10.4. Код формы собственности.
 	 *
 	 * @var integer|null
 	 *
@@ -50,6 +50,7 @@ class SellerRequest extends AbstractRequest
 
 	/**
 	 * Адрес истинного продавца.
+	 *
 	 * Используется при печати инвойсов для отображения адреса настоящего продавца товара, либо торгового названия.
 	 * Только для международных заказов.
 	 *

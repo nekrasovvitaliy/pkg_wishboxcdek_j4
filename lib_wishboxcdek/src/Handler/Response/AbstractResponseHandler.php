@@ -5,9 +5,8 @@
  */
 namespace WishboxCdekSDK2\Handler\Response;
 
-use Joomla\Http\Response as HttpResponse;
 use WishboxCdekSDK2\Handler\AbstractHandler;
-use WishboxCdekSDK2\Interface\HandlerInterface;
+use WishboxCdekSDK2\Model\ResponseData;
 
 /**
  * @since 1.0.0
@@ -15,51 +14,42 @@ use WishboxCdekSDK2\Interface\HandlerInterface;
 abstract class AbstractResponseHandler extends AbstractHandler
 {
 	/**
-	 * The next handler in the chain.
-	 *
-	 * @var  HandlerInterface|null
-	 *
-	 * @since 1.0.0
-	 */
-	private ?HandlerInterface $nextHandler = null;
-
-	/**
-	 * @param   string        $path      Path
-	 * @param   HttpResponse  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response data
 	 *
 	 * @return boolean
 	 *
 	 * @since 1.0.0
 	 */
-	final public function handle(string $path, HttpResponse $response): bool
+	final public function handle(string $path, ResponseData $responseData): bool
 	{
-			return $this->handleResponse($path, $response);
+		return $this->handleResponse($path, $responseData);
 	}
 
 	/**
 	 * Return to parent.
 	 *
-	 * @param   string        $path      Path
-	 * @param   HttpResponse  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response data
 	 *
 	 * @return boolean
 	 *
 	 * @since 1.0.0
 	 */
-	protected function next(string $path, HttpResponse $response): bool
+	protected function next(string $path, ResponseData $responseData): bool
 	{
-		return parent::handle($path, $response);
+		return parent::handle($path, $responseData);
 	}
 
 	/**
 	 * Handle response.
 	 *
-	 * @param   string        $path      Path
-	 * @param   HttpResponse  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response data
 	 *
 	 * @return boolean
 	 *
 	 * @since 1.0.0
 	 */
-	abstract protected function handleResponse(string $path, HttpResponse $response): bool;
+	abstract protected function handleResponse(string $path, ResponseData $responseData): bool;
 }

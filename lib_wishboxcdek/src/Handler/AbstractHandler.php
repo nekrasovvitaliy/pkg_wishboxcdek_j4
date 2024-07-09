@@ -5,8 +5,8 @@
  */
 namespace WishboxCdekSDK2\Handler;
 
-use Joomla\Http\Response as HttpResponse;
 use WishboxCdekSDK2\Interface\HandlerInterface;
+use WishboxCdekSDK2\Model\ResponseData;
 
 /**
  * Represents an abstract handler in the chain of responsibility.
@@ -16,23 +16,28 @@ use WishboxCdekSDK2\Interface\HandlerInterface;
 abstract class AbstractHandler implements HandlerInterface
 {
 	/**
-	 * @var HandlerInterface
+	 * @var HandlerInterface|null
 	 *
 	 * @since 1.0.0
 	 */
-	private HandlerInterface $next;
+	private ?HandlerInterface $next = null;
 
 	/**
-	 * @param   string        $path      Path
-	 * @param   HttpResponse  $response  Response
+	 * @param   string        $path          Path
+	 * @param   ResponseData  $responseData  Response data
 	 *
-	 * @return bool|mixed|null
+	 * @return boolean
 	 *
 	 * @since 1.0.0
 	 */
-	public function handle(string $path, HttpResponse $response)
+	public function handle(string $path, ResponseData $responseData): bool
 	{
-		return $this->next->handle($path, $response);
+		if (null !== $this->next)
+		{
+			return $this->next->handle($path, $responseData);
+		}
+
+		return true;
 	}
 
 	/**

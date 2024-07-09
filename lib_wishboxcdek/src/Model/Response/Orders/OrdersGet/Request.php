@@ -5,15 +5,14 @@
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersGet;
 
-use WishboxCdekSDK2\Entity\Requests\Source;
-use WishboxCdekSDK2\Model\Entity\ErrorResponse;
+use WishboxCdekSDK2\Model\Response\AbstractResponse;
 
 /**
  * Информация о запросе/запросах над заказом
  *
  * @since 1.0.0
  */
-class Request extends Source
+class Request extends AbstractResponse
 {
 	/**
 	 * Идентификатор запроса в ИС СДЭК

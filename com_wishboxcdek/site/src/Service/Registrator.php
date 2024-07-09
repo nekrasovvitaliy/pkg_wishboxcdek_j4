@@ -10,6 +10,7 @@ use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\OrdersPostRequestCreator;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
+use WishboxCdekSDK2\Exception\Api\EntityNotFoundImNumberException;
 use WishboxCdekSDK2\Exceptions\CdekV2AuthException;
 use WishboxCdekSDK2\Exceptions\CdekV2RequestException;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPostRequest;
@@ -233,9 +234,11 @@ class Registrator
 	{
 		$apiClient = $this->getApiClient();
 
-		$ordersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber, false);
-
-		if (!$ordersGetResponse->getEntity())
+		try
+		{
+			$ordersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber, false);
+		}
+		catch(EntityNotFoundImNumberException $e)
 		{
 			return false;
 		}

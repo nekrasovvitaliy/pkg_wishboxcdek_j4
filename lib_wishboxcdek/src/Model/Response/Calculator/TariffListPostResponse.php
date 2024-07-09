@@ -1,12 +1,14 @@
 <?php
 /**
- * @copyright   2013-2024 Nekrasov Vitaliy
+ * @copyright   2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
+ *
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 namespace WishboxCdekSDK2\Model\Response\Calculator;
 
-use WishboxCdekSDK2\Model\Entity\ErrorResponse;
 use WishboxCdekSDK2\Model\Response\AbstractResponse;
+use WishboxCdekSDK2\Model\Response\Calculator\TariffListPost\ErrorResponse;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPost\TariffCodeResponse;
 
 /**
@@ -28,7 +30,7 @@ class TariffListPostResponse extends AbstractResponse
 	/**
 	 * 2. Список ошибок
 	 *
-	 * @var \WishboxCdekSDK2\Model\Entity\ErrorResponse[]|null
+	 * @var \WishboxCdekSDK2\Model\Response\Calculator\TariffListPost\ErrorResponse[]|null
 	 *
 	 * @since 1.0.0
 	 */

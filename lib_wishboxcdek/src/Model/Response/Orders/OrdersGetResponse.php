@@ -1,7 +1,9 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
+ *
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 namespace WishboxCdekSDK2\Model\Response\Orders;
 
@@ -20,7 +22,7 @@ class OrdersGetResponse extends AbstractResponse
 	/**
 	 * 1. Информация о заказе
 	 *
-	 * @var Entity|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity|null
 	 *
 	 * @since 1.0.0
 	 */
@@ -45,7 +47,7 @@ class OrdersGetResponse extends AbstractResponse
 	protected ?array $related_entities = null; // phpcs:ignore
 
 	/**
-	 * Получить информацию о заказе.
+	 * 1. Информация о заказе
 	 *
 	 * @return Entity|null
 	 *
@@ -57,7 +59,7 @@ class OrdersGetResponse extends AbstractResponse
 	}
 
 	/**
-	 * Получить информацию о запросе/запросах над заказом.
+	 * 2. Информация о запросе/запросах над заказом
 	 *
 	 * @return Request[]
 	 *
@@ -71,7 +73,7 @@ class OrdersGetResponse extends AbstractResponse
 	}
 
 	/**
-	 * Получить связанные с заказом сущности.
+	 * 3. Связанные с заказом сущности
 	 *
 	 * @return RelatedEntity[]|null
 	 *

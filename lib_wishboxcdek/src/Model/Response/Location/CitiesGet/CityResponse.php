@@ -5,7 +5,7 @@
  */
 namespace WishboxCdekSDK2\Model\Response\Location\CitiesGet;
 
-use WishboxCdekSDK2\Model\Entity\ErrorResponse;
+use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPoint\ErrorResponse;
 use WishboxCdekSDK2\Model\Response\AbstractResponse;
 
 /**

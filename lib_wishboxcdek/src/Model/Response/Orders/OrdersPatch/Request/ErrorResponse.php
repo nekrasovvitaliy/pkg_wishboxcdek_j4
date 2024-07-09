@@ -5,14 +5,14 @@
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersPatch\Request;
 
-use WishboxCdekSDK2\Entity\Requests\Source;
+use WishboxCdekSDK2\Model\Request\AbstractRequest;
 
 /**
  * 2.5. Ошибки, возникшие в ходе выполнения запроса
  *
  * @since 1.0.0
  */
-class ErrorResponse extends Source
+class ErrorResponse extends AbstractRequest
 {
 	/**
 	 * 2.5.1. Код ошибки
