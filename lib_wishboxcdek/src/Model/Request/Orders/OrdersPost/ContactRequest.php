@@ -6,7 +6,7 @@
 namespace WishboxCdekSDK2\Model\Request\Orders\OrdersPost;
 
 use WishboxCdekSDK2\Model\Request\AbstractRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrderPost\Contact\PhoneRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\Contact\PhoneRequest;
 
 /**
  * @since 1.0.0

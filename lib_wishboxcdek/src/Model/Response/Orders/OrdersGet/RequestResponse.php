@@ -1,7 +1,9 @@
 <?php
 /**
- * @copyright   2013-2024 Nekrasov Vitaliy
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
+ *
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersGet;
 
@@ -12,10 +14,10 @@ use WishboxCdekSDK2\Model\Response\AbstractResponse;
  *
  * @since 1.0.0
  */
-class Request extends AbstractResponse
+class RequestResponse extends AbstractResponse
 {
 	/**
-	 * Идентификатор запроса в ИС СДЭК
+	 * 2.1. Идентификатор запроса в ИС СДЭК
 	 *
 	 * @var string|null
 	 *
@@ -24,7 +26,8 @@ class Request extends AbstractResponse
 	protected ?string $request_uuid = null; // phpcs:ignore
 
 	/**
-	 * Тип запроса
+	 * 2.2. Тип запроса
+	 *
 	 * Может принимать значения: CREATE, UPDATE, DELETE, AUTH, GET
 	 *
 	 * @var string
@@ -34,7 +37,7 @@ class Request extends AbstractResponse
 	protected string $type;
 
 	/**
-	 * Дата и время установки текущего состояния запроса (формат yyyy-MM-dd'T'HH:mm:ssZ)
+	 * 2.3. Дата и время установки текущего состояния запроса (формат yyyy-MM-dd'T'HH:mm:ssZ)
 	 *
 	 * @var string
 	 *
@@ -43,9 +46,9 @@ class Request extends AbstractResponse
 	protected string $date_time; // phpcs:ignore
 
 	/**
-	 * Текущее состояние запроса
-	 * Может принимать значения:
+	 * 2.4. Текущее состояние запроса
 	 *
+	 * Может принимать значения:
 	 * ACCEPTED - пройдена предварительная валидация и запрос принят
 	 * WAITING - запрос ожидает обработки (зависит от выполнения другого запроса)
 	 * SUCCESSFUL - запрос обработан успешно
@@ -58,18 +61,18 @@ class Request extends AbstractResponse
 	protected string $state;
 
 	/**
-	 * Ошибки, возникшие в ходе выполнения запроса
+	 * 2.5. Ошибки, возникшие в ходе выполнения запроса
 	 *
-	 * @var Error[]|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Request\ErrorResponse[]|null
 	 *
 	 * @since 1.0.0
 	 */
 	protected ?array $errors = null;
 
 	/**
-	 * Предупреждения, возникшие в ходе выполнения запроса.
+	 * 2.6. Предупреждения, возникшие в ходе выполнения запроса.
 	 *
-	 * @var array|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Request\WarningResponse[]|null
 	 *
 	 * @since 1.0.0
 	 */
@@ -124,6 +127,7 @@ class Request extends AbstractResponse
 
 	/**
 	 * Текущее состояние запроса
+	 *
 	 * Может принимать значения:
 	 * ACCEPTED - пройдена предварительная валидация и запрос принят
 	 * WAITING - запрос ожидает обработки (зависит от выполнения другого запроса)

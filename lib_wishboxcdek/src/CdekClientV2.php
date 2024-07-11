@@ -13,6 +13,7 @@ use Joomla\Uri\Uri;
 use Psr\Http\Message\StreamInterface;
 use Joomla\CMS\Http\Http;
 use Joomla\CMS\Http\HttpFactory;
+use WishboxCdekSDK2\Exception\Api\RequestError\EntityNotFoundImNumberException;
 use WishboxCdekSDK2\Factory\ResponsePipelineFactory;
 use WishboxCdekSDK2\Interface\ResponseInterface;
 use WishboxCdekSDK2\Model\Request\Calculator\TariffListPostRequest;
@@ -233,7 +234,7 @@ final class CdekClientV2
 				$response = $this->http->post($url, json_encode($params), $headers);
 				break;
 			case 'PATCH':
-				$response = $this->http->patch($url, $params, $headers);
+				$response = $this->http->patch($url, json_encode($params), $headers);
 				break;
 		}
 
@@ -446,7 +447,7 @@ final class CdekClientV2
 			OrdersPatchResponse::class,
 			$request->prepareRequest(),
 			'PATCH',
-			true
+			false
 		);
 
 		return $response;
@@ -482,6 +483,8 @@ final class CdekClientV2
 	 * @param   string  $imNumber  Номер заказа
 	 *
 	 * @return OrdersGetResponse
+	 *
+	 * @throws EntityNotFoundImNumberException
 	 *
 	 * @since 1.0.0
 	 */

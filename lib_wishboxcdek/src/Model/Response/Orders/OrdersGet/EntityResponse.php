@@ -24,10 +24,10 @@ use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\ThresholdResponse;
 /**
  * @since 1.0.0
  */
-class Entity extends AbstractResponse
+class EntityResponse extends AbstractResponse
 {
 	/**
-	 * Идентификатор заказа в ИС СДЭК
+	 * 1.1. Идентификатор заказа в ИС СДЭК
 	 *
 	 * @var string
 	 *
@@ -36,7 +36,7 @@ class Entity extends AbstractResponse
 	protected string $uuid; // phpcs:ignore
 
 	/**
-	 * Признак возвратного заказа:
+	 * 1.2. Признак возвратного заказа:
 	 * true - возвратный
 	 * false - прямой
 	 *
@@ -47,7 +47,7 @@ class Entity extends AbstractResponse
 	protected bool $is_return; // phpcs:ignore
 
 	/**
-	 * Признак реверсного заказа:
+	 * 1.3. Признак реверсного заказа:
 	 * true - реверсный
 	 * false - не реверсный
 	 *
@@ -58,7 +58,7 @@ class Entity extends AbstractResponse
 	protected string $is_reverse; // phpcs:ignore
 
 	/**
-	 * Признак клиентского возврата
+	 * 1.4. Признак клиентского возврата
 	 *
 	 * @var string
 	 *
@@ -67,7 +67,7 @@ class Entity extends AbstractResponse
 	protected string $is_client_return; // phpcs:ignore
 
 	/**
-	 * Тип заказа:
+	 * 1.5. Тип заказа:
 	 * 1 - "интернет-магазин" (только для договора типа "Договор с ИМ")
 	 * 2 - "доставка" (для любого договора)
 	 *
@@ -78,7 +78,7 @@ class Entity extends AbstractResponse
 	protected string $type;
 
 	/**
-	 * Дополнительный тип заказа:
+	 * 1.6. Дополнительный тип заказа:
 	 * 4 - для Forward
 	 * 6 - для "Фулфилмент. Приход"
 	 * 7 - для "Фулфилмент. Отгрузка"
@@ -90,7 +90,7 @@ class Entity extends AbstractResponse
 	protected ?int $additional_order_types = null; // phpcs:ignore
 
 	/**
-	 * Номер заказа СДЭК
+	 * 1.7. Номер заказа СДЭК
 	 *
 	 * @var string|null
 	 *
@@ -99,7 +99,7 @@ class Entity extends AbstractResponse
 	protected ?string $cdek_number = null; // phpcs:ignore
 
 	/**
-	 * Номер заказа в ИС Клиента.
+	 * 1.8. Номер заказа в ИС Клиента.
 	 *
 	 * При запросе информации по данному полю возможны варианты:
 	 * - если не передан, будет присвоен номер заказа в ИС СДЭК - uuid;
@@ -133,7 +133,7 @@ class Entity extends AbstractResponse
 	protected ?string $delivery_mode = null; // phpcs:ignore
 
 	/**
-	 * Код тарифа
+	 * 1.10. Код тарифа
 	 *
 	 * @var integer
 	 *
@@ -142,7 +142,7 @@ class Entity extends AbstractResponse
 	protected int $tariff_code; // phpcs:ignore
 
 	/**
-	 * Комментарий к заказу
+	 * 1.11. Комментарий к заказу
 	 *
 	 * @var string|null
 	 *
@@ -151,7 +151,7 @@ class Entity extends AbstractResponse
 	protected ?string $comment = null;
 
 	/**
-	 * Ключ разработчика (для разработчиков модулей)
+	 * 1.12. Ключ разработчика (для разработчиков модулей)
 	 *
 	 * @var string|null
 	 *
@@ -160,7 +160,7 @@ class Entity extends AbstractResponse
 	protected ?string $developer_key = null; // phpcs:ignore
 
 	/**
-	 * Код ПВЗ СДЭК, на который будет производиться самостоятельный привоз клиентом
+	 * 1.13. Код ПВЗ СДЭК, на который будет производиться самостоятельный привоз клиентом
 	 *
 	 * @var string|null
 	 *
@@ -169,7 +169,7 @@ class Entity extends AbstractResponse
 	protected ?string $shipment_point = null; // phpcs:ignore
 
 	/**
-	 * Код офиса СДЭК (ПВЗ/постамат), на который будет доставлена посылка
+	 * 1.14. Код офиса СДЭК (ПВЗ/постамат), на который будет доставлена посылка
 	 *
 	 * @var string|null
 	 *
@@ -178,7 +178,7 @@ class Entity extends AbstractResponse
 	protected ?string $delivery_point = null; // phpcs:ignore
 
 	/**
-	 * Дата инвойса
+	 * 1.15. Дата инвойса
 	 *
 	 * Только для международных заказов
 	 *
@@ -189,7 +189,7 @@ class Entity extends AbstractResponse
 	protected ?string $date_invoice = null; // phpcs:ignore
 
 	/**
-	 * Грузоотправитель
+	 * 1.16. Грузоотправитель
 	 *
 	 * Только для международных заказов
 	 *
@@ -200,7 +200,7 @@ class Entity extends AbstractResponse
 	protected ?string $shipper_name = null; // phpcs:ignore
 
 	/**
-	 * Адрес грузоотправителя
+	 * 1.17. Адрес грузоотправителя
 	 *
 	 * Только для международных заказов
 	 *
@@ -213,16 +213,16 @@ class Entity extends AbstractResponse
 	/**
 	 * 1.18. Доп. сбор за доставку, которую ИМ берет с получателя.
 	 *
-	 * @var MoneyResponse|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\MoneyResponse|null
 	 *
 	 * @since 1.0.0
 	 */
 	protected ?MoneyResponse $delivery_recipient_cost = null; // phpcs:ignore
 
 	/**
-	 * Доп. сбор за доставку (которую ИМ берет с получателя), в зависимости от суммы заказа
+	 * 1.19. Доп. сбор за доставку (которую ИМ берет с получателя), в зависимости от суммы заказа
 	 *
-	 * @var ThresholdResponse[]
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\ThresholdResponse[]
 	 *
 	 * @since 1.0.0
 	 */
@@ -231,43 +231,43 @@ class Entity extends AbstractResponse
 	/**
 	 * 1.20. Отправитель
 	 *
-	 * @var SenderResponse
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\SenderResponse
 	 *
 	 * @since 1.0.0
 	 */
 	protected SenderResponse $sender;
 
 	/**
-	 * Реквизиты истинного продавца
+	 * 1.21. Реквизиты истинного продавца
 	 *
-	 * @var SellerResponse|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\SellerResponse|null
 	 *
 	 * @since 1.0.0
 	 */
 	protected ?SellerResponse $seller; // phpcs:ignore
 
 	/**
-	 * Получатель
+	 * 1.22. Получатель
 	 *
-	 * @var RecipientResponse
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\RecipientResponse
 	 *
 	 * @since 1.0.0
 	 */
 	protected RecipientResponse $recipient; // phpcs:ignore
 
 	/**
-	 * Адрес отправления
+	 * 1.23. Адрес отправления
 	 *
-	 * @var LocationResponse
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\LocationResponse
 	 *
 	 * @since 1.0.0
 	 */
 	protected LocationResponse $from_location; // phpcs:ignore
 
 	/**
-	 * Адрес получения
+	 * 1.24. Адрес получения
 	 *
-	 * @var LocationResponse
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\LocationResponse
 	 *
 	 * @since 1.0.0
 	 */
@@ -303,7 +303,7 @@ class Entity extends AbstractResponse
 	/**
 	 * 1.28. Информация о вручении
 	 *
-	 * @var DeliveryDetailResponse|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\DeliveryDetailResponse|null
 	 *
 	 * @since 1.0.0
 	 */

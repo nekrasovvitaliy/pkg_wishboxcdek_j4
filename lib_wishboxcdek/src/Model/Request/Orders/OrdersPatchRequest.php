@@ -5,10 +5,10 @@
  */
 namespace WishboxCdekSDK2\Model\Request\Orders;
 
-use WishboxCdekSDK2\Entity\Responses\PackageResponse;
 use WishboxCdekSDK2\Model\Request\AbstractRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\ContactRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\MoneyRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\PackageRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\ThresholdRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\FromLocationRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\SellerRequest;
@@ -193,7 +193,7 @@ class OrdersPatchRequest extends AbstractRequest
 	/**
 	 * Список информации по местам (упаковкам)
 	 *
-	 * @var PackageResponse[]
+	 * @var PackageRequest[]
 	 *
 	 * @since 1.0.0
 	 */
@@ -568,7 +568,7 @@ class OrdersPatchRequest extends AbstractRequest
 	/**
 	 * Список информации по местам (упаковкам)
 	 *
-	 * @param   PackageResponse[]  $packages  Список информации по местам (упаковкам)
+	 * @param   PackageRequest[]  $packages  Список информации по местам (упаковкам)
 	 *
 	 * @return self
 	 *

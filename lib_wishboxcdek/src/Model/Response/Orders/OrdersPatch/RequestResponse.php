@@ -17,7 +17,7 @@ use WishboxCdekSDK2\Model\Response\Orders\OrdersPatch\Request\WarningResponse;
 class RequestResponse extends AbstractResponse
 {
 	/**
-	 * Идентификатор запроса в ИС СДЭК
+	 * 2.1. Идентификатор запроса в ИС СДЭК
 	 *
 	 * @var string|null
 	 *
@@ -26,7 +26,8 @@ class RequestResponse extends AbstractResponse
 	protected ?string $request_uuid = null; // phpcs:ignore
 
 	/**
-	 * Тип запроса
+	 * 2.2. Тип запроса
+	 *
 	 * Может принимать значения: CREATE, UPDATE, DELETE, AUTH, GET
 	 *
 	 * @var string
@@ -36,7 +37,7 @@ class RequestResponse extends AbstractResponse
 	protected string $type;
 
 	/**
-	 * Дата и время установки текущего состояния запроса (формат yyyy-MM-dd'T'HH:mm:ssZ)
+	 * 2.3. Дата и время установки текущего состояния запроса (формат yyyy-MM-dd'T'HH:mm:ssZ)
 	 *
 	 * @var string
 	 *
@@ -45,7 +46,7 @@ class RequestResponse extends AbstractResponse
 	protected string $date_time; // phpcs:ignore
 
 	/**
-	 * Текущее состояние запроса
+	 * 2.4. Текущее состояние запроса
 	 *
 	 * Может принимать значения:
 	 * ACCEPTED - пройдена предварительная валидация и запрос принят
@@ -60,7 +61,7 @@ class RequestResponse extends AbstractResponse
 	protected string $state;
 
 	/**
-	 * Ошибки, возникшие в ходе выполнения запроса
+	 * 2.5. Ошибки, возникшие в ходе выполнения запроса
 	 *
 	 * @var ErrorResponse[]|null
 	 *
@@ -69,7 +70,7 @@ class RequestResponse extends AbstractResponse
 	protected ?array $errors = null;
 
 	/**
-	 * Предупреждения, возникшие в ходе выполнения запроса.
+	 * 2.6. Предупреждения, возникшие в ходе выполнения запроса.
 	 *
 	 * @var array|null
 	 *
@@ -78,7 +79,7 @@ class RequestResponse extends AbstractResponse
 	protected ?array $warnings = null;
 
 	/**
-	 * Получить идентификатор запроса в ИС СДЭК.
+	 * 2.1. Получить идентификатор запроса в ИС СДЭК.
 	 *
 	 * @return string|null
 	 *
@@ -92,17 +93,9 @@ class RequestResponse extends AbstractResponse
 	}
 
 	/**
-	 * Тип сущности, связанной с заказом
+	 * 2.2. Тип запроса
 	 *
-	 * Может принимать значения:
-	 * return_order - возвратный заказ (возвращается для прямого, если заказ не вручен и по нему уже был сформирован возвратный заказ)
-	 * direct_order - прямой заказ (возвращается для возвратного и реверсного заказа)
-	 * waybill - квитанция к заказу (возвращается для заказа, по которому есть сформированная квитанция)
-	 * barcode - ШК места к заказу (возвращается для заказа, по которому есть сформированный ШК места)
-	 * reverse_order - реверсный заказ (возвращается для прямого заказа, если подключен реверс)
-	 * delivery - актуальная договоренность о доставке
-	 * client_return_order - заказ клиентский возврат (возвращается для прямого заказа, к которому привязан клиентский возврат)
-	 * client_direct_order - прямой заказ, по которому оформлен клиентский возврат
+	 * Может принимать значения: CREATE, UPDATE, DELETE, AUTH, GET
 	 *
 	 * @return string
 	 *
@@ -114,7 +107,7 @@ class RequestResponse extends AbstractResponse
 	}
 
 	/**
-	 * Дата и время установки текущего состояния запроса (формат yyyy-MM-dd'T'HH:mm:ssZ)
+	 * 2.3. Дата и время установки текущего состояния запроса (формат yyyy-MM-dd'T'HH:mm:ssZ)
 	 *
 	 * @return string
 	 *
@@ -126,7 +119,8 @@ class RequestResponse extends AbstractResponse
 	}
 
 	/**
-	 * Текущее состояние запроса
+	 * 2.4. Текущее состояние запроса
+	 *
 	 * Может принимать значения:
 	 * ACCEPTED - пройдена предварительная валидация и запрос принят
 	 * WAITING - запрос ожидает обработки (зависит от выполнения другого запроса)
@@ -143,7 +137,7 @@ class RequestResponse extends AbstractResponse
 	}
 
 	/**
-	 * Получить ошибки, возникшие в ходе выполнения запроса.
+	 * 2.5. Получить ошибки, возникшие в ходе выполнения запроса.
 	 *
 	 * @return array|null
 	 *
@@ -155,7 +149,7 @@ class RequestResponse extends AbstractResponse
 	}
 
 	/**
-	 * Получить предупреждения, возникшие в ходе выполнения запроса.
+	 * 2.6. Получить предупреждения, возникшие в ходе выполнения запроса.
 	 *
 	 * @return WarningResponse[]|null
 	 *

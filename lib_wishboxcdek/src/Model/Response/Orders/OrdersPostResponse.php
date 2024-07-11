@@ -2,13 +2,16 @@
 /**
  * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
+ *
+ * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 namespace WishboxCdekSDK2\Model\Response\Orders;
 
 use WishboxCdekSDK2\Model\Response\AbstractResponse;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\RelatedEntity;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Request;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersPost\EntityResponse;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersPost\RelatedEntityResponse;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersPost\RequestResponse;
 
 /**
  * @since 1.0.0
@@ -20,16 +23,16 @@ class OrdersPostResponse extends AbstractResponse
 	/**
 	 * 1. Информация о заказе
 	 *
-	 * @var Entity
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPost\EntityResponse
 	 *
 	 * @since 1.0.0
 	 */
-	protected Entity $entity;
+	protected EntityResponse $entity;
 
 	/**
 	 * 2. Информация о запросе над заказом
 	 *
-	 * @var Request[]
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPost\Request[]
 	 *
 	 * @since 1.0.0
 	 */
@@ -38,7 +41,7 @@ class OrdersPostResponse extends AbstractResponse
 	/**
 	 * 3. Связанные сущности (если в запросе был передан корректный print)
 	 *
-	 * @var RelatedEntity[]|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPost\RelatedEntityResponse[]|null
 	 *
 	 * @since 1.0.0
 	 */
@@ -47,13 +50,13 @@ class OrdersPostResponse extends AbstractResponse
 	/**
 	 * 1. Информация о заказе
 	 *
-	 * @return Entity
+	 * @return EntityResponse
 	 *
 	 * @since 1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getEntity(): Entity
+	public function getEntity(): EntityResponse
 	{
 		return $this->entity;
 	}
@@ -61,7 +64,7 @@ class OrdersPostResponse extends AbstractResponse
 	/**
 	 * 2. Информация о запросе над заказом
 	 *
-	 * @return Request[]
+	 * @return RequestResponse[]
 	 *
 	 * @since 1.0.0
 	 *
@@ -75,7 +78,7 @@ class OrdersPostResponse extends AbstractResponse
 	/**
 	 * 3. Связанные сущности (если в запросе был передан корректный print)
 	 *
-	 * @return RelatedEntity[]|null
+	 * @return RelatedEntityResponse[]|null
 	 *
 	 * @since 1.0.0
 	 *

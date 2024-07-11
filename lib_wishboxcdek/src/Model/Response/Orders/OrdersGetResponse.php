@@ -8,9 +8,9 @@
 namespace WishboxCdekSDK2\Model\Response\Orders;
 
 use WishboxCdekSDK2\Model\Response\AbstractResponse;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\RelatedEntity;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Request;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\EntityResponse;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\RelatedEntityResponse;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\RequestResponse;
 
 /**
  * @since 1.0.0
@@ -22,16 +22,16 @@ class OrdersGetResponse extends AbstractResponse
 	/**
 	 * 1. Информация о заказе
 	 *
-	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\EntityResponse|null
 	 *
 	 * @since 1.0.0
 	 */
-	protected ?Entity $entity = null;
+	protected ?EntityResponse $entity = null;
 
 	/**
 	 * 2. Информация о запросе/запросах над заказом
 	 *
-	 * @var Request[]
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\RequestResponse[]
 	 *
 	 * @since 1.0.0
 	 */
@@ -40,7 +40,7 @@ class OrdersGetResponse extends AbstractResponse
 	/**
 	 * 3. Связанные с заказом сущности
 	 *
-	 * @var RelatedEntity[]|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\RelatedEntityResponse[]|null
 	 *
 	 * @since 1.0.0
 	 */
@@ -49,11 +49,11 @@ class OrdersGetResponse extends AbstractResponse
 	/**
 	 * 1. Информация о заказе
 	 *
-	 * @return Entity|null
+	 * @return EntityResponse|null
 	 *
 	 * @since 1.0.0
 	 */
-	public function getEntity(): ?Entity
+	public function getEntity(): ?EntityResponse
 	{
 		return $this->entity;
 	}
@@ -61,7 +61,7 @@ class OrdersGetResponse extends AbstractResponse
 	/**
 	 * 2. Информация о запросе/запросах над заказом
 	 *
-	 * @return Request[]
+	 * @return RequestResponse[]
 	 *
 	 * @since 1.0.0
 	 *
@@ -75,7 +75,7 @@ class OrdersGetResponse extends AbstractResponse
 	/**
 	 * 3. Связанные с заказом сущности
 	 *
-	 * @return RelatedEntity[]|null
+	 * @return RelatedEntityResponse[]|null
 	 *
 	 * @since 1.0.0
 	 *

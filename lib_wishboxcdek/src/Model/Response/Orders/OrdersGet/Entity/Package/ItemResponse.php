@@ -2,11 +2,14 @@
 /**
  * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
+ *
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\Package;
 
 use WishboxCdekSDK2\Model\Response\AbstractResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\Package\Item\PaymentResponse;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\Package\Item\ReturnItemDetailResponse;
 
 /**
  * @since 1.0.0
@@ -39,7 +42,7 @@ class ItemResponse extends AbstractResponse
 	 * 1.26.10.3. Оплата за товар при получении (за единицу товара в валюте страны получателя, значение >=0)
 	 * — наложенный платеж, в случае предоплаты значение = 0
 	 *
-	 * @var PaymentResponse
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\Package\Item\PaymentResponse
 	 *
 	 * @since 1.0.0
 	 */
@@ -65,7 +68,7 @@ class ItemResponse extends AbstractResponse
 	protected int $weight;
 
 	/**
-	 * Вес брутто (только для международных заказов).
+	 * 1.26.10.6. Вес брутто (только для международных заказов).
 	 *
 	 * @var integer|null
 	 *
@@ -74,7 +77,7 @@ class ItemResponse extends AbstractResponse
 	protected ?int $weight_gross; // phpcs:ignore
 
 	/**
-	 * Количество единиц товара.
+	 * 1.26.10.7. Количество единиц товара.
 	 *
 	 * @var integer
 	 *
@@ -83,7 +86,7 @@ class ItemResponse extends AbstractResponse
 	protected int $amount;
 
 	/**
-	 * Количество врученных единиц товара (в штуках).
+	 * 1.26.10.8. Количество врученных единиц товара (в штуках).
 	 *
 	 * @var integer|null
 	 *
@@ -92,7 +95,7 @@ class ItemResponse extends AbstractResponse
 	protected ?int $delivery_amount; // phpcs:ignore
 
 	/**
-	 * Маркировка товара/вложения.
+	 * 1.26.10.9. Маркировка товара/вложения.
 	 *
 	 * @var string|null
 	 *
@@ -101,7 +104,7 @@ class ItemResponse extends AbstractResponse
 	protected ?string $marking;
 
 	/**
-	 * Наименование на иностранном языке.
+	 * 1.26.10.10. Наименование на иностранном языке.
 	 *
 	 * @var string|null
 	 *
@@ -110,7 +113,7 @@ class ItemResponse extends AbstractResponse
 	protected ?string $name_i18n; // phpcs:ignore
 
 	/**
-	 * Бренд на иностранном языке.
+	 * 1.26.10.11. Бренд на иностранном языке.
 	 *
 	 * @var string|null
 	 *
@@ -119,7 +122,7 @@ class ItemResponse extends AbstractResponse
 	protected ?string $brand;
 
 	/**
-	 * Код страны в формате ISO_3166-1_alpha-2.
+	 * 1.26.10.12. Код страны в формате ISO_3166-1_alpha-2.
 	 *
 	 * @var string|null
 	 *
@@ -128,7 +131,7 @@ class ItemResponse extends AbstractResponse
 	protected ?string $country_code; // phpcs:ignore
 
 	/**
-	 * Код материала.
+	 * 1.26.10.13. Код материала.
 	 *
 	 * @var string|null
 	 *
@@ -137,7 +140,7 @@ class ItemResponse extends AbstractResponse
 	protected ?string $material;
 
 	/**
-	 * Содержит ли радиочастотные модули (wifi/gsm).
+	 * 1.26.10.14. Содержит ли радиочастотные модули (wifi/gsm).
 	 *
 	 * @var boolean|null
 	 *
@@ -146,7 +149,7 @@ class ItemResponse extends AbstractResponse
 	protected ?bool $wifi_gsm; // phpcs:ignore
 
 	/**
-	 * Ссылка на сайт интернет-магазина с описанием товара.
+	 * 1.26.10.15. Ссылка на сайт интернет-магазина с описанием товара.
 	 *
 	 * @var string|null
 	 *
@@ -157,11 +160,11 @@ class ItemResponse extends AbstractResponse
 	/**
 	 * 1.26.10.16 Информация по товарам в возвратном заказе (только для возвратного заказа)
 	 *
-	 * @var string|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\Package\Item\ReturnItemDetailResponse|null
 	 *
 	 * @since 1.0.0
 	 */
-	protected ?string $return_item_detail; // phpcs:ignore
+	protected ?ReturnItemDetailResponse $return_item_detail; // phpcs:ignore
 
 	/**
 	 * 1.26.10.17 Информация по товарам в возвратном заказе (только для возвратного заказа)

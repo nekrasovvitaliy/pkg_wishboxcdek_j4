@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrsov_vitaliy@list.ru>
- * @license     GNU General Public License version 2 or later
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Service\RequestCreator;
 
@@ -9,14 +9,14 @@ use Exception;
 use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\Contact\PhoneRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ContactRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\MoneyRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\Package\ItemRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\PackageRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\SellerRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ToLocationRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPostRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\Contact\PhoneRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\ContactRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\MoneyRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\Package\ItemRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\PackageRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\SellerRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\ToLocationRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatchRequest;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class OrdersPostRequestCreator
+class OrdersPatchRequestCreator
 {
 	use ApiClientTrait;
 
@@ -50,22 +50,22 @@ class OrdersPostRequestCreator
 	}
 
 	/**
-	 * @return OrdersPostRequest
+	 * @return OrdersPatchRequest
 	 *
 	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */
-	public function getRequest(): OrdersPostRequest
+	public function getRequest(): OrdersPatchRequest
 	{
-		$ordersPostRequest = new OrdersPostRequest;
-		$this->setOrderData($ordersPostRequest);
+		$ordersPatchRequest = new OrdersPatchRequest;
+		$this->setOrderData($ordersPatchRequest);
 
-		return $ordersPostRequest;
+		return $ordersPatchRequest;
 	}
 
 	/**
-	 * @param   OrdersPostRequest   $ordersPostRequest      Order
+	 * @param   OrdersPatchRequest  $ordersPatchRequest  Order
 	 *
 	 * @return void
 	 *
@@ -73,17 +73,20 @@ class OrdersPostRequestCreator
 	 *
 	 * @since 1.0.0
 	 */
-	protected function setOrderData(OrdersPostRequest $ordersPostRequest): void
+	protected function setOrderData(OrdersPatchRequest $ordersPatchRequest): void
 	{
+		$apiClient = $this->getApiClient();
 		$orderNumber            = $this->delegate->getOrderNumber();
+		$existingOrdersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber, false);
+
+		$ordersPatchRequest->setUuid($existingOrdersGetResponse->getEntity()->getUuid());
+
 		$orderComment           = $this->delegate->getOrderComment();
 		$tariffCode             = $this->delegate->getTariffCode();
 		$deliveryRecipientCost  = $this->delegate->getDeliveryRecipientCost();
 		$shipmentPoint          = $this->delegate->getShipmentPoint();
 
-		$ordersPostRequest->setNumber($orderNumber)
-			->setType(1)
-			->setComment($orderComment)
+		$ordersPatchRequest->setComment($orderComment)
 			->setTariffCode($tariffCode)
 			->setDeliveryRecipientCost((new MoneyRequest)->setValue($deliveryRecipientCost['value']))
 			->setShipmentPoint($shipmentPoint);
@@ -91,7 +94,7 @@ class OrdersPostRequestCreator
 		if (WishboxcdekHelper::isTariffToPoint($tariffCode))
 		{
 			$deliveryPoint = $this->delegate->getDeliveryPoint();
-			$ordersPostRequest->setDeliveryPoint($deliveryPoint);
+			$ordersPatchRequest->setDeliveryPoint($deliveryPoint);
 		}
 		else
 		{
@@ -100,11 +103,11 @@ class OrdersPostRequestCreator
 			$location = (new ToLocationRequest)
 				->setAddress($deliveryAddress)
 				->setCode($cityCode);
-			$ordersPostRequest->setToLocation($location);
+			$ordersPatchRequest->setToLocation($location);
 		}
 
 		// Запрос создать файл накладной вместе с заказом
-		$ordersPostRequest->setPrint('waybill');
+		$ordersPatchRequest->setPrint('waybill');
 
 		// Добавление информации о продавце
 		$sellerName          = $this->delegate->getSellerName();
@@ -117,7 +120,7 @@ class OrdersPostRequestCreator
 			->setInn($sellerInn)
 			->setPhone($sellerPhone)
 			->setOwnershipForm($sellerOwnershipForm);
-		$ordersPostRequest->setSeller($seller);
+		$ordersPatchRequest->setSeller($seller);
 
 		$recipientCompany   = $this->delegate->getRecipientCompany();
 		$recipientName      = $this->delegate->getRecipientName();
@@ -135,7 +138,7 @@ class OrdersPostRequestCreator
 				]
 			);
 
-		$ordersPostRequest->setRecipient($recipient);
+		$ordersPatchRequest->setRecipient($recipient);
 
 		if ($this->delegate->isTariffFromDoor())
 		{
@@ -148,8 +151,15 @@ class OrdersPostRequestCreator
 		$packageLength = $this->delegate->getPackageLength();
 
 		// Создаем данные посылки. Место
-		$package = (new PackageRequest)
-			->setNumber('1')
+		$package = new PackageRequest;
+
+		$existingPackages = $existingOrdersGetResponse->getEntity()->getPackages();
+
+		$existingPackage   = $existingPackages[0];
+		$existingPackageId = $existingPackage->getPackageId();
+		$package->setPackageId($existingPackageId);
+
+		$package->setNumber('1')
 			->setWeight($totalWeight)
 			->setHeight($packageHeight)
 			->setWidth($packageWidth)
@@ -165,17 +175,13 @@ class OrdersPostRequestCreator
 			$items[] = (new ItemRequest)
 				->setName($product->name)
 				->setWareKey($product->code)
-				// Оплата за товар при получении, без НДС (за единицу товара)
 				->setPayment((new MoneyRequest)->setValue($product->payment))
-				// Объявленная стоимость товара (за единицу товара)
 				->setCost($product->cost)
-				// Вес в граммах
 				->setWeight($product->weight)
-				// Количество
 				->setAmount($product->quantity);
 		}
 
 		$package->setItems($items);
-		$ordersPostRequest->setPackages([$package]);
+		$ordersPatchRequest->setPackages([$package]);
 	}
 }

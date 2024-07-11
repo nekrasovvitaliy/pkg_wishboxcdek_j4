@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright  (c) 2013-2024 Nekrasov Vitaliy
- * @license    GNU General Public License version 2 or later;
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\Controller;
 
@@ -50,7 +50,7 @@ class OfficesController extends AdminController
 
 		try
 		{
-			if (!$officesupdaterModel->update(5000))
+			if (!$officesupdaterModel->update())
 			{
 				// Throw new Exception
 				throw new Exception('Update return false', 500);

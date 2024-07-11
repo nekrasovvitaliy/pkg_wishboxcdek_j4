@@ -1,21 +1,17 @@
 <?php
 /**
- * @copyright 2023 Nekrasov Vitaliy
- * @license     GNU General Public License version 2 or later
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
 
 use Exception;
-use Joomla\CMS\Application\CliApplication;
-use Joomla\CMS\Application\ConsoleApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseModel;
 use Joomla\Database\DatabaseDriver;
 use ReflectionException;
 use WishboxCdekSDK2\CdekClientV2;
-use WishboxCdekSDK2\Exceptions\CdekV2AuthException;
-use WishboxCdekSDK2\Exceptions\CdekV2RequestException;
 use WishboxCdekSDK2\Model\Request\DeliveryPoints\DeliveryPointsGetRequest;
 use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPointResponse;
 
@@ -35,8 +31,6 @@ class UpdaterModel extends BaseModel
 	 *
 	 * @return boolean
 	 *
-	 * @throws CdekV2AuthException
-	 * @throws CdekV2RequestException
 	 * @throws ReflectionException
 	 * @throws Exception
 	 *

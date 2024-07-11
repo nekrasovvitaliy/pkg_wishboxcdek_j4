@@ -5,12 +5,12 @@
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity;
 
-use WishboxCdekSDK2\Model\Request\AbstractRequest;
+use WishboxCdekSDK2\Model\Response\AbstractResponse;
 
 /**
  * @since 1.0.0
  */
-class MoneyResponse extends AbstractRequest
+class MoneyResponse extends AbstractResponse
 {
 	/**
 	 * Сумма в валюте.

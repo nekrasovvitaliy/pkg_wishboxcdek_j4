@@ -2,6 +2,8 @@
 /**
  * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
+ *
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 namespace WishboxCdekSDK2\Model\Response\Orders;
 
@@ -17,7 +19,7 @@ class OrdersPatchResponse extends AbstractResponse
 	/**
 	 * 1. Информация о заказе
 	 *
-	 * @var EntityResponse
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPatch\EntityResponse
 	 *
 	 * @since 1.0.0
 	 */
@@ -26,7 +28,7 @@ class OrdersPatchResponse extends AbstractResponse
 	/**
 	 * 2. Информация о запросе над заказом
 	 *
-	 * @var RequestResponse[]
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPatch\RequestResponse[]
 	 *
 	 * @since 1.0.0
 	 */
