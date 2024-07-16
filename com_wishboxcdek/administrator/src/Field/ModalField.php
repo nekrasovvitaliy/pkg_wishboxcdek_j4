@@ -35,6 +35,15 @@ class ModalField extends ListField
 	protected $type = 'Modal';
 
 	/**
+	 * Shop name
+	 *
+	 * @var string
+	 *
+	 * @since  1.0.0
+	 */
+	protected string $shopName;
+
+	/**
 	 * City code.
 	 *
 	 * @var    integer
@@ -160,6 +169,8 @@ class ModalField extends ListField
 	 * @return  array
 	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpMissingReturnTypeInspection
 	 */
 	protected function getLayoutData()
 	{

@@ -32,7 +32,6 @@ class UpdaterModel extends BaseModel
 	 *
 	 * @throws Exception
 	 *
-	 *
 	 * @since 1.0.0
 	 */
 	public function update(int $limit = 10000): bool

@@ -11,7 +11,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Wishboxcdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
-use WishboxCdekSDK2\ApiClientException;
+use WishboxCdekSDK2\Exception\ApiException;
+use WishboxCdekSDK2\Exception\ClientException;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -56,7 +57,7 @@ class OfficesController extends AdminController
 				throw new Exception('Update return false', 500);
 			}
 		}
-		catch (ApiClientException $e)
+		catch (ApiException | ClientException $e)
 		{
 			$this->setRedirect(
 				Route::_('index.php?option=com_wishboxcdek', false),
