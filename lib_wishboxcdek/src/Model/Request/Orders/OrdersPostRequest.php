@@ -5,7 +5,6 @@
  */
 namespace WishboxCdekSDK2\Model\Request\Orders;
 
-use WishboxCdekSDK2\Entity\Responses\PackageResponse;
 use WishboxCdekSDK2\Model\Request\AbstractRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ContactRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\MoneyRequest;
@@ -14,6 +13,7 @@ use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\FromLocationRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\SellerRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ServiceRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ToLocationRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\PackageRequest;
 
 /**
  * @since 1.0.0
@@ -212,7 +212,7 @@ class OrdersPostRequest extends AbstractRequest
 	/**
 	 * Список информации по местам (упаковкам)
 	 *
-	 * @var PackageResponse[]
+	 * @var PackageRequest[]
 	 *
 	 * @since 1.0.0
 	 */
@@ -220,9 +220,10 @@ class OrdersPostRequest extends AbstractRequest
 
 	/**
 	 * 21. Необходимость сформировать печатную форму по заказу
-	 *     Может принимать значения:
-	 *     barcode - ШК мест (число копий - 1)
-	 *     waybill - квитанция (число копий - 2)
+	 *
+	 * Может принимать значения:
+	 * barcode - ШК мест (число копий - 1)
+	 * waybill - квитанция (число копий - 2)
 	 *
 	 * @var string|null
 	 *
@@ -611,7 +612,7 @@ class OrdersPostRequest extends AbstractRequest
 	/**
 	 * Список информации по местам (упаковкам)
 	 *
-	 * @param   PackageResponse[]  $packages  Список информации по местам (упаковкам)
+	 * @param   PackageRequest[]  $packages  Список информации по местам (упаковкам)
 	 *
 	 * @return self
 	 *

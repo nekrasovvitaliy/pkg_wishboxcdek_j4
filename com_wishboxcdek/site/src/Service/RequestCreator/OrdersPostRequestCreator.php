@@ -6,13 +6,14 @@
 namespace Joomla\Component\Wishboxcdek\Site\Service\RequestCreator;
 
 use Exception;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\Contact\PhoneRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ContactRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\MoneyRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\Package\ItemRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\PackageRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\SellerRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ToLocationRequest;
@@ -142,40 +143,7 @@ class OrdersPostRequestCreator
 			throw new Exception('', 500);
 		}
 
-		$totalWeight   = $this->delegate->getTotalWeight();
-		$packageWidth  = $this->delegate->getPackageWidth();
-		$packageHeight = $this->delegate->getPackageHeight();
-		$packageLength = $this->delegate->getPackageLength();
-
-		// Создаем данные посылки. Место
-		$package = (new PackageRequest)
-			->setNumber('1')
-			->setWeight($totalWeight)
-			->setHeight($packageHeight)
-			->setWidth($packageWidth)
-			->setLength($packageLength);
-
-		$products = $this->delegate->getProducts();
-
-		// Создаем товары
-		$items = [];
-
-		foreach ($products as $product)
-		{
-			$items[] = (new ItemRequest)
-				->setName($product->name)
-				->setWareKey($product->code)
-				// Оплата за товар при получении, без НДС (за единицу товара)
-				->setPayment((new MoneyRequest)->setValue($product->payment))
-				// Объявленная стоимость товара (за единицу товара)
-				->setCost($product->cost)
-				// Вес в граммах
-				->setWeight($product->weight)
-				// Количество
-				->setAmount($product->quantity);
-		}
-
-		$package->setItems($items);
-		$ordersPostRequest->setPackages([$package]);
+		$packages = $this->delegate->getOrdersPostPackages();
+		$ordersPostRequest->setPackages($packages);
 	}
 }

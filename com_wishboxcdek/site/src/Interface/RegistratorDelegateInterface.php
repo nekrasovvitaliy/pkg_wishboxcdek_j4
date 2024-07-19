@@ -7,6 +7,8 @@ namespace Joomla\Component\Wishboxcdek\Site\Interface;
 
 use Joomla\Component\Wishboxcdek\Site\Entity\ProductEntity;
 use Joomla\Database\DatabaseDriver;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\PackageRequest as OrdersPostPackageRequest;
+use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\PackageRequest as OrdersPatchPackageRequest;
 
 /**
  * @property DatabaseDriver $db
@@ -114,25 +116,18 @@ interface RegistratorDelegateInterface
 	public function getTotalWeight(): int;
 
 	/**
-	 * @return integer
+	 * @return OrdersPostPackageRequest[]
 	 *
 	 * @since 1.0.0
 	 */
-	public function getPackageWidth(): int;
+	public function getOrdersPostPackages(): array;
 
 	/**
-	 * @return integer
+	 * @return OrdersPatchPackageRequest[]
 	 *
 	 * @since 1.0.0
 	 */
-	public function getPackageHeight(): int;
-
-	/**
-	 * @return integer
-	 *
-	 * @since 1.0.0
-	 */
-	public function getPackageLength(): int;
+	public function getOrdersPatchPackages(): array;
 
 	/**
 	 * @return ProductEntity[]

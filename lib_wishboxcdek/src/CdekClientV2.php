@@ -24,6 +24,7 @@ use WishboxCdekSDK2\Model\Request\Orders\OrdersPostRequest;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPostResponse;
 use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPointResponse;
 use WishboxCdekSDK2\Model\Response\Location\CitiesGet\CityResponse;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersDeleteResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersPatchResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersPostResponse;
@@ -454,6 +455,29 @@ final class CdekClientV2
 	}
 
 	/**
+	 * Delete order
+	 *
+	 * @param   string  $uuid  Order UUID
+	 *
+	 * @return OrdersDeleteResponse
+	 *
+	 * @since 1.0.0
+	 */
+	public function deleteOrder(string $uuid): OrdersDeleteResponse
+	{
+		/** @var OrdersPatchResponse $response */
+		$response = $this->getResponse(
+			Constants::ORDERS_URL . '/' . $uuid,
+			OrdersDeleteResponse::class,
+			null,
+			'DELETE',
+			false
+		);
+
+		return $response;
+	}
+
+	/**
 	 * Полная информация о заказе по трек номеру.
 	 *
 	 * @param   string  $cdekNumber  Номер заказа(накладной) СДЭК
@@ -602,11 +626,12 @@ final class CdekClientV2
 			);
 
 		/** @var ResponseData $data */
-		$data = $cacheController->get(
+		$responseData = $cacheController->get(
 			[$this, 'getResponseData'],
-			[$path, $type, $data, $method],
+			[$path, $data, $method],
 		);
 
+		$data = json_decode($responseData->getBody(), true);
 		$responseArray = [];
 
 		foreach ($data as $item)

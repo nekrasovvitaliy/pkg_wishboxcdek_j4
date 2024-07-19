@@ -32,7 +32,7 @@ class OrdersPostResponse extends AbstractResponse
 	/**
 	 * 2. Информация о запросе над заказом
 	 *
-	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPost\Request[]
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPost\RequestResponse[]
 	 *
 	 * @since 1.0.0
 	 */

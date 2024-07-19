@@ -12,8 +12,6 @@ use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\Contact\PhoneRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\ContactRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\MoneyRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\Package\ItemRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\PackageRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\SellerRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\ToLocationRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatchRequest;
@@ -77,7 +75,7 @@ class OrdersPatchRequestCreator
 	{
 		$apiClient = $this->getApiClient();
 		$orderNumber            = $this->delegate->getOrderNumber();
-		$existingOrdersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber, false);
+		$existingOrdersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber);
 
 		$ordersPatchRequest->setUuid($existingOrdersGetResponse->getEntity()->getUuid());
 
@@ -106,10 +104,8 @@ class OrdersPatchRequestCreator
 			$ordersPatchRequest->setToLocation($location);
 		}
 
-		// Запрос создать файл накладной вместе с заказом
 		$ordersPatchRequest->setPrint('waybill');
 
-		// Добавление информации о продавце
 		$sellerName          = $this->delegate->getSellerName();
 		$sellerInn           = $this->delegate->getSellerInn();
 		$sellerPhone         = $this->delegate->getSellerPhone();
@@ -127,7 +123,6 @@ class OrdersPatchRequestCreator
 		$recipientEmail     = $this->delegate->getRecipientEmail();
 		$recipientPhone     = $this->delegate->getRecipientPhone();
 
-		// Добавление информации о получателе
 		$recipient = (new ContactRequest)
 			->setCompany($recipientCompany)
 			->setName($recipientName)
@@ -145,43 +140,7 @@ class OrdersPatchRequestCreator
 			throw new Exception('', 500);
 		}
 
-		$totalWeight   = $this->delegate->getTotalWeight();
-		$packageWidth  = $this->delegate->getPackageWidth();
-		$packageHeight = $this->delegate->getPackageHeight();
-		$packageLength = $this->delegate->getPackageLength();
-
-		// Создаем данные посылки. Место
-		$package = new PackageRequest;
-
-		$existingPackages = $existingOrdersGetResponse->getEntity()->getPackages();
-
-		$existingPackage   = $existingPackages[0];
-		$existingPackageId = $existingPackage->getPackageId();
-		$package->setPackageId($existingPackageId);
-
-		$package->setNumber('1')
-			->setWeight($totalWeight)
-			->setHeight($packageHeight)
-			->setWidth($packageWidth)
-			->setLength($packageLength);
-
-		$products = $this->delegate->getProducts();
-
-		// Создаем товары
-		$items = [];
-
-		foreach ($products as $product)
-		{
-			$items[] = (new ItemRequest)
-				->setName($product->name)
-				->setWareKey($product->code)
-				->setPayment((new MoneyRequest)->setValue($product->payment))
-				->setCost($product->cost)
-				->setWeight($product->weight)
-				->setAmount($product->quantity);
-		}
-
-		$package->setItems($items);
-		$ordersPatchRequest->setPackages([$package]);
+		$packages = $this->delegate->getOrdersPatchPackages();
+		$ordersPatchRequest->setPackages($packages);
 	}
 }

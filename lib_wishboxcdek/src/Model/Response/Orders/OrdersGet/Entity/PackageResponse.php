@@ -15,11 +15,13 @@ class PackageResponse extends AbstractResponse
 	/**
 	 * 1.26.1. Уникальный номер упаковки в ИС СДЭК
 	 *
-	 * @var string
+	 * Согласно документации обязательное, но фактически нет
+	 *
+	 * @var string|null
 	 *
 	 * @since 1.0.0
 	 */
-	protected string $package_id; // phpcs:ignore
+	protected ?string $package_id = null; // phpcs:ignore
 
 	/**
 	 * 1.26.2. Номер упаковки в ИС клиента (можно использовать порядковый номер упаковки заказа или номер заказа),
@@ -104,15 +106,15 @@ class PackageResponse extends AbstractResponse
 	protected ?array $items = null;
 
 	/**
-	 * Получить значение - Уникальный номер упаковки в ИС СДЭК.
+	 * 1.26.1. Уникальный номер упаковки в ИС СДЭК
 	 *
-	 * @return string
+	 * @return string|null
 	 *
 	 * @since 1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getPackageId(): string
+	public function getPackageId(): ?string
 	{
 		return $this->package_id; // phpcs:ignore
 	}

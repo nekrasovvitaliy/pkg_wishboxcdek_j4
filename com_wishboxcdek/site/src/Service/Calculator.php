@@ -8,10 +8,9 @@ namespace Joomla\Component\Wishboxcdek\Site\Service;
 use Exception;
 use InvalidArgumentException;
 use Joomla\Component\Wishboxcdek\Site\Interface\CalculatorDelegateInterface;
+use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\TariffListPostRequestCreator;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
-use UnexpectedValueException;
 use Wishbox\ShippingService\ShippingTariff;
-use WishboxCdekSDK2\Model\Request\Calculator\TariffListPostRequest;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPost\TariffCodeResponse;
 use function defined;
 
@@ -143,14 +142,8 @@ class Calculator
 	 */
 	private function getTariffs(): array
 	{
-		$weight = $this->delegate->getTotalWeight();
-
-		if ($weight <= 0)
-		{
-			throw new UnexpectedValueException('$weight must be greater than zero');
-		}
-
-		$tariffListPostRequest = new TariffListPostRequest;
+		$tariffListPostRequestCreator = new TariffListPostRequestCreator($this->delegate);
+		$tariffListPostRequest = $tariffListPostRequestCreator->getRequest();
 
 		$receiverCityCode = $this->delegate->getReceiverCityCode();
 
@@ -158,13 +151,6 @@ class Calculator
 		{
 			return [];
 		}
-
-		$senderCityCode = $this->delegate->getSenderCityCode();
-
-		$tariffListPostRequest->setCityCodes($senderCityCode, $receiverCityCode);
-		$tariffListPostRequest->setPackageWeight($weight);
-		$packages = $this->delegate->getPackages();
-		$tariffListPostRequest->setPackages($packages);
 
 		$apiClient = $this->getApiClient();
 

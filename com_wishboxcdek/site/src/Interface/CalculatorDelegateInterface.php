@@ -63,25 +63,4 @@ interface CalculatorDelegateInterface
 	 * @since 1.0.0
 	 */
 	public function useDimensions(): bool;
-
-	/**
-	 * @return integer
-	 *
-	 * @since 1.0.0
-	 */
-	public function getPackageWidth(): int;
-
-	/**
-	 * @return integer
-	 *
-	 * @since 1.0.0
-	 */
-	public function getPackageHeight(): int;
-
-	/**
-	 * @return integer
-	 *
-	 * @since 1.0.0
-	 */
-	public function getPackageLength(): int;
 }
