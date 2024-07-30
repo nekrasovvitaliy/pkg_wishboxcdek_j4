@@ -61,7 +61,8 @@ class AbstractResponse implements ResponseInterface
 						{
 							if (!is_array($value))
 							{
-								print_r($value);
+								throw new \Exception('value is not array', 500);
+								//print_r($value);
 								die;
 							}
 

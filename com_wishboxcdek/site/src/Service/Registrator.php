@@ -98,7 +98,6 @@ class Registrator
 		$ordersPatchRequest = $ordersPatchRequestCreator->getRequest();
 		$apiClient = $this->getApiClient();
 		$ordersPatchResponse = $apiClient->updateOrder($ordersPatchRequest);
-		print_r($ordersPatchResponse);
 	}
 
 	/**

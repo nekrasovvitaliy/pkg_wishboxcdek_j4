@@ -419,11 +419,14 @@ final class CdekClientV2
 	 */
 	public function createOrder(OrdersPostRequest $request): OrdersPostResponse
 	{
+		$requestData = $request->prepareRequest();
+echo json_encode($requestData);
+	die;
 		/** @var OrdersPostResponse $response */
 		$response = $this->getResponse(
 			Constants::ORDERS_URL,
 			OrdersPostResponse::class,
-			$request->prepareRequest(),
+			$requestData,
 			'POST',
 			true
 		);

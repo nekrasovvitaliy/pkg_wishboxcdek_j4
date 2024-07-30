@@ -36,23 +36,24 @@ class OfficeTable extends BaseTable
 	public ?string $addres;
 
 	/**
-	 * @param   DatabaseDriver $_db Database driver
+	 * @param   DatabaseDriver  $db  Database driver
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct(&$_db)
+	public function __construct(&$db)
 	{
-		parent::__construct('#__wishboxcdek_offices', 'id', $_db);
+		parent::__construct('#__wishboxcdek_offices', 'id', $db);
 	}
 
 	/**
-	 * @param   integer  $cityCode  City code
+	 * @param   integer       $cityCode    City code
+	 * @param   boolean|null  $allowedCod  Разрешен наложенный платеж
 	 *
 	 * @return array
 	 *
 	 * @since 1.0.0
 	 */
-	public function getItems(int $cityCode): array
+	public function getItems(int $cityCode, ?bool $allowedCod = null): array
 	{
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
@@ -64,8 +65,14 @@ class OfficeTable extends BaseTable
 				]
 			)
 			->from('#__wishboxcdek_offices AS o')
-			->where('o.city_code = ' . $cityCode)
-			->order('address');
+			->where('o.city_code = ' . $cityCode);
+
+		if ($allowedCod)
+		{
+			$query->where('allowed_cod = ' . (int) $allowedCod);
+		}
+
+		$query->order('address');
 		$db->setQuery($query);
 
 		return $db->loadObJectList();

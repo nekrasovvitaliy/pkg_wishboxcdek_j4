@@ -44,6 +44,18 @@ class OfficeField extends ListField
 	protected int $cityCode;
 
 	/**
+	 * Разрешен наложенный платеж, может принимать значения:
+	 *
+	 * «1», «true» - да;
+	 * «0», «false» - нет.
+	 *
+	 * @var boolean|null
+	 *
+	 * @since 1.0.0
+	 */
+	protected ?bool $allowedСod = null;
+
+	/**
 	 * Method to attach a Form object to the field.
 	 *
 	 * @param   SimpleXMLElement   $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
@@ -67,6 +79,13 @@ class OfficeField extends ListField
 		if ($return)
 		{
 			$this->cityCode = (int) $this->element['cityCode'];
+
+			$allowedСod = (string) $this->element['allowed_cod'];
+
+			if ($allowedСod)
+			{
+				$this->allowedСod = (bool) $allowedСod;
+			}
 		}
 
 		return $return;
@@ -93,7 +112,7 @@ class OfficeField extends ListField
 				->getMVCFactory()
 				->createTable('Office', 'Administrator');
 
-			$offices = $officeTable->getItems($this->cityCode);
+			$offices = $officeTable->getItems($this->cityCode, $this->allowedСod);
 
 			if (count($offices))
 			{
@@ -106,25 +125,23 @@ class OfficeField extends ListField
 					);
 				}
 			}
-		}
 
-		if (!count($options) && $this->value && $this->value !== '-1')
-		{
-			/** @var OfficeTable $officeTable */
-			$officeTable = $app->bootComponent('com_wishboxcdek')
-				->getMVCFactory()
-				->createTable('Office', 'Administrator');
-
-			if (!$officeTable->load(['code' => $this->value]))
+			if (!count($options) && $this->value && $this->value !== '-1')
 			{
-				$app->enqueueMessage('Cdek office with code ' . $this->value . 'is not exists', CMSApplicationInterface::MSG_CRITICAL);
-			}
+				/** @var OfficeTable $officeTable */
+				$officeTable = $app->bootComponent('com_wishboxcdek')
+					->getMVCFactory()
+					->createTable('Office', 'Administrator');
 
-			$options[] = HTMLHelper::_(
-				'select.option',
-				$officeTable->code,
-				$officeTable->address
-			);
+				if ($officeTable->load(['city_code' => $this->cityCode, 'code' => $this->value]))
+				{
+					$options[] = HTMLHelper::_(
+						'select.option',
+						$officeTable->code,
+						$officeTable->address
+					);
+				}
+			}
 		}
 
 		// Merge any additional options in the XML definition.
