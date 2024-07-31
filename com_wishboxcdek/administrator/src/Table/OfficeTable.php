@@ -48,12 +48,13 @@ class OfficeTable extends BaseTable
 	/**
 	 * @param   integer       $cityCode    City code
 	 * @param   boolean|null  $allowedCod  Разрешен наложенный платеж
+	 * @param   integer|null  $weight      Weight
 	 *
 	 * @return array
 	 *
 	 * @since 1.0.0
 	 */
-	public function getItems(int $cityCode, ?bool $allowedCod = null): array
+	public function getItems(int $cityCode, ?bool $allowedCod = null, ?int $weight): array
 	{
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
@@ -61,7 +62,7 @@ class OfficeTable extends BaseTable
 			->select(
 				[
 					'o.code',
-					'o.address AS name'
+					'CONCAT(o.address, " ", o.type) AS name'
 				]
 			)
 			->from('#__wishboxcdek_offices AS o')
@@ -70,6 +71,11 @@ class OfficeTable extends BaseTable
 		if ($allowedCod)
 		{
 			$query->where('allowed_cod = ' . (int) $allowedCod);
+		}
+
+		if ($weight)
+		{
+			$query->where('weight_max >= ' . $weight);
 		}
 
 		$query->order('address');

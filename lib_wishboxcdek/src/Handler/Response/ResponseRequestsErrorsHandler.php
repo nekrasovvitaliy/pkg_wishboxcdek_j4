@@ -28,7 +28,7 @@ class ResponseRequestsErrorsHandler extends AbstractResponseHandler
 	 */
 	protected function handleResponse(string $path, ResponseData $responseData): bool
 	{
-		if ($responseData->getCode() >= 200 && $responseData->getCode() < 500)
+		if ($responseData->getCode() >= 400 && $responseData->getCode() < 500)
 		{
 			$responseBodyData = json_decode($responseData->getBody());
 

@@ -6,7 +6,6 @@
 namespace Joomla\Component\Wishboxcdek\Administrator\Field;
 
 use Exception;
-use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Component\Wishboxcdek\Administrator\Table\OfficeTable;
@@ -53,7 +52,14 @@ class OfficeField extends ListField
 	 *
 	 * @since 1.0.0
 	 */
-	protected ?bool $allowedСod = null;
+	protected ?bool $allowedCod = null;
+
+	/**
+	 * @var integer|null
+	 *
+	 * @since 1.0.0
+	 */
+	protected ?int $weight = null;
 
 	/**
 	 * Method to attach a Form object to the field.
@@ -80,11 +86,18 @@ class OfficeField extends ListField
 		{
 			$this->cityCode = (int) $this->element['cityCode'];
 
-			$allowedСod = (string) $this->element['allowed_cod'];
+			$allowedCod = (string) $this->element['allowed_cod'];
 
-			if ($allowedСod)
+			if ($allowedCod)
 			{
-				$this->allowedСod = (bool) $allowedСod;
+				$this->allowedCod = (bool) $allowedCod;
+			}
+
+			$weight = (string) $this->element['weight'];
+
+			if ($weight)
+			{
+				$this->weight = (int) $weight;
 			}
 		}
 
@@ -112,7 +125,7 @@ class OfficeField extends ListField
 				->getMVCFactory()
 				->createTable('Office', 'Administrator');
 
-			$offices = $officeTable->getItems($this->cityCode, $this->allowedСod);
+			$offices = $officeTable->getItems($this->cityCode, $this->allowedCod, $this->weigh);
 
 			if (count($offices))
 			{

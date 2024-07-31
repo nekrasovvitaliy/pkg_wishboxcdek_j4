@@ -12,6 +12,7 @@ use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\OrdersPostRequestCr
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
 use WishboxCdekSDK2\Exception\Api\RequestError\EntityNotFoundImNumberException;
 use WishboxCdekSDK2\Exception\Api\RequestErrorException;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -115,9 +116,13 @@ class Registrator
 		{
 			$ordersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber);
 		}
-		catch (EntityNotFoundImNumberException | RequestErrorException $e)
+		catch (EntityNotFoundImNumberException $e)
 		{
 			return false;
+		}
+		catch (RequestErrorException $e)
+		{
+			return true;
 		}
 
 		return true;
