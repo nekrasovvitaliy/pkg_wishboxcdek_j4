@@ -97,7 +97,7 @@ class OfficeField extends ListField
 
 			if ($weight)
 			{
-				$this->weight = (int) $weight;
+				$this->weight = (float) $weight;
 			}
 		}
 
@@ -125,7 +125,7 @@ class OfficeField extends ListField
 				->getMVCFactory()
 				->createTable('Office', 'Administrator');
 
-			$offices = $officeTable->getItems($this->cityCode, $this->allowedCod, $this->weigh);
+			$offices = $officeTable->getItems($this->cityCode, $this->allowedCod, $this->weight);
 
 			if (count($offices))
 			{

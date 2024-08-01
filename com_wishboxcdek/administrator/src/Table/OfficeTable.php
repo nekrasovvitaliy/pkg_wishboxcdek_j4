@@ -54,7 +54,7 @@ class OfficeTable extends BaseTable
 	 *
 	 * @since 1.0.0
 	 */
-	public function getItems(int $cityCode, ?bool $allowedCod = null, ?int $weight): array
+	public function getItems(int $cityCode, ?bool $allowedCod = null, ?int $weight = null): array
 	{
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 

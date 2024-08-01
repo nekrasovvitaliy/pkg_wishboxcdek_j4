@@ -53,6 +53,19 @@ class PackageRequest extends AbstractRequest
 	/**
 	 * 8.1 Общий вес (в граммах)
 	 *
+	 * @return integer
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public function getWeight(): int
+	{
+		return $this->weight;
+	}
+
+	/**
+	 * 8.1 Общий вес (в граммах)
+	 *
 	 * @param   integer  $weight  Общий вес (в граммах)
 	 *
 	 * @return self
