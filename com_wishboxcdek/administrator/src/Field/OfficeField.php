@@ -55,11 +55,11 @@ class OfficeField extends ListField
 	protected ?bool $allowedCod = null;
 
 	/**
-	 * @var integer|null
+	 * @var array|null
 	 *
 	 * @since 1.0.0
 	 */
-	protected ?int $weight = null;
+	protected ?array $packages = null;
 
 	/**
 	 * Method to attach a Form object to the field.
@@ -93,11 +93,12 @@ class OfficeField extends ListField
 				$this->allowedCod = (bool) $allowedCod;
 			}
 
-			$weight = (string) $this->element['weight'];
+			$packages = (string) $this->element['packages'];
+			$packages = json_decode($packages);
 
-			if ($weight)
+			if (is_array($packages))
 			{
-				$this->weight = (float) $weight;
+				$this->packages = $packages;
 			}
 		}
 
@@ -125,7 +126,7 @@ class OfficeField extends ListField
 				->getMVCFactory()
 				->createTable('Office', 'Administrator');
 
-			$offices = $officeTable->getItems($this->cityCode, $this->allowedCod, $this->weight);
+			$offices = $officeTable->getItems($this->cityCode, $this->allowedCod, $this->packages);
 
 			if (count($offices))
 			{

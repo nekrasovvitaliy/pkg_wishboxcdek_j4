@@ -160,11 +160,23 @@ class UpdaterModel extends BaseModel
 			$workTimeList = json_encode($item->getWorkTimeList());
 			$weightMin = $item->getWeightMin() ?? 0;
 			$weightMax = $item->getWeightMax() ?? 0;
+
 			$dimensions = '';
 
 			if ($item->getDimensions())
 			{
-				$dimensions = json_encode($item->getDimensions());
+				$arr = [];
+
+				foreach ($item->getDimensions() as $dimension)
+				{
+					$arr[] = [
+						'width' => $dimension->getWidth(),
+						'height' => $dimension->getHeight(),
+						'depth' => $dimension->getDepth(),
+					];
+				}
+
+				$dimensions = json_encode($arr);
 			}
 
 			$codes[] = $code;

@@ -48,13 +48,13 @@ class OfficeTable extends BaseTable
 	/**
 	 * @param   integer       $cityCode    City code
 	 * @param   boolean|null  $allowedCod  Разрешен наложенный платеж
-	 * @param   integer|null  $weight      Weight
+	 * @param   array|null    $packages    Packages
 	 *
 	 * @return array
 	 *
 	 * @since 1.0.0
 	 */
-	public function getItems(int $cityCode, ?bool $allowedCod = null, ?int $weight = null): array
+	public function getItems(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array
 	{
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
@@ -62,7 +62,9 @@ class OfficeTable extends BaseTable
 			->select(
 				[
 					'o.code',
-					'CONCAT(o.address, " ", o.type) AS name'
+					'CONCAT(o.address, " ", o.type, " ", o.weight_max) AS name',
+					'o.type',
+					'o.dimensions'
 				]
 			)
 			->from('#__wishboxcdek_offices AS o')
@@ -73,14 +75,100 @@ class OfficeTable extends BaseTable
 			$query->where('allowed_cod = ' . (int) $allowedCod);
 		}
 
-		if ($weight)
+		if (is_array($packages) && count($packages))
 		{
-			$query->where('weight_max >= ' . $weight);
+			$volumeWeight = $this->getVolumeWeight($packages);
+			$query->where('weight_max >= ' . $volumeWeight);
 		}
 
 		$query->order('address');
 		$db->setQuery($query);
 
-		return $db->loadObJectList();
+		$list = $db->loadObjectList();
+
+		if (is_array($packages) && count($packages))
+		{
+			foreach ($list as $k => $item)
+			{
+				if ($item->type == 'POSTAMAT' && !empty($item->dimensions))
+				{
+					$deliveryPointDimensions = [];
+					$itemDimensions          = json_decode($item->dimensions);
+
+					foreach ($itemDimensions as $itemDimension)
+					{
+						$arr = array_values((array) $itemDimension);
+						arsort($arr);
+						$deliveryPointDimensions[] = $arr;
+					}
+
+					$packageDimensions = [];
+
+					foreach ($packages as $package)
+					{
+						$arr = [
+							$package->width,
+							$package->height,
+							$package->length
+						];
+						arsort($arr);
+						$packageDimensions[] = $arr;
+					}
+
+					$mainFlag = true;
+
+					foreach ($packageDimensions as $packageDimension)
+					{
+						$flag = false;
+
+						foreach ($deliveryPointDimensions as $deliveryPointDimension)
+						{
+							if ($packageDimension[0] < $deliveryPointDimension[0]
+								&& $packageDimension[1] < $deliveryPointDimension[1]
+								&& $packageDimension[2] < $deliveryPointDimension[2])
+							{
+								$flag = true;
+
+								break;
+							}
+						}
+
+						if (!$flag)
+						{
+							$mainFlag = false;
+						}
+					}
+
+					if (!$mainFlag)
+					{
+						unset($list[$k]);
+					}
+				}
+			}
+		}
+
+		return $list;
+	}
+
+	/**
+	 * @param   array|null  $packages  Packages
+	 *
+	 * @return float|null
+	 *
+	 * @since 1.0.0
+	 */
+	private function getVolumeWeight(?array $packages): ?float
+	{
+		$volumeWeight = 0;
+
+		if (is_array($packages) && count($packages))
+		{
+			foreach ($packages as $package)
+			{
+				$volumeWeight += $package->width * $package->height * $package->length / 5000;
+			}
+		}
+
+		return $volumeWeight;
 	}
 }

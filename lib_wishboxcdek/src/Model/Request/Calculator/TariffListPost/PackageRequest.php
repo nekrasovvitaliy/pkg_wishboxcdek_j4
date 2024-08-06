@@ -5,6 +5,7 @@
  */
 namespace WishboxCdekSDK2\Model\Request\Calculator\TariffListPost;
 
+use phpseclib3\Math\PrimeField\Integer;
 use WishboxCdekSDK2\Model\Request\AbstractRequest;
 
 /**
@@ -83,6 +84,19 @@ class PackageRequest extends AbstractRequest
 	/**
 	 * 8.2 Габариты упаковки. Длина (в сантиметрах)
 	 *
+	 * @return integer
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public function getLength(): int
+	{
+		return $this->length;
+	}
+
+	/**
+	 * 8.2 Габариты упаковки. Длина (в сантиметрах)
+	 *
 	 * @param   integer|null  $length  Габариты упаковки. Длина (в сантиметрах)
 	 *
 	 * @return self
@@ -100,6 +114,19 @@ class PackageRequest extends AbstractRequest
 	/**
 	 * 8.3 Габариты упаковки. Ширина (в сантиметрах)
 	 *
+	 * @return integer
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public function getWidth(): int
+	{
+		return $this->width;
+	}
+
+	/**
+	 * 8.3 Габариты упаковки. Ширина (в сантиметрах)
+	 *
 	 * @param   integer|null  $width  Габариты упаковки. Ширина (в сантиметрах)
 	 *
 	 * @return self
@@ -112,6 +139,19 @@ class PackageRequest extends AbstractRequest
 		$this->width = $width;
 
 		return $this;
+	}
+
+	/**
+	 * 8.4 Габариты упаковки. Высота (в сантиметрах)
+	 *
+	 * @return integer
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public function getHeight(): int
+	{
+		return $this->height;
 	}
 
 	/**

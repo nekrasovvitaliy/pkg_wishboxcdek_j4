@@ -6,13 +6,13 @@
 namespace Joomla\Component\Wishboxcdek\Site\Service;
 
 use Exception;
+use Joomla\Component\Wishboxcdek\Site\Exception\OrdersPatchRequestErrorsException;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\OrdersPatchRequestCreator;
 use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\OrdersPostRequestCreator;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
 use WishboxCdekSDK2\Exception\Api\RequestError\EntityNotFoundImNumberException;
 use WishboxCdekSDK2\Exception\Api\RequestErrorException;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -83,7 +83,7 @@ class Registrator
 		$ordersPostResponse = $apiClient->createOrder($ordersPostRequest);
 		$uuid = $ordersPostResponse->getEntity()->getUuid();
 
-		$ordersGetResponse = $apiClient->getOrderInfoByUuid($uuid);
+		$this->checkLastOrderRequest($uuid);
 	}
 
 	/**
@@ -97,8 +97,34 @@ class Registrator
 	{
 		$ordersPatchRequestCreator = new OrdersPatchRequestCreator($this->delegate);
 		$ordersPatchRequest = $ordersPatchRequestCreator->getRequest();
+
 		$apiClient = $this->getApiClient();
 		$ordersPatchResponse = $apiClient->updateOrder($ordersPatchRequest);
+		$uuid = $ordersPatchResponse->getEntity()->getUuid();
+		$this->checkLastOrderRequest($uuid);
+	}
+
+	/**
+	 * @param   string  $uuid  Uuid
+	 *
+	 * @return void
+	 *
+	 * @throws OrdersPatchRequestErrorsException
+	 *
+	 * @since 1.0.0
+	 */
+	protected function checkLastOrderRequest(string $uuid): void
+	{
+		$apiClient = $this->getApiClient();
+		$ordersGetResponse = $apiClient->getOrderInfoByUuid($uuid);
+		$ordersGetResponseRequests = $ordersGetResponse->getRequests();
+		$lastRequest = $ordersGetResponseRequests[0];
+		$lastRequestErrors = $lastRequest->getErrors();
+
+		if (is_array($lastRequestErrors) && count($lastRequestErrors))
+		{
+			throw new OrdersPatchRequestErrorsException($lastRequestErrors);
+		}
 	}
 
 	/**

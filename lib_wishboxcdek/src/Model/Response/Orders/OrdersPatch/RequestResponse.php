@@ -63,7 +63,7 @@ class RequestResponse extends AbstractResponse
 	/**
 	 * 2.5. Ошибки, возникшие в ходе выполнения запроса
 	 *
-	 * @var ErrorResponse[]|null
+	 * @var \WishboxCdekSDK2\Model\Response\Orders\OrdersPatch\Request\ErrorResponse[]|null
 	 *
 	 * @since 1.0.0
 	 */
