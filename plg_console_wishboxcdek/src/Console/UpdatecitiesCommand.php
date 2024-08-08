@@ -1,8 +1,6 @@
 <?php
 /**
- * @package     Joomla.Plugin
- * @subpackage  Console.Wishboxcdek
- * @copyright   (C) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Console\Wishboxcdek\Console;
@@ -26,13 +24,11 @@ defined('_JEXEC') or die;
 class UpdatecitiesCommand extends AbstractCommand
 {
 	/**
-	 * Имя команды по умолчанию
+	 * @var string
 	 *
-	 * @var    string
-	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
-	protected static $defaultName = 'wishboxcdek:updateCities';
+	protected static $defaultName = 'wishboxcdek:update-cities';
 
 	/**
 	 * @var InputInterface
@@ -78,8 +74,6 @@ class UpdatecitiesCommand extends AbstractCommand
 	}
 
 	/**
-	 * Инициализация команды.
-	 *
 	 * @return  void
 	 *
 	 * @since   1.0.0
@@ -89,7 +83,7 @@ class UpdatecitiesCommand extends AbstractCommand
 		$help = "<info>%command.name%</info> Updates cities
                         \nUsage: <info>php %command.full_name%</info>";
 
-		$this->setDescription('Called by cron to updates cities.');
+		$this->setDescription('Update cities');
 		$this->setHelp($help);
 
 	}

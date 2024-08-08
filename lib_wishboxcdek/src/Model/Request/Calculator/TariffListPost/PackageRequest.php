@@ -114,12 +114,12 @@ class PackageRequest extends AbstractRequest
 	/**
 	 * 8.3 Габариты упаковки. Ширина (в сантиметрах)
 	 *
-	 * @return integer
+	 * @return integer|null
 	 *
 	 * @since 1.0.0
 	 *
 	 */
-	public function getWidth(): int
+	public function getWidth(): ?int
 	{
 		return $this->width;
 	}

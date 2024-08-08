@@ -90,7 +90,7 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 
 		// Add test command to joomla.php cli script
 		Factory::getContainer()->get(WritableLoaderInterface::class)
-			->add('wishboxcdek:updateCities', 'wishboxcdek.updateCities');
+			->add('wishboxcdek:update-cities', 'wishboxcdek.updateCities');
 
 		// Second test command
 		Factory::getContainer()->share(
@@ -103,7 +103,7 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 
 		// Add second test command to joomla.php cli script
 		Factory::getContainer()->get(WritableLoaderInterface::class)
-			->add('wishboxcdek:updateOffices', 'wishboxcdek.updateOffices');
+			->add('wishboxcdek:update-offices', 'wishboxcdek.updateOffices');
 	}
 
 	/**
@@ -122,10 +122,10 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		/** @var CityResponse[] $cityResponses */
 		$cityResponses = $event->getArgument(0);
 
-		/** @var integer $page */
+		/** @var integer $page Page */
 		$page = $event->getArgument(1);
 
-		/** @var integer $limit */
+		/** @var integer $limit Limit */
 		$limit = $event->getArgument(2);
 
 		/** @var ConsoleApplication $app */
