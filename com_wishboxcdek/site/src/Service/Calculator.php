@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <>
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Service;
@@ -67,6 +67,42 @@ class Calculator
 		self::$tariffs[$this->delegate->getShippingMethodId()] = $shippingTariff;
 
 		return $shippingTariff;
+	}
+
+	/**
+	 * @return ShippingTariff[]
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 */
+	public function getShippingTariffs(): array
+	{
+		$shippingTariffs = [];
+
+		$tariffs = $this->getTariffs();
+
+		if (count($tariffs))
+		{
+			foreach ($tariffs as $tariff)
+			{
+				$shippingTariff = new ShippingTariff(0, 0);
+
+				$periodMin = $tariff->getPeriodMin();
+				$periodMax = $tariff->getPeriodMax();
+				$shipping  = $tariff->getDeliverySum();
+				$code      = $tariff->getTariffCode();
+				$name      = $tariff->getTariffName();
+				$shippingTariff->setPeriodMin($periodMin)
+					->setPeriodMax($periodMax)
+					->setShipping($shipping)
+					->setCode($code)
+					->setName($name);
+				$shippingTariffs[] = $shippingTariff;
+			}
+		}
+
+		return $shippingTariffs;
 	}
 
 	/**

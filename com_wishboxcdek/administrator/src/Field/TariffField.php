@@ -7,6 +7,7 @@ namespace Joomla\Component\Wishboxcdek\Administrator\Field;
 
 use Exception;
 use Joomla\Component\Wishboxcdek\Administrator\Helper\WishboxcdekHelper;
+use Joomla\Utilities\ArrayHelper;
 use SimpleXMLElement;
 use Wishbox\Field\ListField;
 use function defined;
@@ -29,7 +30,7 @@ class TariffField extends ListField
 	 *
 	 * @since  1.0.0
 	 */
-	protected $type = 'Office';
+	protected $type = 'Tariff';
 
 	/**
 	 * @var integer|null $filterCode Filter code
@@ -37,6 +38,27 @@ class TariffField extends ListField
 	 * @since  1.0.0
 	 */
 	private ?int $filterCode;
+
+	/**
+	 * @var integer[]|null $allowedCodes Allowed codes
+	 *
+	 * @since  1.0.0
+	 */
+	private ?array $allowedCodes = null;
+
+	/**
+	 * @var float[]|null $pricesByCodes Prices by codes
+	 *
+	 * @since  1.0.0
+	 */
+	private ?array $pricesByCodes = null;
+
+	/**
+	 * @var string[]|null $periodsByCodes Periods codes
+	 *
+	 * @since  1.0.0
+	 */
+	private ?array $periodsByCodes = null;
 
 	/**
 	 * Method to attach a Form object to the field.
@@ -62,6 +84,48 @@ class TariffField extends ListField
 		if ($return)
 		{
 			$this->filterCode = (int) $this->element['filterCode'];
+
+			$allowedCodes = (string) $this->element['available_codes'];
+
+			if (!empty($allowedCodes))
+			{
+				$allowedCodes = explode(',', $allowedCodes);
+				$allowedCodes = ArrayHelper::toInteger($allowedCodes);
+
+				$this->allowedCodes = $allowedCodes;
+			}
+
+			$pricesByCodes = $this->element['prices_by_codes'];
+
+			if ($pricesByCodes !== null)
+			{
+				$pricesByCodes = (string) $pricesByCodes;
+
+				$pricesByCodes = json_decode($pricesByCodes, true);
+
+				if (!is_array($pricesByCodes))
+				{
+					$pricesByCodes = [];
+				}
+
+				$this->pricesByCodes = $pricesByCodes;
+			}
+
+			$periodsByCodes = $this->element['periods_by_codes'];
+
+			if ($periodsByCodes !== null)
+			{
+				$periodsByCodes = (string) $periodsByCodes;
+
+				$periodsByCodes = json_decode($periodsByCodes, true);
+
+				if (!is_array($periodsByCodes))
+				{
+					$periodsByCodes = [];
+				}
+
+				$this->periodsByCodes = $periodsByCodes;
+			}
 		}
 
 		return $return;
@@ -80,6 +144,49 @@ class TariffField extends ListField
 	{
 		$options = parent::getOptions();
 
-		return array_merge($options, WishboxcdekHelper::getTariffOptions($this->filterCode));
+		$tariffOptions = WishboxcdekHelper::getTariffOptions($this->filterCode);
+
+		if ($this->allowedCodes)
+		{
+			foreach ($tariffOptions as $k => $tariffOption)
+			{
+				if (!in_array((int) $tariffOption->value, $this->allowedCodes))
+				{
+					unset($tariffOptions[$k]);
+				}
+			}
+		}
+
+		if (is_array($this->pricesByCodes))
+		{
+			foreach ($tariffOptions as $k => $tariffOption)
+			{
+				if (isset($this->pricesByCodes[$tariffOption->value]))
+				{
+					$tariffOptions[$k]->text .= ' (' . $this->pricesByCodes[$tariffOption->value] . ' руб.)';
+				}
+				else
+				{
+					unset($tariffOptions[$k]);
+				}
+			}
+		}
+
+		if (is_array($this->periodsByCodes))
+		{
+			foreach ($tariffOptions as $k => $tariffOption)
+			{
+				if (isset($this->periodsByCodes[$tariffOption->value]))
+				{
+					$tariffOptions[$k]->text .= ' (' . $this->periodsByCodes[$tariffOption->value] . ')';
+				}
+				else
+				{
+					unset($tariffOptions[$k]);
+				}
+			}
+		}
+
+		return array_merge($options, $tariffOptions);
 	}
 }
