@@ -8,7 +8,8 @@ namespace Joomla\Component\Wishboxcdek\Site\Service;
 use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
-use Joomla\Component\RadicalMart\Administrator\Table\ShippingMethodTable;
+use Joomla\Component\Wishboxcdek\Administrator\Table\TariffTable;
+use Joomla\Component\Wishboxcdek\Site\Exception\NoAvailableTariffsException;
 use Joomla\Component\Wishboxcdek\Site\Interface\CalculatorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\TariffListPostRequestCreator;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
@@ -202,7 +203,7 @@ class Calculator
 		if (count($responseTariffCodes))
 		{
 			/** @var DatabaseDriver $db */
-			$db = \Joomla\CMS\Factory::getContainer()->get(DatabaseDriver::class);
+			$db = Factory::getContainer()->get(DatabaseDriver::class);
 			$query = $db->getQuery(true)
 				->select('id')
 				->from('#__wishboxcdek_tariffs');
@@ -215,7 +216,7 @@ class Calculator
 			$db->setQuery($query);
 			$tariffModes = $db->loadColumn();
 
-			foreach ($responseTariffCodes as $k => $tariff)
+			foreach ($responseTariffCodes as $tariff)
 			{
 				if (!in_array($tariff->getTariffCode(), $tariffCodes))
 				{
@@ -228,7 +229,7 @@ class Calculator
 					$tariffTable->published = 1;
 					$tariffTable->name = $tariff->getTariffName();
 					$tariffTable->mode = $tariff->getDeliveryMode();
-					$tariffTable->weight_limit = '';
+					$tariffTable->weight_limit = ''; // phpcs:ignore
 					$tariffTable->service = '';
 					$tariffTable->description = $tariff->getTariffDescription();
 					$tariffTable->store();
@@ -253,7 +254,7 @@ class Calculator
 
 			if (!count($responseTariffCodes))
 			{
-				throw new Exception('All tariffs has unset', 500);
+				throw new NoAvailableTariffsException;
 			}
 		}
 
