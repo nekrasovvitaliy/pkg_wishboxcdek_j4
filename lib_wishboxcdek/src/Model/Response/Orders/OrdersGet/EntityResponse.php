@@ -19,6 +19,7 @@ use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\SenderResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\ServiceResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\MoneyResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\LocationResponse;
+use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\StatusResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\ThresholdResponse;
 
 /**
@@ -734,6 +735,18 @@ class EntityResponse extends AbstractResponse
 	public function getTransactedPaymentOptional(): ?bool
 	{
 		return $this->transacted_payment; // phpcs:ignore
+	}
+
+	/**
+	 * 1.30. Список статусов по заказу, отсортированных по дате и времени
+	 *
+	 * @return StatusResponse[]|null
+	 *
+	 * @since 1.0.0
+	 */
+	public function getStatuses(): ?array
+	{
+		return $this->statuses;
 	}
 
 	/**

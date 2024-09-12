@@ -24,14 +24,15 @@ class DatadistanceModel extends DataModel implements DataInterface
 	/**
 	 * Method returns array of offices use distance
 	 *
-	 * @param	integer     $cityCode         City code
-	 * @param	array|null  $orderDimensions  Order dimensions
+	 * @param	integer       $cityCode    City code
+	 * @param	boolean|null  $allowedCod  Allowed cod
+	 * @param	array|null    $packages    Packages
 	 *
 	 * @return    array     List of offices
 	 *
 	 * @since 1.0.0
 	 */
-	public function getOffices(int $cityCode, ?array $orderDimensions = null): array
+	public function getOffices(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array
 	{
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
@@ -50,11 +51,11 @@ class DatadistanceModel extends DataModel implements DataInterface
 			// Получаем расстояние между самыми дальними офисами
 			$distance = $this->getDistance($cityCode);
 
-			$query = $this->db->getQuery(true)
+			$query = $db->getQuery(true)
 				->select(
 					[
 						'o.id AS id',
-						'o.name AS name',
+						'o.address AS name',
 						'o.code AS value',
 						'o.code AS code',
 						'o.address AS address',
@@ -68,19 +69,31 @@ class DatadistanceModel extends DataModel implements DataInterface
 						'o.have_cashless AS havecashless',
 						'o.allowed_cod AS allowed_code',
 						'o.nearest_station AS nearest_station',
-						'o.metro_station AS metro_station',
+						'o.nearest_metro_station AS metro_station',
 						'o.city_code AS city_id',
 						'IF (city_code <> ' . $cityCode . ', "1", "0") AS other_city',
 						'c.cityname AS city'
 					]
 				)
-				->from('#__jshopping_shipping_method_wishboxcdek_offices AS o')
-				->join('LEFT', '#__jshopping_shipping_method_wishboxcdek_cities AS c ON c.code = o.city_code')
-				->where(
-					'(dist(' . $avg->longitude . ', ' . $avg->latitude
-					. ', o.location_longitude, o.location_latitude) < ' . ($distance * 1.1) . ') || (city_code = "' . $cityCode . '")'
-				)
-				->order('other_city ASC');
+				->from('#__wishboxcdek_offices AS o')
+				->join('LEFT', '#__wishboxcdek_cities AS c ON c.code = o.city_code');
+
+			if ($allowedCod)
+			{
+				$query->where('allowed_cod = ' . (int) $allowedCod);
+			}
+
+			if (is_array($packages) && count($packages))
+			{
+				$volumeWeight = $this->getVolumeWeight($packages);
+				$query->where('weight_max >= ' . $volumeWeight);
+			}
+
+			$query->where(
+				'(dist(' . $avg->longitude . ', ' . $avg->latitude
+				. ', o.location_longitude, o.location_latitude) < ' . ($distance * 5) . ') || (city_code = "' . $cityCode . '")'
+			)->order('other_city ASC');
+			$query->order('o.address ASC');
 			$db->setQuery($query);
 			$offices = $db->loadObjectList();
 		}
@@ -102,19 +115,21 @@ class DatadistanceModel extends DataModel implements DataInterface
 			throw new InvalidArgumentException('city_code must be greater than zero', 500);
 		}
 
-		$query = $this->db->getQuery(true)
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
+
+		$query = $db->getQuery(true)
 			->select(
 				[
 					'CAST(AVG(location_latitude) AS DECIMAL(12,10)) AS location_latitude',
 					'CAST(AVG(location_longitude) AS DECIMAL(12,10)) AS location_longitude'
 				]
 			)
-			->from('#__jshopping_shipping_method_wishboxcdek_offices')
+			->from('#__wishboxcdek_offices')
 			->where('city_code = ' . $cityCode);
 
-		$this->db->setQuery($query);
+		$db->setQuery($query);
 
-		$result = $this->db->loadObject();
+		$result = $db->loadObject();
 
 		return new Point(floatval($result->location_latitude), floatval($result->location_longitude)); // phpcs:ignore
 	}
@@ -128,14 +143,16 @@ class DatadistanceModel extends DataModel implements DataInterface
 	 */
 	private function getDistance(int $cityCode): int
 	{
-		$query = $this->db->getQuery(true)
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
+
+		$query = $db->getQuery(true)
 			->select('dist(MIN(location_longitude), MIN(location_latitude), MAX(location_longitude), MAX(location_latitude)) / 2')
 			->from('#__wishboxcdek_offices')
 			->where('city_code = ' . $cityCode);
 
-		$this->db->setQuery($query);
+		$db->setQuery($query);
 
-		$distance = $this->db->loadResult();
+		$distance = $db->loadResult();
 
 		if ($distance == 0)
 		{
@@ -143,5 +160,27 @@ class DatadistanceModel extends DataModel implements DataInterface
 		}
 
 		return (int) $distance;
+	}
+
+	/**
+	 * @param   array|null  $packages  Packages
+	 *
+	 * @return float|null
+	 *
+	 * @since 1.0.0
+	 */
+	private function getVolumeWeight(?array $packages): ?float
+	{
+		$volumeWeight = 0;
+
+		if (is_array($packages) && count($packages))
+		{
+			foreach ($packages as $package)
+			{
+				$volumeWeight += $package->width * $package->height * $package->length / 5000;
+			}
+		}
+
+		return $volumeWeight;
 	}
 }

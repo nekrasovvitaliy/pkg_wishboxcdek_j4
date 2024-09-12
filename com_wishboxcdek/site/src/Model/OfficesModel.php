@@ -10,10 +10,10 @@ use InvalidArgumentException;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Site\Model\Offices\DataInterface;
-use Wishbox\ShippingService\Cdek\Dimensions;
+use Wishbox\ShippingService\ShippingTariff;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -32,13 +32,16 @@ class OfficesModel extends BaseDatabaseModel
 	protected DataInterface $dataModel;
 
 	/**
+	 * @param   array                 $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
+	 * @param   ?MVCFactoryInterface  $factory  The factory.
+	 *
 	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct()
+	public function __construct($config = [], MVCFactoryInterface $factory = null)
 	{
-		parent::__construct();
+		parent::__construct($config, $factory);
 
 		$app = Factory::getApplication();
 
@@ -71,10 +74,16 @@ class OfficesModel extends BaseDatabaseModel
 
 		// Load state from the request.
 		$cityCode = $app->getInput()->getInt('city_code');
-		$this->setState('filter.cityCode', $cityCode);
+		$this->setState('filter.city_code', $cityCode);
 
 		$shippingMethodId = $app->getInput()->getInt('shipping_method_id');
 		$this->setState('shipping_method_id', $shippingMethodId);
+
+		$shippingTariffData = $app->getInput()->getVar('shipping_tariff');
+		$this->setState('shipping_tariff_data', $shippingTariffData);
+
+		$packagesData = $app->getInput()->getVar('packages_data');
+		$this->setState('filter.packages_data', $packagesData);
 
 		$shopName = $app->getInput()->get('shop_name');
 		$this->setState('shop_name', $shopName);
@@ -120,7 +129,8 @@ class OfficesModel extends BaseDatabaseModel
 
 		if (count($items))
 		{
-			$shippingTariff = WishboxcdekHelper::getShippingTariff($shopName, $shippingMethodId);
+			$shippingTariffData = json_decode($this->getState('shipping_tariff_data'), true);
+			$shippingTariff = ShippingTariff::withArray($shippingTariffData);
 
 			foreach ($items as $item)
 			{
@@ -135,16 +145,17 @@ class OfficesModel extends BaseDatabaseModel
 					]
 				];
 				$feature['options'] = [];
-				$feature['options']['iconLayout'] = 'default#image';
+
+				$feature['options']['preset'] = 'islands#greenIcon';
+
 				$feature['properties'] = [];
-				$feature['properties']['iconLayout'] = 'default#image';
 				$feature['properties']['balloonContent'] = LayoutHelper::render(
 					'components.wishboxcdek.changeoffice/yandexmap/balooncontent.d',
 					[
-						'office'            => $item,
-						'shippingTariff'    => $shippingTariff,
-						'advUser'           => $this->advUser,
-						'shippingMethodId'  => $shippingMethodId
+						'office'                => $item,
+						'shipping_tariff'       => $shippingTariff,
+						'adv_user'              => $this->advUser,
+						'shipping_method_id'    => $shippingMethodId
 					]
 				);
 				$feature['properties']['clusterCaption'] = 'hj-';
@@ -169,13 +180,17 @@ class OfficesModel extends BaseDatabaseModel
 	 */
 	public function getItems(): array
 	{
-		$cityCode = $this->getState('filter.cityCode');
+		$cityCode = $this->getState('filter.city_code');
 
 		if ($cityCode == 0)
 		{
 			throw new InvalidArgumentException('param $cityCode must be more than zero', 500);
 		}
 
-		return $this->dataModel->getOffices($cityCode, [new Dimensions(1000, 900, 800)]);
+		$allowedCod = $this->getState('filter.allowed_cod');
+		$packagesData = $this->getState('filter.packages_data');
+		$packages = json_decode($packagesData);
+
+		return $this->dataModel->getOffices($cityCode, $allowedCod, $packages);
 	}
 }

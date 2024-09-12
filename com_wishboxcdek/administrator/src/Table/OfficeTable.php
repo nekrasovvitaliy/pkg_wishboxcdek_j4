@@ -64,7 +64,9 @@ class OfficeTable extends BaseTable
 					'o.code',
 					'CONCAT(o.address, " ", o.type, " ", o.weight_max) AS name',
 					'o.type',
-					'o.dimensions'
+					'o.dimensions',
+					'o.location_latitude',
+					'o.location_longitude'
 				]
 			)
 			->from('#__wishboxcdek_offices AS o')

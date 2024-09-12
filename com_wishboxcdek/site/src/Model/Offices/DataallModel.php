@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class DatacityModel extends DataModel implements DataInterface
+class DataallModel extends DataModel implements DataInterface
 {
 	/**
 	 * Method returns array of offices use city
@@ -37,11 +37,6 @@ class DatacityModel extends DataModel implements DataInterface
 	 */
 	public function getOffices(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array
 	{
-		if ($cityCode <= 0)
-		{
-			throw new InvalidArgumentException('city_code must be greater than zero', 500);
-		}
-
 		$app = Factory::getApplication();
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
@@ -67,8 +62,7 @@ class DatacityModel extends DataModel implements DataInterface
 					'o.city_code AS city_id',
 					'o.dimensions AS dimensions']
 			)
-			->from('#__wishboxcdek_offices AS o')
-			->where('o.city_code = ' . $cityCode);
+			->from('#__wishboxcdek_offices AS o');
 
 		if ($packages && is_array($packages) && count($packages))
 		{
@@ -82,26 +76,8 @@ class DatacityModel extends DataModel implements DataInterface
 
 		if (count($offices))
 		{
-			$wishboxcdekcityTable = $app->bootComponent('com_wishboxcdek')
-				->getMVCFactory()
-				->createTable('city', 'Administrator');
-
-			$wishboxcdekcityTable->load(['code' => $cityCode]);
-
-			$packagesDimensions = [];
-
-			if ($packages && is_array($packages))
-			{
-				foreach ($packages as $package)
-				{
-					$packagesDimensions[] = new DimensionsEntity($package->width, $package->height, $package->length);
-				}
-			}
-
 			foreach ($offices as $k => $office)
 			{
-				$offices[$k]->city = $wishboxcdekcityTable->cityname;
-
 				if ($packages && is_array($packages) && $offices[$k]->type == 'POSTAMAT')
 				{
 					$offices[$k]->dimensions = json_decode($offices[$k]->dimensions, true);
@@ -112,18 +88,16 @@ class DatacityModel extends DataModel implements DataInterface
 					}
 
 					$offices[$k]->dimensions = array_values($offices[$k]->dimensions);
-
+/*
 					if (is_array($offices[$k]->dimensions) && count($offices[$k]->dimensions))
 					{
 						$officeDimensions = DimensionsEntity::arrayFromAccos($offices[$k]->dimensions);
 
-
-
-						if (!DimensionsEntity::arrayInArray($packagesDimensions, $officeDimensions))
+						if (!DimensionsEntity::arrayInArray($packages, $officeDimensions))
 						{
 							unset($offices[$k]);
 						}
-					}
+					}*/
 				}
 			}
 		}

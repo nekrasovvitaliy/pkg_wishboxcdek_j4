@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 abstract class WishboxcdekHelper
 {
 	/**
-	 * @param   string  $tariffCode  Tariff code
+	 * @param   integer  $tariffCode  Tariff code
 	 *
 	 * @return boolean
 	 *
@@ -28,17 +28,28 @@ abstract class WishboxcdekHelper
 	 *
 	 * @since 1.0.0
 	 */
-	public static function isTariffToPoint(string $tariffCode): bool
+	public static function isTariffToPoint(int $tariffCode): bool
 	{
+		if ($tariffCode <= 0)
+		{
+			throw new Exception('$tariffCode must be more than zero', 500);
+		}
+
 		$tariffTable = Factory::getApplication()
 			->bootComponent('com_wishboxcdek')
 			->getMVCFactory()
 			->createTable('Tariff', 'Administrator');
 		$tariffTable->load(['code' => $tariffCode]);
 
-		list(, $deliveryTariffMode) = explode('-', $tariffTable->mode);
+		$tariffModeTable = Factory::getApplication()
+			->bootComponent('com_wishboxcdek')
+			->getMVCFactory()
+			->createTable('TariffMode', 'Administrator');
+		$tariffModeTable->load(['code' => $tariffTable->mode]);
 
-		if ($deliveryTariffMode == 'С')
+		list(, $deliveryTariffMode) = explode('-', $tariffModeTable->title);
+
+		if ($deliveryTariffMode == 'склад')
 		{
 			return true;
 		}

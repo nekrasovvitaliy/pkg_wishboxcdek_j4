@@ -7,9 +7,12 @@ namespace Joomla\Component\Wishboxcdek\Site\Service;
 
 use Exception;
 use InvalidArgumentException;
+use Joomla\CMS\Factory;
+use Joomla\Component\RadicalMart\Administrator\Table\ShippingMethodTable;
 use Joomla\Component\Wishboxcdek\Site\Interface\CalculatorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\TariffListPostRequestCreator;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
+use Joomla\Database\DatabaseDriver;
 use Wishbox\ShippingService\ShippingTariff;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPost\TariffCodeResponse;
 use function defined;
@@ -178,6 +181,7 @@ class Calculator
 	 */
 	private function getTariffs(): array
 	{
+		$app = Factory::getApplication();
 		$tariffListPostRequestCreator = new TariffListPostRequestCreator($this->delegate);
 		$tariffListPostRequest = $tariffListPostRequestCreator->getRequest();
 
@@ -191,21 +195,68 @@ class Calculator
 		$apiClient = $this->getApiClient();
 
 		$tariffListPostResponse = $apiClient->calculateTariffList($tariffListPostRequest);
-		$tariffCodes = $tariffListPostResponse->getTariffCodes();
+		$responseTariffCodes = $tariffListPostResponse->getTariffCodes();
 
 		$requiredTariffCodes = $this->delegate->getTariffCodes();
 
-		if (count($tariffCodes))
+		if (count($responseTariffCodes))
 		{
-			foreach ($tariffCodes as $k => $tariff)
+			/** @var DatabaseDriver $db */
+			$db = \Joomla\CMS\Factory::getContainer()->get(DatabaseDriver::class);
+			$query = $db->getQuery(true)
+				->select('id')
+				->from('#__wishboxcdek_tariffs');
+			$db->setQuery($query);
+			$tariffCodes = $db->loadColumn();
+
+			$query = $db->getQuery(true)
+				->select('code')
+				->from('#__wishboxcdek_tariff_modes');
+			$db->setQuery($query);
+			$tariffModes = $db->loadColumn();
+
+			foreach ($responseTariffCodes as $k => $tariff)
 			{
-				if (!in_array($tariff->getTariffCode(), $requiredTariffCodes))
+				if (!in_array($tariff->getTariffCode(), $tariffCodes))
 				{
-					unset($tariffCodes[$k]);
+					/** @var TariffTable $tariffTable */
+					$tariffTable = $app->bootComponent('com_wishboxcdek')
+						->getMVCFactory()
+						->createTable('Tariff', 'Administrator');
+
+					$tariffTable->code = $tariff->getTariffCode();
+					$tariffTable->published = 1;
+					$tariffTable->name = $tariff->getTariffName();
+					$tariffTable->mode = $tariff->getDeliveryMode();
+					$tariffTable->weight_limit = '';
+					$tariffTable->service = '';
+					$tariffTable->description = $tariff->getTariffDescription();
+					$tariffTable->store();
+				}
+
+				if (!in_array($tariff->getDeliveryMode(), $tariffModes))
+				{
+					throw new Exception('Delivery mode not found', 500);
 				}
 			}
 		}
 
-		return array_values($tariffCodes);
+		if (count($responseTariffCodes))
+		{
+			foreach ($responseTariffCodes as $k => $tariff)
+			{
+				if (!in_array($tariff->getTariffCode(), $requiredTariffCodes))
+				{
+					unset($responseTariffCodes[$k]);
+				}
+			}
+
+			if (!count($responseTariffCodes))
+			{
+				throw new Exception('All tariffs has unset', 500);
+			}
+		}
+
+		return array_values($responseTariffCodes);
 	}
 }

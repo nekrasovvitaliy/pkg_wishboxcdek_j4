@@ -13,7 +13,7 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 
 $user = Factory::getApplication()->getIdentity();
-$userId = $user->get('id');
+$userId = $user->id;
 ?>
 
 <form

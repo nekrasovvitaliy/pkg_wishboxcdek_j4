@@ -7,11 +7,11 @@ namespace Joomla\Component\Wishboxcdek\Administrator\Field;
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\FormField;
+use Joomla\Component\Wishboxcdek\Administrator\Table\CityTable;
 use Joomla\Component\Wishboxcdek\Administrator\Table\OfficeTable;
-use Joomla\Component\Wishboxcdek\Site\Model\OfficesModel;
 use SimpleXMLElement;
-use Wishbox\Field\ListField;
+use Wishbox\ShippingService\ShippingTariff;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -23,7 +23,7 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class OfficeField extends ListField
+class OfficeYandexMapField extends FormField
 {
 	/**
 	 * The form field type.
@@ -32,7 +32,7 @@ class OfficeField extends ListField
 	 *
 	 * @since  1.0.0
 	 */
-	protected $type = 'Office';
+	protected $type = 'OfficeYandexMap';
 
 	/**
 	 * City code.
@@ -61,6 +61,13 @@ class OfficeField extends ListField
 	 * @since 1.0.0
 	 */
 	protected ?array $packages = null;
+
+	/**
+	 * @var string
+	 *
+	 * @since 1.0.0
+	 */
+	protected $layout = 'components.wishboxcdek.field.officeyandexmap';
 
 	/**
 	 * Method to attach a Form object to the field.
@@ -94,12 +101,24 @@ class OfficeField extends ListField
 				$this->allowedCod = (bool) $allowedCod;
 			}
 
-			$packagesData = (string) $this->element['packages'];
+			$packagesData = (string) $this->element['packages_data'];
 			$packages = json_decode($packagesData);
 
 			if (is_array($packages))
 			{
 				$this->packages = $packages;
+			}
+
+			$shippingTariff = (string) $this->element['shipping_tariff'];
+
+			if (!empty($shippingTariff))
+			{
+				$shippingTariff = json_decode($shippingTariff, true);
+
+				if (is_array($shippingTariff))
+				{
+					$this->shippingTariff = ShippingTariff::withArray($shippingTariff);
+				}
 			}
 		}
 
@@ -115,58 +134,81 @@ class OfficeField extends ListField
 	 *
 	 * @since   1.0.0
 	 */
-	protected function getOptions(): array
+	protected function getMarkers(): array
 	{
 		$app = Factory::getApplication();
-		$options = [];
+		$markers = [];
 
 		if ($this->cityCode)
 		{
-			/** @var OfficesModel $officesModel */
-			$officesModel = $app->bootComponent('com_wishboxcdek')
-				->createModel(
-					'offices',
-					'Site\\Model',
-					['ignore_request' => true]
-				);
+			/** @var OfficeTable $officeTable */
+			$officeTable = $app->bootComponent('com_wishboxcdek')
+				->getMVCFactory()
+				->createTable('Office', 'Administrator');
 
-			$officesModel->setState('filter.city_code', $this->cityCode);
-			$officesModel->setState('filter.allowed_cod', $this->allowedCod);
-			$packagesData = json_encode($this->packages);
-			$officesModel->setState('filter.packages_data', $packagesData);
-			$offices = $officesModel->getItems();
+			$offices = $officeTable->getItems($this->cityCode, $this->allowedCod, $this->packages);
 
 			if (count($offices))
 			{
 				foreach ($offices as $office)
 				{
-					$options[] = HTMLHelper::_(
-						'select.option',
-						$office->code,
-						$office->name
-					);
+					$markers[] = [
+						'lat' => $office->location_latitude, // phpcs:ignore
+						'lng' => $office->location_longitude, // phpcs:ignore
+						'name' => $office->name,
+						'code' => $office->code
+					];
 				}
 			}
 
-			if (!count($options) && $this->value && $this->value !== '-1')
+			if (!count($markers) && $this->value && $this->value !== '-1')
 			{
 				/** @var OfficeTable $officeTable */
 				$officeTable = $app->bootComponent('com_wishboxcdek')
 					->getMVCFactory()
-					->createTable('Office', 'Administrator', ['ignore_request' => true]);
+					->createTable('Office', 'Administrator');
 
 				if ($officeTable->load(['city_code' => $this->cityCode, 'code' => $this->value]))
 				{
-					$options[] = HTMLHelper::_(
-						'select.option',
-						$officeTable->code,
-						$officeTable->address
-					);
+					$markers[] = [
+						'lat' => $officeTable->location_latitude, // phpcs:ignore
+						'lng' => $officeTable->location_longitude // phpcs:ignore
+					];
 				}
 			}
 		}
 
-		// Merge any additional options in the XML definition.
-		return array_merge(parent::getOptions(), $options);
+		return $markers;
+	}
+
+	/**
+	 * @return array
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 */
+	protected function getLayoutData(): array
+	{
+		$layoutData = parent::getLayoutData();
+
+		$app = Factory::getApplication();
+
+		/** @var CityTable $cityTable */
+		$cityTable = $app->bootComponent('com_wishboxcdek')
+			->getMVCFactory()
+			->createTable('City', 'Administrator');
+
+		$cityTable->load(['code' => $this->cityCode]);
+
+		$layoutData['center'] = [
+			'latitude' => $cityTable->latitude,
+			'longitude' => $cityTable->longitude
+		];
+		$layoutData['packages'] = $this->packages;
+		$layoutData['shipping_tariff'] = $this->shippingTariff;
+		$layoutData['city_code'] = $this->cityCode;
+
+		return $layoutData;
 	}
 }

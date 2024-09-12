@@ -141,6 +141,18 @@ class Registrator
 		try
 		{
 			$ordersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber);
+
+			$statuses = $ordersGetResponse->getEntity()->getStatuses();
+
+			foreach ($statuses as $status)
+			{
+				if ($status->getCode() == 'CREATED')
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 		catch (EntityNotFoundImNumberException $e)
 		{
@@ -150,7 +162,5 @@ class Registrator
 		{
 			return true;
 		}
-
-		return true;
 	}
 }

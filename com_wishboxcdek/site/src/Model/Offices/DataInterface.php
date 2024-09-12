@@ -22,5 +22,5 @@ interface DataInterface
 	 *
 	 * @since 1.0.0
 	 */
-	public function getOffices(int $cityCode, ?array $orderDimensions = null): array;
+	public function getOffices(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array;
 }

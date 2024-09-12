@@ -17,15 +17,15 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class TariffTable extends Table
+class TariffModeTable extends Table
 {
 	/**
-	 * @param   DatabaseDriver $_db Database driver
+	 * @param   DatabaseDriver  $db  Database driver
 	 *
 	 * @since   1.0.0
 	 */
-	public function __construct(&$_db)
+	public function __construct(&$db)
 	{
-		parent::__construct('#__wishboxcdek_tariffs', 'id', $_db);
+		parent::__construct('#__wishboxcdek_tariff_modes', 'id', $db);
 	}
 }

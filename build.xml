@@ -15,7 +15,7 @@
         <zip destfile="com_wishboxcdek/com_wishboxcdek.zip">
             <fileset dir="./com_wishboxcdek">
                 <include name="administrator/**" />
-                <include name="media/**" />
+                <include name="layouts/**" />
                 <include name="site/**" />
                 <include name="wishboxcdek.xml" />
             </fileset>

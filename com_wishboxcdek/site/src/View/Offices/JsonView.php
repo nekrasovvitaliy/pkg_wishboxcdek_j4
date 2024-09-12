@@ -16,18 +16,18 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @since  1.5
+ * @since  1.0.0
  */
 class JsonView extends BaseJsonView
 {
 	/**
 	 * The model state
 	 *
-	 * @var   CMSObject
+	 * @var   object
 	 *
 	 * @since 1.0.0
 	 */
-	protected CMSObject $state;
+	protected object $state;
 
 	/**
 	 * The user object

@@ -7,11 +7,15 @@
     <version>1.0.0</version>
     <description>COM_WISHBOXCDEK_XML_DESCRIPTION</description>
     <namespace path="src">Joomla\Component\Wishboxcdek</namespace>
+    <scriptfile>script.php</scriptfile>
     <files folder="site">
         <folder>language</folder>
-        <folder>layouts</folder>
         <folder>src</folder>
     </files>
+    <layouts destination="components/wishboxcdek" folder="layouts">
+        <folder>changeoffice</folder>
+        <folder>field</folder>
+    </layouts>
     <install>
         <sql>
             <file driver="mysqli" charset="utf8">sql/install.mysql.utf8.sql</file>

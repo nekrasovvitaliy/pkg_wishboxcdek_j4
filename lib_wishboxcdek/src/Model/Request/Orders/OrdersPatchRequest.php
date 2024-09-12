@@ -146,7 +146,7 @@ class OrdersPatchRequest extends AbstractRequest
 	protected ?ContactRequest $sender = null;
 
 	/**
-	 * 15. Реквизиты истинного продавца
+	 * 10. Реквизиты истинного продавца
 	 *
 	 * @var SellerRequest|null
 	 *
