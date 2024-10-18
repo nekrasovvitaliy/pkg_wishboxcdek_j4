@@ -39,13 +39,21 @@ abstract class WishboxcdekHelper
 			->bootComponent('com_wishboxcdek')
 			->getMVCFactory()
 			->createTable('Tariff', 'Administrator');
-		$tariffTable->load(['code' => $tariffCode]);
+
+		if (!$tariffTable->load(['code' => $tariffCode]))
+		{
+			throw new Exception('tariff with code ' . $tariffCode . 'not loaded', 500);
+		}
 
 		$tariffModeTable = Factory::getApplication()
 			->bootComponent('com_wishboxcdek')
 			->getMVCFactory()
 			->createTable('TariffMode', 'Administrator');
-		$tariffModeTable->load(['code' => $tariffTable->mode]);
+
+		if (!$tariffModeTable->load(['code' => $tariffTable->mode]))
+		{
+			throw new Exception('tariff with code ' . $tariffTable->mode . 'notloaded', 500);
+		}
 
 		list(, $deliveryTariffMode) = explode('-', $tariffModeTable->title);
 

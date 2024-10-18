@@ -28,7 +28,7 @@ class ModalField extends ListField
 	/**
 	 * The form field type.
 	 *
-	 * @var    string
+	 * @var string
 	 *
 	 * @since  1.0.0
 	 */

@@ -46,7 +46,7 @@ class Calculator
 	protected static array $tariffs;
 
 	/**
-	 * @param   CalculatorDelegateInterface  $delegate Delegate
+	 * @param   CalculatorDelegateInterface  $delegate  Delegate
 	 *
 	 * @since 1.0.0
 	 */
@@ -200,7 +200,7 @@ class Calculator
 
 		$requiredTariffCodes = $this->delegate->getTariffCodes();
 
-		if (count($responseTariffCodes))
+		if (is_array($responseTariffCodes) && count($responseTariffCodes))
 		{
 			/** @var DatabaseDriver $db */
 			$db = Factory::getContainer()->get(DatabaseDriver::class);
@@ -242,7 +242,7 @@ class Calculator
 			}
 		}
 
-		if (count($responseTariffCodes))
+		if (is_array($responseTariffCodes) && count($responseTariffCodes))
 		{
 			foreach ($responseTariffCodes as $k => $tariff)
 			{
@@ -251,13 +251,18 @@ class Calculator
 					unset($responseTariffCodes[$k]);
 				}
 			}
-
-			if (!count($responseTariffCodes))
-			{
-				throw new NoAvailableTariffsException;
-			}
 		}
 
-		return array_values($responseTariffCodes);
+		if (!is_array($responseTariffCodes) || !count($responseTariffCodes))
+		{
+			throw new NoAvailableTariffsException;
+		}
+
+		if (is_array($responseTariffCodes))
+		{
+			return array_values($responseTariffCodes);
+		}
+
+		return [];
 	}
 }

@@ -78,7 +78,7 @@ class UpdaterModel extends BaseModel
 
 		static $codes = [];
 		$query = $db->getQuery(true)
-			->insert($db->quoteName('#__wishboxcdek_offices'))
+			->insert($db->qn('#__wishboxcdek_offices'))
 			->columns(
 				[
 					$db->qn('id'),

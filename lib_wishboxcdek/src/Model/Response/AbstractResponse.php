@@ -5,6 +5,7 @@
  */
 namespace WishboxCdekSDK2\Model\Response;
 
+use Exception;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
@@ -21,6 +22,7 @@ class AbstractResponse implements ResponseInterface
 	 * @param   array|null  $properties  Properties
 	 *
 	 * @throws ReflectionException
+	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */
@@ -61,9 +63,7 @@ class AbstractResponse implements ResponseInterface
 						{
 							if (!is_array($value))
 							{
-								throw new \Exception('value is not array', 500);
-								//print_r($value);
-								die;
+								throw new Exception('value is not array', 500);
 							}
 
 							$this->{$key} = $propertyType::create($value);

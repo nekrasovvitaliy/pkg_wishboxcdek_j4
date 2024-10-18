@@ -61,6 +61,13 @@ class TariffField extends ListField
 	private ?array $periodsByCodes = null;
 
 	/**
+	 * @var boolean|null $addPrices Add prices
+	 *
+	 * @since  1.0.0
+	 */
+	private ?bool $addPrices = null;
+
+	/**
 	 * Method to attach a Form object to the field.
 	 *
 	 * @param   SimpleXMLElement   $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
@@ -126,6 +133,17 @@ class TariffField extends ListField
 
 				$this->periodsByCodes = $periodsByCodes;
 			}
+
+			$addPrices = $this->element['add_prices'];
+
+			if ($addPrices !== null)
+			{
+				$addPrices = (string) $addPrices;
+
+				$addPrices = (bool) $addPrices;
+
+				$this->addPrices = $addPrices;
+			}
 		}
 
 		return $return;
@@ -163,7 +181,10 @@ class TariffField extends ListField
 			{
 				if (isset($this->pricesByCodes[$tariffOption->value]))
 				{
-					$tariffOptions[$k]->text .= ' (' . $this->pricesByCodes[$tariffOption->value] . ' руб.)';
+					if ($this->addPrices)
+					{
+						$tariffOptions[$k]->text .= ' (' . $this->pricesByCodes[$tariffOption->value] . ' руб.)';
+					}
 				}
 				else
 				{

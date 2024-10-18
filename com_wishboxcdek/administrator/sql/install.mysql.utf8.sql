@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS `#__wishboxcdek_cities` (
     `longitude` double(11,7) NOT NULL,
     `latitude` double(11,7) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `code` (`code`),
     UNIQUE KEY `code_unique` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -67,18 +66,19 @@ CREATE TABLE IF NOT EXISTS `#__wishboxcdek_tariffs` (
 
 CREATE TABLE IF NOT EXISTS `#__wishboxcdek_tariff_modes` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
+    `code` int(11) NOT NULL,
     `title` varchar(255) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `#__wishboxcdek_tariffs` (`code`, `published`, `name`, `mode`, `weight_limit`, `service`, `description`) VALUES
- (1, 1, 'дверь-дверь'),
- (2, 2, 'двер-склад'),
- (3, 3, 'склад-дверь'),
- (4, 4, 'склад-склад'),
- (5, 6, 'дверь-посамат'),
- (6, 7, 'склад-постаат'),
- (7, 8, 'постамат-двер'),
- (8, 9, 'постамат-склад'),
- (9, 10, 'постамат-постамат');
+INSERT INTO `#__wishboxcdek_tariff_modes` (`code`, `title`) VALUES
+ (1, 'дверь-дверь'),
+ (2, 'двер-склад'),
+ (3, 'склад-дверь'),
+ (4, 'склад-склад'),
+ (6, 'дверь-посамат'),
+ (7, 'склад-постаат'),
+ (8, 'постамат-двер'),
+ (9, 'постамат-склад'),
+ (10, 'постамат-постамат');

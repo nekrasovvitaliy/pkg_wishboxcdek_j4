@@ -120,7 +120,7 @@ class OfficeField extends ListField
 		$app = Factory::getApplication();
 		$options = [];
 
-		if ($this->cityCode)
+		if ($this->cityCode > 0)
 		{
 			/** @var OfficesModel $officesModel */
 			$officesModel = $app->bootComponent('com_wishboxcdek')
