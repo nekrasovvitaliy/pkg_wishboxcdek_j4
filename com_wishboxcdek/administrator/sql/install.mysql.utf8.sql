@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `#__wishboxcdek_offices` (
      `country_code` varchar(2) NOT NULL,
      `region_code` int(9) NOT NULL,
      `city_code` int(11) NOT NULL,
-     `city` varchar(50) NOT NULL,
+     `city` varchar(255) NOT NULL,
      `work_time` varchar(100) NOT NULL,
      `address` varchar(255) NOT NULL,
      `address_full` varchar(255) NOT NULL,

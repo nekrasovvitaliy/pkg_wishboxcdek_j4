@@ -184,12 +184,13 @@ class UpdaterModel extends BaseModel
 			$event = AbstractEvent::create(
 				'onWishboxCdekCitiesUpdaterAfterLoadCities',
 				[
+					'subject'       => $this,
 					'cityResponses' => $cityResponses,
 					'page'          => $page,
-					'limit'         => $limit
+					'limit'         => $limit,
 				]
 			);
-			$app->getDispatcher()->dispatch($event->getName(), $event);
+			$app->getDispatcher()->dispatch('onWishboxCdekCitiesUpdaterAfterLoadCities', $event);
 		}
 
 		return count($cityResponses);

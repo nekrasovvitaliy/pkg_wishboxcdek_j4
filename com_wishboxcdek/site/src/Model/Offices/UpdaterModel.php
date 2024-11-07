@@ -253,6 +253,11 @@ class UpdaterModel extends BaseModel
 
 		$countryCodes = $componentParams->get('country_codes', []);
 
+		if (!count($countryCodes))
+		{
+			throw new Exception('No country selected in component arameters.', 500);
+		}
+
 		foreach ($countryCodes as $countryCode)
 		{
 			$requestPvz = (new DeliveryPointsGetRequest)

@@ -66,6 +66,15 @@ class OfficesController extends AdminController
 
 			return;
 		}
+		catch (Exception $e)
+		{
+			$this->setRedirect(
+				Route::_('index.php?option=com_wishboxcdek', false),
+				$e->getMessage()
+			);
+
+			return;
+		}
 
 		$this->setRedirect(
 			Route::_('index.php?option=com_wishboxcdek', false),
