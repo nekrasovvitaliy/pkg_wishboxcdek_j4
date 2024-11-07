@@ -8,9 +8,14 @@ namespace Joomla\Component\Wishboxcdek\Site\Model;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\AbstractEvent;
-use Joomla\CMS\Event\GenericEvent;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Wishboxcdek\Administrator\Event\Model\OrderStatusUpdater\AfterUpdateAllEvent;
+use Joomla\Component\Wishboxcdek\Administrator\Event\Model\OrderStatusUpdater\UpdateOrderStatusEvent;
+use Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater\GetCdekNumbersEvent;
 use WishboxCdekSDK2\CdekClientV2;
+use WishboxCdekSDK2\Exception\ApiException;
+use WishboxCdekSDK2\Exception\ClientException;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\StatusResponse;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -19,6 +24,8 @@ defined('_JEXEC') or die;
 
 /**
  * @since 1.0.0
+ *
+ * @noinspection PhpUnused
  */
 class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel
 {
@@ -37,41 +44,57 @@ class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel
 
 		$cdekNumbers = $this->getCdekNumbers();
 
-		/** @var GenericEvent $eventBeforeUpdate */
-		$eventBeforeUpdate = AbstractEvent::create(
-			'onWishboxCdekOrderStatusUpdaterBeforeUpdate',
+		$app->enqueueMessage('Found numbers ' . count($cdekNumbers));
+
+		/** @var AfterUpdateAllEvent $eventBeforeUpdateAll */
+		$eventBeforeUpdateAll = AbstractEvent::create(
+			'onWishboxCdekOrderStatusUpdaterBeforeUpdateAll',
 			[
-				'subject'  => $this,
-				'cdekNumbers' => &$cdekNumbers,
+				'subject'       => $this,
+				'cdekNumbers'   => &$cdekNumbers,
+				'eventClass'    => AfterUpdateAllEvent::class
 			]
 		);
-		$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterBeforeUpdateAll', $eventBeforeUpdate);
 
-		foreach ($cdekNumbers as $cdekNumber)
+		$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterBeforeUpdateAll', $eventBeforeUpdateAll);
+
+		foreach ($cdekNumbers as $componentName => $componentCdekNumbers)
 		{
-			$orderCdekStatuses = $this->getOrderCdekStatuses($cdekNumber);
+			foreach ($componentCdekNumbers as $cdekNumber)
+			{
+				try
+				{
+					$orderCdekStatuses = $this->getOrderCdekStatuses($cdekNumber);
 
-			/** @var GenericEvent $event */
-			$event = AbstractEvent::create(
-				'onWishboxCdekOrderStatusUpdaterUpdateStatus',
-				[
-					'subject'           => $this,
-					'cdekNumber'        => &$cdekNumber,
-					'orderCdekStatuses' => $orderCdekStatuses
-				]
-			);
-			$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterUpdateOrder', $event);
+					/** @var UpdateOrderStatusEvent $event */
+					$event = AbstractEvent::create(
+						'onWishboxCdekOrderStatusUpdaterUpdateOrderStatus',
+						[
+							'subject'           => $this,
+							'cdekNumber'        => &$cdekNumber,
+							'orderCdekStatuses' => $orderCdekStatuses,
+							'eventClass'        => UpdateOrderStatusEvent::class
+						]
+					);
+
+					$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterUpdateOrderStatus', $event);
+				}
+				catch (ApiException|ClientException $e)
+				{
+				}
+			}
 		}
 
-		/** @var GenericEvent $eventAfterUpdate */
-		$eventAfterUpdate = AbstractEvent::create(
-			'onWishboxCdekOrderStatusUpdaterAfterUpdate',
+		/** @var AfterUpdateAllEvent $eventAfterUpdateAll */
+		$eventAfterUpdateAll = AbstractEvent::create(
+			'onWishboxCdekOrderStatusUpdaterAfterUpdateAll',
 			[
-				'subject'  => $this,
-				'cdekNumbers' => &$cdekNumbers,
+				'subject'       => $this,
+				'cdekNumbers'   => &$cdekNumbers,
+				'eventClass'    => AfterUpdateAllEvent::class
 			]
 		);
-		$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterAfterUpdate', $eventAfterUpdate);
+		$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterAfterUpdateAll', $eventAfterUpdateAll);
 	}
 
 	/**
@@ -85,26 +108,28 @@ class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel
 	{
 		$app = Factory::getApplication();
 
-		/** @var string[] $cdekNumbers */
-		$cdekNumbers = [];
+		PluginHelper::importPlugin('wishboxcdek');
 
-		/** @var GenericEvent $event */
+		/** @var GetCdekNumbersEvent $event */
 		$event = AbstractEvent::create(
 			'onWishboxCdekOrderStatusUpdaterGetCdekNumbers',
 			[
-				'subject'  => $this,
-				'cdekNumbers' => &$cdekNumbers,
+				'subject'       => $this,
+				'eventClass'    => GetCdekNumbersEvent::class
 			]
 		);
-		$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterGetCdekNumbers', $event);
 
-		return $event->getArgument('cdekNumbers');
+		$eventResult = $app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterGetCdekNumbers', $event);
+
+		return $eventResult->getResult();
 	}
 
 	/**
 	 * @param   string  $cdekNumber  Cdek number
 	 *
 	 * @return StatusResponse[]|null
+	 *
+	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */

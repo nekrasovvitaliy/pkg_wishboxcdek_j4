@@ -5,8 +5,11 @@
  */
 namespace WishboxCdekSDK2;
 
+use Exception;
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Cache\Controller\CallbackController;
+use Joomla\CMS\Event\AbstractEvent;
+use Joomla\CMS\Event\GenericEvent;
 use Joomla\CMS\Factory;
 use Joomla\Http\Response as HttpResponse;
 use Joomla\Uri\Uri;
@@ -449,8 +452,7 @@ final class CdekClientV2
 			Constants::ORDERS_URL,
 			OrdersPatchResponse::class,
 			$request->prepareRequest(),
-			'PATCH',
-			false
+			'PATCH'
 		);
 
 		return $response;
@@ -472,8 +474,7 @@ final class CdekClientV2
 			Constants::ORDERS_URL . '/' . $uuid,
 			OrdersDeleteResponse::class,
 			null,
-			'DELETE',
-			false
+			'DELETE'
 		);
 
 		return $response;
@@ -486,12 +487,16 @@ final class CdekClientV2
 	 *
 	 * @return OrdersGetResponse
 	 *
-	 * @since 1.0.0
+	 * @throws Exception
+	 *
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getOrderInfoByCdekNumber(string $cdekNumber): OrdersGetResponse
 	{
+		$app = Factory::getApplication();
+
 		/** @var OrdersGetResponse $response */
 		$response = $this->getResponse(
 			Constants::ORDERS_URL,
@@ -499,6 +504,16 @@ final class CdekClientV2
 			['cdek_number' => $cdekNumber],
 			'GET'
 		);
+
+		/** @var GenericEvent $event */
+		$event = AbstractEvent::create(
+			'onWishboxCdekClientV2AfterGetOrderInfo',
+			[
+				'subject'   => $this,
+				'response'  => $response
+			]
+		);
+		$app->getDispatcher()->dispatch($event->getName(), $event);
 
 		return $response;
 	}

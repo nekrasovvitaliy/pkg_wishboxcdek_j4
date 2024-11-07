@@ -12,15 +12,15 @@ use Joomla\CMS\Console\Loader\WritableLoaderInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Component\Wishboxcdek\Administrator\Event\Model\OrderStatusUpdater\AfterLoadCitiesEvent;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Plugin\Console\Wishboxcdek\Console\UpdatecitiesCommand;
 use Joomla\Plugin\Console\Wishboxcdek\Console\UpdateofficesCommand;
+use Joomla\Plugin\Console\Wishboxcdek\Console\UpdateOrderStatutesCommand;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Output\ConsoleSectionOutput;
-use WishboxCdekSDK2\Model\Response\Location\CitiesGet\CityResponse;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -64,8 +64,8 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	public static function getSubscribedEvents(): array
 	{
 		return [
-			ApplicationEvents::BEFORE_EXECUTE   => 'registerCommands',
-			'onAfterLoadWishboxCdekCities'      => 'onAfterLoadWishboxCdekCities'
+			ApplicationEvents::BEFORE_EXECUTE               => 'registerCommands',
+			'onWishboxCdekCitiesUpdaterAfterLoadCities'     => 'onWishboxCdekCitiesUpdaterAfterLoadCities'
 		];
 	}
 
@@ -79,35 +79,29 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	 */
 	public function registerCommands(): void
 	{
-		// Test command
-		Factory::getContainer()->share(
-			'wishboxcdek.updateCities',
-			function (ContainerInterface $container) {
-				return new UpdatecitiesCommand;
-			},
-			true
-		);
+		$commands = [
+			UpdatecitiesCommand::class,
+			UpdateofficesCommand::class,
+			UpdateOrderStatutesCommand::class
+		];
 
-		// Add test command to joomla.php cli script
-		Factory::getContainer()->get(WritableLoaderInterface::class)
-			->add('wishboxcdek:update-cities', 'wishboxcdek.updateCities');
-
-		// Second test command
-		Factory::getContainer()->share(
-			'wishboxcdek.updateOffices',
-			function (ContainerInterface $container) {
-				return new UpdateofficesCommand;
-			},
-			true
-		);
-
-		// Add second test command to joomla.php cli script
-		Factory::getContainer()->get(WritableLoaderInterface::class)
-			->add('wishboxcdek:update-offices', 'wishboxcdek.updateOffices');
+		foreach ($commands as $commandClass)
+		{
+			Factory::getContainer()->share(
+				$commandClass,
+				function (ContainerInterface $container) use ($commandClass) {
+					return new $commandClass;
+				},
+				true
+			);
+			/** @noinspection PhpUndefinedMethodInspection */
+			Factory::getContainer()->get(WritableLoaderInterface::class)
+				->add($commandClass::getDefaultName(), $commandClass);
+		}
 	}
 
 	/**
-	 * @param   Event  $event  Event
+	 * @param   AfterLoadCitiesEvent  $event  Event
 	 *
 	 * @return void
 	 *
@@ -117,16 +111,9 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function onAfterLoadWishboxCdekCities(Event $event): void
+	public function onWishboxCdekCitiesUpdaterAfterLoadCities(AfterLoadCitiesEvent $event): void
 	{
-		/** @var CityResponse[] $cityResponses */
-		$cityResponses = $event->getArgument(0);
-
-		/** @var integer $page Page */
-		$page = $event->getArgument(1);
-
-		/** @var integer $limit Limit */
-		$limit = $event->getArgument(2);
+		$page = $event->getPage();
 
 		/** @var ConsoleApplication $app */
 		$app = Factory::getApplication();
@@ -138,9 +125,5 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		}
 
 		$this->pageSection->overwrite('Page ' . $page . ' loaded');
-
-		$event->setArgument(0, $cityResponses);
-		$event->setArgument(1, $page);
-		$event->setArgument(2, $limit);
 	}
 }

@@ -77,8 +77,48 @@ class WishboxcdekHelper
 
 		if ($filterCode)
 		{
-			$query->where('code = ' . $filterCode);
+			$query->where($db->qn('code') . ' = ' . $filterCode);
 		}
+
+		$query->order($db->qn('t.code'));
+
+		// Get the options.
+		$db->setQuery($query);
+
+		try
+		{
+			$options = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{
+			$app->enqueueMessage($e->getMessage(), 'error');
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Get a status list in text/value format for a select field
+	 *
+	 * @return array
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 */
+	public static function getStatusOptions(): array
+	{
+		$app = Factory::getApplication();
+		$options = [];
+		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$query = $db->getQuery(true)
+			->select(
+				[
+					$db->qn('code', 'value'),
+					$db->qn('name', 'text'),
+				]
+			)
+			->from($db->qn('#__wishboxcdek_statuses', 't'));
 
 		$query->order($db->qn('t.code'));
 

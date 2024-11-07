@@ -59,6 +59,13 @@ class HtmlView extends BaseHtmlView
 			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_OFFICES') . '(' . $officesCount . ')',
 			false
 		);
+		ToolbarHelper::custom(
+			'orders.updatestatuses',
+			'refresh',
+			'refresh_f2.png',
+			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_ORDER_STATUSES'),
+			false
+		);
 
 		parent::display($tpl);
 	}

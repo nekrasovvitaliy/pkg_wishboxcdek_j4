@@ -42,7 +42,7 @@ class OfficeTable extends BaseTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__wishboxcdek_offices', 'id', $db);
+		parent::__construct($db->qn('#__wishboxcdek_offices'), 'id', $db);
 	}
 
 	/**

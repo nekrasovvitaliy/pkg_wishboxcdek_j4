@@ -7,9 +7,11 @@ namespace Joomla\Component\Wishboxcdek\Site\Model\Cities;
 
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\Wishboxcdek\Administrator\Event\Model\OrderStatusUpdater\AfterLoadCitiesEvent;
 use Joomla\Database\DatabaseDriver;
 use WishboxCdekSDK2\CdekClientV2;
 use WishboxCdekSDK2\Model\Request\Location\CitiesGetRequest;
@@ -91,13 +93,13 @@ class UpdaterModel extends BaseModel
 			60.0
 		);
 
-		$citiesResponses = $apiClient->getCities($request);
+		$cityResponses = $apiClient->getCities($request);
 
-		if (count($citiesResponses))
+		if (count($cityResponses))
 		{
 			static $codes = [];
 			$query = $db->getQuery(true)
-				->insert('#__wishboxcdek_cities')
+				->insert($db->qn('#__wishboxcdek_cities'))
 				->columns(
 					[
 						$db->qn('id'),
@@ -113,7 +115,7 @@ class UpdaterModel extends BaseModel
 					]
 				);
 
-			foreach ($citiesResponses as $cityResponse)
+			foreach ($cityResponses as $cityResponse)
 			{
 				$id = 0;
 				$code = $cityResponse->getCode();
@@ -177,10 +179,20 @@ class UpdaterModel extends BaseModel
 			$db->setQuery($query);
 			$db->execute();
 			PluginHelper::importPlugin('wishboxcdek');
-			$app->triggerEvent('onAfterLoadWishboxCdekCities', [&$citiesResponses, $page, $limit]);
+
+			/** @var AfterLoadCitiesEvent $event */
+			$event = AbstractEvent::create(
+				'onWishboxCdekCitiesUpdaterAfterLoadCities',
+				[
+					'cityResponses' => $cityResponses,
+					'page'          => $page,
+					'limit'         => $limit
+				]
+			);
+			$app->getDispatcher()->dispatch($event->getName(), $event);
 		}
 
-		return count($citiesResponses);
+		return count($cityResponses);
 	}
 
 	/**
