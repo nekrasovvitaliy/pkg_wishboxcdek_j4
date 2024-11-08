@@ -3,7 +3,7 @@
     <name>pkg_wishboxcdek</name>
     <author>Nekrasov Vitaliy</author>
     <authorEmail>nekrasov_vitaliy@list.ru</authorEmail>
-    <creationDate>December 2023</creationDate>
+    <creationDate>November 2024</creationDate>
     <packagename>wishboxcdek</packagename>
     <version>1.0.0</version>
     <packager>Nekrasov Vitaliy</packager>
@@ -18,5 +18,6 @@
         <file type="library" id="wishboxcdek">lib_wishboxcdek.zip</file>
         <file type="plugin" group="console" id="wishboxcdek">plg_console_wishboxcdek.zip</file>
         <file type="plugin" group="task" id="wishboxcdek">plg_task_wishboxcdek.zip</file>
+        <file type="plugin" group="wishboxcdek" id="tariff">plg_wishboxcdek_tariff.zip</file>
     </files>
 </extension>

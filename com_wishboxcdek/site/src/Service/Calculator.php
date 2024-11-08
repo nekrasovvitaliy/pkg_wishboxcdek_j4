@@ -204,37 +204,15 @@ class Calculator
 		{
 			/** @var DatabaseDriver $db */
 			$db = Factory::getContainer()->get(DatabaseDriver::class);
-			$query = $db->getQuery(true)
-				->select('id')
-				->from('#__wishboxcdek_tariffs');
-			$db->setQuery($query);
-			$tariffCodes = $db->loadColumn();
 
 			$query = $db->getQuery(true)
-				->select('code')
-				->from('#__wishboxcdek_tariff_modes');
+				->select($db->qn('code'))
+				->from($db->qn('#__wishboxcdek_tariff_modes'));
 			$db->setQuery($query);
 			$tariffModes = $db->loadColumn();
 
 			foreach ($responseTariffCodes as $tariff)
 			{
-				if (!in_array($tariff->getTariffCode(), $tariffCodes))
-				{
-					/** @var TariffTable $tariffTable */
-					$tariffTable = $app->bootComponent('com_wishboxcdek')
-						->getMVCFactory()
-						->createTable('Tariff', 'Administrator');
-
-					$tariffTable->code = $tariff->getTariffCode();
-					$tariffTable->published = 1;
-					$tariffTable->name = $tariff->getTariffName();
-					$tariffTable->mode = $tariff->getDeliveryMode();
-					$tariffTable->weight_limit = ''; // phpcs:ignore
-					$tariffTable->service = '';
-					$tariffTable->description = $tariff->getTariffDescription();
-					$tariffTable->store();
-				}
-
 				if (!in_array($tariff->getDeliveryMode(), $tariffModes))
 				{
 					throw new Exception('Delivery mode not found', 500);

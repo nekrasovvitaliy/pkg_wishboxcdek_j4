@@ -50,6 +50,16 @@
             </fileset>
         </zip>
 
+        <zip destfile="plg_wishboxcdek_tariff/plg_wishboxcdek_tariff.zip">
+            <fileset dir="./plg_wishboxcdek_tariff">
+                <include name="language/**" />
+                <include name="services/**" />
+                <include name="src/**" />
+                <include name="script.php" />
+                <include name="tariff.xml" />
+            </fileset>
+        </zip>
+
         <zip destfile="pkg_wishboxcdek_j4.zip">
             <fileset dir="./com_wishboxcdek">
                 <include name="com_wishboxcdek.zip" />
@@ -62,6 +72,9 @@
             </fileset>
             <fileset dir="./plg_task_wishboxcdek">
                 <include name="plg_task_wishboxcdek.zip" />
+            </fileset>
+            <fileset dir="./plg_wishboxcdek_tariff">
+                <include name="plg_wishboxcdek_tariff.zip" />
             </fileset>
             <fileset dir="./">
                 <include name="language/**" />
@@ -87,6 +100,11 @@
         <delete quiet="yes">
             <fileset dir=".">
                 <include name="plg_task_wishboxcdek/plg_task_wishboxcdek.zip" />
+            </fileset>
+        </delete>
+        <delete quiet="yes">
+            <fileset dir=".">
+                <include name="plg_wishboxcdek_tariff/plg_wishboxcdek_tariff.zip" />
             </fileset>
         </delete>
     </target>

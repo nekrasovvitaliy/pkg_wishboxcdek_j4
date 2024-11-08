@@ -11,6 +11,7 @@ use Joomla\CMS\Cache\Controller\CallbackController;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Event\GenericEvent;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Http\Response as HttpResponse;
 use Joomla\Uri\Uri;
 use Psr\Http\Message\StreamInterface;
@@ -137,12 +138,27 @@ final class CdekClientV2
 	 */
 	public function calculateTariffList(TariffListPostRequest $request): TariffListPostResponse
 	{
+		$app = Factory::getApplication();
+
+		PluginHelper::importPlugin('wishboxcdek');
+
 		/** @var TariffListPostResponse $response */
 		$response = $this->getResponse(
 			Constants::CALC_TARIFFLIST_URL,
 			TariffListPostResponse::class,
 			$request->prepareRequest()
 		);
+
+		/** @var GenericEvent $event */
+		$event = AbstractEvent::create(
+			'onWishboxCdekClientV2AfterCalculateTariffList',
+			[
+				'subject'   => $this,
+				'request'   => $request,
+				'response'  => $response
+			]
+		);
+		$app->getDispatcher()->dispatch($event->getName(), $event);
 
 		return $response;
 	}
@@ -513,7 +529,7 @@ final class CdekClientV2
 				'response'  => $response
 			]
 		);
-		$app->getDispatcher()->dispatch($event->getName(), $event);
+		$app->getDispatcher()->dispatch('onWishboxCdekClientV2AfterGetOrderInfo', $event);
 
 		return $response;
 	}
