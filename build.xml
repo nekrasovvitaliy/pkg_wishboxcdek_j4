@@ -15,8 +15,10 @@
         <zip destfile="com_wishboxcdek/com_wishboxcdek.zip">
             <fileset dir="./com_wishboxcdek">
                 <include name="administrator/**" />
+                <include name="api/**" />
                 <include name="layouts/**" />
                 <include name="site/**" />
+                <include name="script.php" />
                 <include name="wishboxcdek.xml" />
             </fileset>
         </zip>

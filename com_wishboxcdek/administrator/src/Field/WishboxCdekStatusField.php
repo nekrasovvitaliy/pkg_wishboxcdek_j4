@@ -19,7 +19,7 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class StatusField extends ListField
+class WishboxCdekStatusField extends ListField
 {
 	/**
 	 * The form field type.
@@ -28,7 +28,7 @@ class StatusField extends ListField
 	 *
 	 * @since  1.0.0
 	 */
-	protected $type = 'Status';
+	protected $type = 'wishboxcdekstatus';
 
 	/**
 	 * Method to get the list of options.

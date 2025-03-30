@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\Field;
@@ -56,6 +56,17 @@ class OfficeField extends ListField
 	protected ?bool $allowedCod = null;
 
 	/**
+	 * Тип офиса. Принимает значения: "POSTAMAT", "PVZ", "ALL".
+	 *
+	 * При отсутствии параметра принимается значение по умолчанию «ALL».
+	 *
+	 * @var string
+	 *
+	 * @since 1.0.0
+	 */
+	protected string $deliveryPointType = 'ALL';
+
+	/**
 	 * @var array|null
 	 *
 	 * @since 1.0.0
@@ -94,6 +105,13 @@ class OfficeField extends ListField
 				$this->allowedCod = (bool) $allowedCod;
 			}
 
+			$deliveryPointType = (string) $this->element['deliverypoint_type'];
+
+			if ($deliveryPointType)
+			{
+				$this->deliveryPointType = $deliveryPointType;
+			}
+
 			$packagesData = (string) $this->element['packages'];
 			$packages = json_decode($packagesData);
 
@@ -124,14 +142,16 @@ class OfficeField extends ListField
 		{
 			/** @var OfficesModel $officesModel */
 			$officesModel = $app->bootComponent('com_wishboxcdek')
+				->getMVCFactory()
 				->createModel(
 					'offices',
-					'Site\\Model',
+					'Site',
 					['ignore_request' => true]
 				);
 
 			$officesModel->setState('filter.city_code', $this->cityCode);
 			$officesModel->setState('filter.allowed_cod', $this->allowedCod);
+			$officesModel->setState('filter.type', $this->deliveryPointType);
 			$packagesData = json_encode($this->packages);
 			$officesModel->setState('filter.packages_data', $packagesData);
 			$offices = $officesModel->getItems();
@@ -143,7 +163,7 @@ class OfficeField extends ListField
 					$options[] = HTMLHelper::_(
 						'select.option',
 						$office->code,
-						$office->name
+						$office->name . ' (' . $office->type . ' )'
 					);
 				}
 			}

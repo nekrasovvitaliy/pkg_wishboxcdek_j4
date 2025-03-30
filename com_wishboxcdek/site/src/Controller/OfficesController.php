@@ -10,7 +10,6 @@ use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
-use Joomla\Component\Jshopping\Site\Model\Wishbox\Cdek\OfficesModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -50,8 +49,7 @@ class OfficesController extends BaseController
 			$shopName = $app->input->get('shop_name', '');
 
 			/** @var OfficesModel $officesModel */
-			$officesModel = $app->bootComponent('com_wishboxcdek')
-				->getMVCFactory()
+			$officesModel = $this->factory->getMVCFactory()
 				->createModel('Offices', 'Site');
 
 			$data = $officesModel->getOfficesDataForMap($shopName, $cityCode, $shPrMethodId);

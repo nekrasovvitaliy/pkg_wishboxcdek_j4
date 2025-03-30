@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model;
@@ -83,8 +83,6 @@ class ChangeofficeModel extends BaseDatabaseModel
 	 */
 	public function getCenter(?int $cityCode = null): array
 	{
-		$app = Factory::getApplication();
-
 		$cityCode = (int) ($cityCode ?: $this->getState('cityCode'));
 
 		if (!$cityCode)
@@ -93,9 +91,7 @@ class ChangeofficeModel extends BaseDatabaseModel
 		}
 
 		/** @var CityTable $wishboxcdekcityTable */
-		$wishboxcdekcityTable = $app->bootComponent('com_wishboxcdek')
-			->getMVCFactory()
-			->createTable('city', 'Administrator');
+		$wishboxcdekcityTable = $this->getTable('city', 'Administrator');
 
 		if (!$wishboxcdekcityTable->load(['code' => $cityCode]))
 		{

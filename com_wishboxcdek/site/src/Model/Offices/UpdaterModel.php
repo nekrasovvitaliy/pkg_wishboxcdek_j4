@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
@@ -8,7 +8,7 @@ namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\MVC\Model\BaseModel;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Database\DatabaseDriver;
 use ReflectionException;
 use WishboxCdekSDK2\CdekClientV2;
@@ -24,7 +24,7 @@ defined('_JEXEC') or die;
  *
  * @since 1.0.0
  */
-class UpdaterModel extends BaseModel
+class UpdaterModel extends BaseDatabaseModel
 {
 	/**
 	 * @param   integer  $limit  Limit
@@ -72,12 +72,12 @@ class UpdaterModel extends BaseModel
 	public function loadOffices(int $page = 0, int $limit = 1000): int
 	{
 		$app = Factory::getApplication();
-		$db  = Factory::getContainer()->get(DatabaseDriver::class);
+		$db  = $this->getDatabase();
 
 		$deliveryPointResponses = $this->getDeliveryPointsResponses($page, $limit);
 
 		static $codes = [];
-		$query = $db->getQuery(true)
+		$query = $db->createQuery()
 			->insert($db->qn('#__wishboxcdek_offices'))
 			->columns(
 				[
@@ -236,7 +236,7 @@ class UpdaterModel extends BaseModel
 	 *
 	 * @return DeliveryPointResponse[]
 	 *
-	 * @throws ReflectionException
+	 * @throws ReflectionException|Exception
 	 *
 	 * @since 1.0.0
 	 */
@@ -282,7 +282,7 @@ class UpdaterModel extends BaseModel
 	 */
 	private function deleteAll(): void
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 
 		/** @noinspection SqlWithoutWhere */
 		$query = 'DELETE FROM #__wishboxcdek_offices;';

@@ -1,14 +1,12 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
 
 use Exception;
-use InvalidArgumentException;
 use Joomla\CMS\Factory;
-use Joomla\Component\Wishboxcdek\Site\Entity\DimensionsEntity;
 use Joomla\Database\DatabaseDriver;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -27,7 +25,8 @@ class DataallModel extends DataModel implements DataInterface
 	 *
 	 * @param   integer       $cityCode    City code
 	 * @param   boolean|null  $allowedCod  Allowed cod
-	 * @param   array|null    $packages    Min dimension
+	 * @param   string        $type        Type
+	 * @param   array|null    $packages    Packages
 	 *
 	 * @return    array
 	 *
@@ -35,12 +34,11 @@ class DataallModel extends DataModel implements DataInterface
 	 *
 	 * @since 1.0.0
 	 */
-	public function getOffices(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array
+	public function getOffices(int $cityCode, ?bool $allowedCod = null, string $type = 'ALL', ?array $packages = null): array
 	{
-		$app = Factory::getApplication();
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 
-		$query = $db->getQuery(true)
+		$query = $db->createQuery()
 			->select(
 				[
 					'o.id AS id',
@@ -55,7 +53,7 @@ class DataallModel extends DataModel implements DataInterface
 					'o.location_longitude AS location_longitude',
 					'o.work_time AS work_time',
 					'o.is_dressing_room AS is_dressing_room',
-					'o.have_cashless AS havecashless',
+					'o.have_cashless AS have cashless',
 					'o.allowed_cod AS allowed_code',
 					'TRIM(o.nearest_station) AS nearest_station',
 					'o.nearest_metro_station AS metro_station',
@@ -63,6 +61,12 @@ class DataallModel extends DataModel implements DataInterface
 					'o.dimensions AS dimensions']
 			)
 			->from('#__wishboxcdek_offices AS o');
+
+		if ($packages && is_array($packages) && count($packages))
+		{
+			$volumeWeight = $this->getVolumeWeight($packages);
+			$query->where('weight_max >= ' . $volumeWeight);
+		}
 
 		if ($packages && is_array($packages) && count($packages))
 		{

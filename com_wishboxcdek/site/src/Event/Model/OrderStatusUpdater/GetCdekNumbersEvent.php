@@ -8,9 +8,8 @@ namespace Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Event\Result\ResultAware;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
-use Joomla\CMS\Event\Result\ResultTypeObjectAware;
+use Joomla\CMS\Event\Result\ResultTypeStringAware;
 use Joomla\Component\Wishboxcdek\Site\Model\OrderStatusUpdaterModel;
-use WishboxCdekSDK2\Model\Request\Calculator\TariffListPost\PackageRequest;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -23,7 +22,7 @@ defined('_JEXEC') or die;
 class GetCdekNumbersEvent extends AbstractEvent implements ResultAwareInterface
 {
 	use ResultAware;
-	use ResultTypeObjectAware;
+	use ResultTypeStringAware;
 
 	/**
 	 * @param   string  $eventName  Event name
@@ -36,7 +35,6 @@ class GetCdekNumbersEvent extends AbstractEvent implements ResultAwareInterface
 		parent::__construct($eventName, $arguments);
 
 		$this->preventSetArgumentResult = true;
-		$this->resultAcceptableClasses = [PackageRequest::class];
 	}
 
 	/**
@@ -68,7 +66,7 @@ class GetCdekNumbersEvent extends AbstractEvent implements ResultAwareInterface
 	 *
 	 * @since 1.0.0
 	 */
-	public function getSubject(): OrderStatusUpdaterModel
+	public function getOrderStatusUpdaterModel(): OrderStatusUpdaterModel
 	{
 		return $this->getArgument('subject');
 	}
@@ -78,8 +76,8 @@ class GetCdekNumbersEvent extends AbstractEvent implements ResultAwareInterface
 	 *
 	 * @since 1.0.0
 	 */
-	public function getResult(): array
+	public function getCdekNumbers(): array
 	{
-		return $this->arguments['result'];
+		return $this->getArgument('result') ?? [];
 	}
 }

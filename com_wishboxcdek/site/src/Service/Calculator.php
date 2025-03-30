@@ -205,7 +205,7 @@ class Calculator
 			/** @var DatabaseDriver $db */
 			$db = Factory::getContainer()->get(DatabaseDriver::class);
 
-			$query = $db->getQuery(true)
+			$query = $db->createQuery()
 				->select($db->qn('code'))
 				->from($db->qn('#__wishboxcdek_tariff_modes'));
 			$db->setQuery($query);

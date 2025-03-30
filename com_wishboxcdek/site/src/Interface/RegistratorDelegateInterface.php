@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Interface;
@@ -163,6 +163,27 @@ interface RegistratorDelegateInterface
 	 * @since 1.0.0
 	 */
 	public function getDeliveryAddress(): string;
+
+	/**
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 */
+	public function getSenderName(): string;
+
+	/**
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 */
+	public function getSenderPhoneNumber(): string;
+
+	/**
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 */
+	public function getSenderPhoneAdditional(): string;
 
 	/**
 	 * @param   string  $trackingNumber  Tracking number

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Console\Wishboxcdek\Extension;
@@ -12,7 +12,7 @@ use Joomla\CMS\Console\Loader\WritableLoaderInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Component\Wishboxcdek\Administrator\Event\Model\OrderStatusUpdater\AfterLoadCitiesEvent;
+use Joomla\Component\Wishboxcdek\Site\Event\Model\Cities\Updater\AfterLoadCitiesEvent;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Event\SubscriberInterface;
@@ -49,7 +49,7 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct(&$subject, $config = [])
+	public function __construct(DispatcherInterface &$subject, array $config = [])
 	{
 		parent::__construct($subject, $config);
 	}
@@ -90,7 +90,8 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 			Factory::getContainer()->share(
 				$commandClass,
 				function (ContainerInterface $container) use ($commandClass) {
-					return new $commandClass;
+					return (new $commandClass)
+						->setMVCFactory($this->getMVCFactory());
 				},
 				true
 			);

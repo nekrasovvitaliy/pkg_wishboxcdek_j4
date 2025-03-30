@@ -130,6 +130,15 @@ class Constants
 	public const CITIES_URL = 'location/cities';
 
 	/**
+	 * URL для получения информации о вебхуках.
+	 *
+	 * @var string
+	 *
+	 * @since 1.0.0
+	 */
+	public const WEBHOOKS_URL = 'webhooks';
+
+	/**
 	 * Список корректных параметров, которые разрешено передавать для поиска офисов.
 	 *
 	 * @var array
@@ -137,20 +146,20 @@ class Constants
 	 * @since 1.0.0
 	 */
 	public const DELIVERY_POINTS_FILTER = [
-		'postal_code' => '',
-		'city_code' => '',
-		'type' => '',
-		'country_code' => '',
-		'region_code' => '',
-		'have_cashless' => '',
-		'have_cash' => '',
-		'allowed_cod' => '',
-		'is_dressing_room' => '',
-		'weight_max' => '',
-		'lang' => '',
-		'take_only' => '',
-		'is_handout' => '',
-		'is_reception' => '',
+		'postal_code'       => '',
+		'city_code'         => '',
+		'type'              => '',
+		'country_code'      => '',
+		'region_code'       => '',
+		'have_cashless'     => '',
+		'have_cash'         => '',
+		'allowed_cod'       => '',
+		'is_dressing_room'  => '',
+		'weight_max'        => '',
+		'lang'              => '',
+		'take_only'         => '',
+		'is_handout'        => '',
+		'is_reception'      => '',
 	];
 
 	/**

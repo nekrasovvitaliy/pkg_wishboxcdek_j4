@@ -1,12 +1,12 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Console\Wishboxcdek\Console;
 
 use Exception;
-use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Component\Wishboxcdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
 use Joomla\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,6 +22,8 @@ defined('_JEXEC') or die;
  */
 class UpdateofficesCommand extends AbstractCommand
 {
+	use MVCFactoryAwareTrait;
+
 	/**
 	 * @var   string
 	 *
@@ -44,16 +46,6 @@ class UpdateofficesCommand extends AbstractCommand
 	 * @since 1.0.0
 	 */
 	private SymfonyStyle $ioStyle;
-
-	/**
-	 * Создание команды.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
 
 	/**
 	 * Конфигурирует вход-выход
@@ -110,10 +102,8 @@ class UpdateofficesCommand extends AbstractCommand
 			throw new Exception('ini_set("memory_limit", "512MB") return false', 500);
 		}
 
-		$app = Factory::getApplication();
-
 		/** @var OfficesUpdaterModel $officesupdaterModel */
-		$officesupdaterModel = $app->bootComponent('com_wishboxcdek')
+		$officesupdaterModel = $this->getMVCFactory()
 			->createModel(
 				'updater',
 				'Site\\Model\\Offices',

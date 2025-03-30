@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Cities;
@@ -9,9 +9,9 @@ use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
-use Joomla\CMS\MVC\Model\BaseModel;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\Component\Wishboxcdek\Administrator\Event\Model\OrderStatusUpdater\AfterLoadCitiesEvent;
+use Joomla\Component\Wishboxcdek\Site\Event\Model\Cities\Updater\AfterLoadCitiesEvent;
 use Joomla\Database\DatabaseDriver;
 use WishboxCdekSDK2\CdekClientV2;
 use WishboxCdekSDK2\Model\Request\Location\CitiesGetRequest;
@@ -25,7 +25,7 @@ defined('_JEXEC') or die;
  *
  * @since 1.0.0
  */
-class UpdaterModel extends BaseModel
+class UpdaterModel extends BaseDatabaseModel
 {
 	/**
 	 * @param   integer  $limit  Limit
@@ -77,7 +77,7 @@ class UpdaterModel extends BaseModel
 	public function loadCities(int $page = 0, int $limit = 1000): int
 	{
 		$app = Factory::getApplication();
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
 
 		$countryCodes = $componentParams->get('country_codes', []);
@@ -98,7 +98,7 @@ class UpdaterModel extends BaseModel
 		if (count($cityResponses))
 		{
 			static $codes = [];
-			$query = $db->getQuery(true)
+			$query = $db->createQuery()
 				->insert($db->qn('#__wishboxcdek_cities'))
 				->columns(
 					[
@@ -188,8 +188,10 @@ class UpdaterModel extends BaseModel
 					'cityResponses' => $cityResponses,
 					'page'          => $page,
 					'limit'         => $limit,
+					'eventClass'    => AfterLoadCitiesEvent::class,
 				]
 			);
+
 			$app->getDispatcher()->dispatch('onWishboxCdekCitiesUpdaterAfterLoadCities', $event);
 		}
 

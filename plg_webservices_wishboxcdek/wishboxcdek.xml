@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="console" method="upgrade">
+    <name>plg_console_wishboxcdek</name>
+    <author>Nekrasov Vitaliy</author>
+    <creationDate>March 2024</creationDate>
+    <license>GNU General Public License version 3 or later</license>
+    <authorEmail>nekrasov_vitaliy@list.ru</authorEmail>
+    <version>1.0.0</version>
+    <description>PLG_CONSOLE_WISHBOXCDEK_XML_DESCRIPTION</description>
+    <namespace path="src">Joomla\Plugin\Console\Wishboxcdek</namespace>
+    <scriptfile>script.php</scriptfile>
+    <files>
+        <folder>language</folder>
+        <folder plugin="wishboxcdek">services</folder>
+        <folder>src</folder>
+    </files>
+    <config>
+    </config>
+</extension>

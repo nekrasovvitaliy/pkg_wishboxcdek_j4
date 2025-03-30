@@ -1,17 +1,20 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Console\Wishboxcdek\Console;
 
 use Exception;
-use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
+use Joomla\Component\Wishboxcdek\Site\Model\OrderStatusUpdaterModel;
 use Joomla\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use WishboxCdekSDK2\Exception\ApiException;
+use WishboxCdekSDK2\Exception\ClientException;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -22,6 +25,8 @@ defined('_JEXEC') or die;
  */
 class UpdateOrderStatutesCommand extends AbstractCommand
 {
+	use MVCFactoryAwareTrait;
+
 	/**
 	 * @var string
 	 *
@@ -44,16 +49,6 @@ class UpdateOrderStatutesCommand extends AbstractCommand
 	 * @since 1.0.0
 	 */
 	private SymfonyStyle $ioStyle;
-
-	/**
-	 * Создание команды.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
 
 	/**
 	 * Конфигурирует вход-выход
@@ -81,7 +76,7 @@ class UpdateOrderStatutesCommand extends AbstractCommand
 		$help = "<info>%command.name%</info> Updates cities
                         \nUsage: <info>php %command.full_name%</info>";
 
-		$this->setDescription('Update cities');
+		$this->setDescription('Update order statuses');
 		$this->setHelp($help);
 
 	}
@@ -102,27 +97,28 @@ class UpdateOrderStatutesCommand extends AbstractCommand
 	{
 		$this->configureIO($input, $output);
 
-		$this->ioStyle->title('Updating cities');
+		$this->ioStyle->title('Updating order statuses');
 
 		if (!ini_set('memory_limit', '256000000'))
 		{
 			throw new Exception('ini_set("memory_limit", "512MB") return false', 500);
 		}
 
-		$app = Factory::getApplication();
-
-		/** @var CitiesUpdaterModel $citiesupdaterModel */
-		$citiesupdaterModel = $app->bootComponent('com_wishboxcdek')
+		/** @var OrderStatusupdaterModel $orderStatusUpdaterModel */
+		$orderStatusUpdaterModel = $this->getMVCFactory()
 			->createModel(
-				'updater',
-				'Site\\Model\\Cities',
+				'OrderStatusUpdater',
+				'Site\\Model',
 				['ignore_request' => true]
 			);
 
-		if (!$citiesupdaterModel->update(5000))
+		try
 		{
-			// Throw new Exception
-			throw new Exception('Update return false', 500);
+			$orderStatusUpdaterModel->updateAll();
+		}
+		catch (ApiException | ClientException $e)
+		{
+			return Command::FAILURE;
 		}
 
 		return Command::SUCCESS;

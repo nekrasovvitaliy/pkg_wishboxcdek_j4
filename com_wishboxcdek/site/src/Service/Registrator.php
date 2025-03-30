@@ -1,11 +1,12 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Service;
 
 use Exception;
+use Joomla\CMS\Factory;
 use Joomla\Component\Wishboxcdek\Site\Exception\OrdersPatchRequestErrorsException;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\OrdersPatchRequestCreator;
@@ -78,14 +79,46 @@ class Registrator
 	 */
 	private function createOrder(): void
 	{
+		$app = Factory::getApplication();
+
 		$ordersPostRequestCreator = new OrdersPostRequestCreator($this->delegate);
 		$ordersPostRequest = $ordersPostRequestCreator->getRequest();
 		$apiClient = $this->getApiClient();
 		$ordersPostResponse = $apiClient->createOrder($ordersPostRequest);
 		$uuid = $ordersPostResponse->getEntity()->getUuid();
+
 		$ordersGetResponse = $apiClient->getOrderInfoByUuid($uuid);
 		$this->checkLastOrderRequest($ordersGetResponse);
-		$this->delegate->setTrackingNumber($ordersGetResponse->getEntity()->getCdekNumber());
+		$app->enqueueMessage($ordersGetResponse->getRequests()[0]->getState());
+
+		if ($ordersGetResponse->getRequests()[0]->getState() == 'ACCEPTED')
+		{
+			sleep(3);
+			$ordersGetResponse = $apiClient->getOrderInfoByUuid($uuid);
+			$this->checkLastOrderRequest($ordersGetResponse);
+			$app->enqueueMessage($ordersGetResponse->getRequests()[0]->getState());
+		}
+
+		if ($ordersGetResponse->getRequests()[0]->getState() == 'ACCEPTED')
+		{
+			sleep(3);
+			$ordersGetResponse = $apiClient->getOrderInfoByUuid($uuid);
+			$this->checkLastOrderRequest($ordersGetResponse);
+			$app->enqueueMessage($ordersGetResponse->getRequests()[0]->getState());
+		}
+
+		if ($this->checkLastOrderRequest($ordersGetResponse))
+		{
+			$cdekNumber = $ordersGetResponse->getEntity()->getCdekNumber();
+
+			if (!$cdekNumber)
+			{
+				$this->delegate->setTrackingNumber('');
+				throw new Exception('CdekNumber is empty', 500);
+			}
+
+			$this->delegate->setTrackingNumber($cdekNumber);
+		}
 	}
 
 	/**
@@ -103,22 +136,28 @@ class Registrator
 		$apiClient = $this->getApiClient();
 		$ordersPatchResponse = $apiClient->updateOrder($ordersPatchRequest);
 		$uuid = $ordersPatchResponse->getEntity()->getUuid();
-
+		sleep(1);
 		$ordersGetResponse = $apiClient->getOrderInfoByUuid($uuid);
-		$this->checkLastOrderRequest($ordersGetResponse);
-		$this->delegate->setTrackingNumber($ordersGetResponse->getEntity()->getCdekNumber());
+
+		if ($this->checkLastOrderRequest($ordersGetResponse))
+		{
+			if ($cdekNumber = $ordersGetResponse->getEntity()->getCdekNumber())
+			{
+				$this->delegate->setTrackingNumber($cdekNumber);
+			}
+		}
 	}
 
 	/**
 	 * @param   OrdersGetResponse  $ordersGetResponse  Orders get response
 	 *
-	 * @return void
+	 * @return boolean
 	 *
 	 * @throws OrdersPatchRequestErrorsException
 	 *
 	 * @since 1.0.0
 	 */
-	protected function checkLastOrderRequest(OrdersGetResponse $ordersGetResponse): void
+	protected function checkLastOrderRequest(OrdersGetResponse $ordersGetResponse): bool
 	{
 		$ordersGetResponseRequests = $ordersGetResponse->getRequests();
 		$lastRequest = $ordersGetResponseRequests[0];
@@ -128,6 +167,8 @@ class Registrator
 		{
 			throw new OrdersPatchRequestErrorsException($lastRequestErrors);
 		}
+
+		return true;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\Extension;
@@ -9,11 +9,6 @@ namespace Joomla\Component\Wishboxcdek\Administrator\Extension;
 defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Cache\CacheControllerFactoryAwareInterface;
-use Joomla\CMS\Cache\CacheControllerFactoryInterface;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Form\FormFactoryAwareInterface;
-use Joomla\CMS\Router\SiteRouterAwareInterface;
 use Joomla\Component\Wishboxcdek\Administrator\Service\Html\Wishboxcdek;
 use Joomla\CMS\Association\AssociationServiceTrait;
 use Joomla\CMS\Component\Router\RouterServiceInterface;
@@ -21,12 +16,9 @@ use Joomla\CMS\Component\Router\RouterServiceTrait;
 use Joomla\CMS\Extension\BootableExtensionInterface;
 use Joomla\CMS\Extension\MVCComponent;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
-use Joomla\Database\DatabaseAwareInterface;
-use Joomla\Database\DatabaseDriver;
-use Joomla\Database\Exception\DatabaseNotFoundException;
-use Joomla\Event\DispatcherAwareInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use UnexpectedValueException;
+use Psr\Container\NotFoundExceptionInterface;
 use function defined;
 
 /**
@@ -51,122 +43,14 @@ class WishboxcdekComponent extends MVCComponent implements RouterServiceInterfac
 	 *
 	 * @return  void
 	 *
-	 * @since   1.0.0
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 *
-	 * @noinspection PhpMissingReturnTypeInspection
+	 * @since   1.0.0
 	 */
-	public function boot(ContainerInterface $container)
+	public function boot(ContainerInterface $container): void
 	{
 		$db = $container->get('DatabaseDriver');
 		$this->getRegistry()->register('wishboxcdek', new Wishboxcdek($db));
-	}
-
-	/**
-	 * Returns the table for the count items functions for the given section.
-	 *
-	 * @param   string|null  $section  The section
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0.0
-	 */
-	protected function getTableNameForSection(string $section = null)
-	{
-	}
-
-	/**
-	 * @param   string  $name    Name
-	 * @param   string  $prefix  Prefix
-	 * @param   array   $config  Config
-	 *
-	 * @return mixed
-	 *
-	 * @since 1.0.0
-	 */
-	public function createModel(string $name, string $prefix, array $config = []): mixed
-	{
-		$mvcFactory = $this->getMVCFactory();
-		$className = 'Joomla\\Component\\Wishboxcdek\\' . $prefix . '\\' . ucfirst($name) . 'Model';
-		$model = new $className($config, $mvcFactory);
-
-		if ($model instanceof FormFactoryAwareInterface)
-		{
-			try
-			{
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$model->setFormFactory($mvcFactory->getFormFactory());
-			}
-
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			catch (UnexpectedValueException $e)
-			{
-				// Ignore it
-			}
-		}
-
-		if ($model instanceof DispatcherAwareInterface)
-		{
-			try
-			{
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$model->setDispatcher($mvcFactory->getDispatcher());
-			}
-
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			catch (UnexpectedValueException $e)
-			{
-				// Ignore it
-			}
-		}
-
-		if ($model instanceof SiteRouterAwareInterface)
-		{
-			try
-			{
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$model->setSiteRouter($mvcFactory->getSiteRouter());
-			}
-
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			catch (UnexpectedValueException $e)
-			{
-				// Ignore it
-			}
-		}
-
-		if ($model instanceof CacheControllerFactoryAwareInterface)
-		{
-			try
-			{
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$model->setCacheControllerFactory(Factory::getContainer()->get(CacheControllerFactoryInterface::class));
-			}
-
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			catch (UnexpectedValueException $e)
-			{
-				// Ignore it
-			}
-		}
-
-		if ($model instanceof DatabaseAwareInterface)
-		{
-			try
-			{
-				$model->setDatabase(Factory::getContainer()->get(DatabaseDriver::class));
-			}
-
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			catch (DatabaseNotFoundException $e)
-			{
-				@trigger_error(
-					'Database must be set, this will not be caught anymore in 5.0.',
-					E_USER_DEPRECATED
-				);
-				$model->setDatabase(Factory::getContainer()->get(DatabaseDriver::class));
-			}
-		}
-
-		return $model;
 	}
 }

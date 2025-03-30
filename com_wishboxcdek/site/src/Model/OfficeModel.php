@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model;
@@ -66,6 +66,13 @@ class OfficeModel extends BaseDatabaseModel
 	 * @param   integer  $pk  The id of the article.
 	 *
 	 * @return  object|boolean  Menu item data object on success, boolean false
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 *
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function getItem($pk = null)
 	{
@@ -81,7 +88,7 @@ class OfficeModel extends BaseDatabaseModel
 			try
 			{
 				$db    = $this->getDatabase();
-				$query = $db->getQuery(true);
+				$query = $db->createQuery();
 
 				$query->select(
 					$this->getState(
@@ -91,7 +98,7 @@ class OfficeModel extends BaseDatabaseModel
 						]
 					)
 				)
-					->from($db->quoteName('#__wishboxcdek_offices', 'a'))
+					->from($db->qn('#__wishboxcdek_offices', 'a'))
 					->where(
 						[
 							'a.id = :pk',
@@ -104,12 +111,12 @@ class OfficeModel extends BaseDatabaseModel
 
 				if (empty($data))
 				{
-					throw new \Exception(Text::_('COM_CONTENT_ERROR_ARTICLE_NOT_FOUND'), 404);
+					throw new Exception(Text::_('COM_CONTENT_ERROR_ARTICLE_NOT_FOUND'), 404);
 				}
 
 				$this->_item[$pk] = $data;
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
 				if ($e->getCode() == 404)
 				{
@@ -182,9 +189,7 @@ class OfficeModel extends BaseDatabaseModel
 		}
 
 		/** @var CityTable $wishboxcdekcityTable */
-		$wishboxcdekcityTable = $app->bootComponent('com_wishboxcdek')
-			->getMVCFactory()
-			->createTable('city', 'Administrator');
+		$wishboxcdekcityTable = $this->getTable('city', 'Administrator');
 
 		if (!$wishboxcdekcityTable->load(['code' => $cityCode]))
 		{

@@ -1,12 +1,12 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Console\Wishboxcdek\Console;
 
 use Exception;
-use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
 use Joomla\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
@@ -23,6 +23,8 @@ defined('_JEXEC') or die;
  */
 class UpdatecitiesCommand extends AbstractCommand
 {
+	use MVCFactoryAwareTrait;
+
 	/**
 	 * @var string
 	 *
@@ -45,16 +47,6 @@ class UpdatecitiesCommand extends AbstractCommand
 	 * @since 1.0.0
 	 */
 	private SymfonyStyle $ioStyle;
-
-	/**
-	 * Создание команды.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
 
 	/**
 	 * Конфигурирует вход-выход
@@ -110,17 +102,15 @@ class UpdatecitiesCommand extends AbstractCommand
 			throw new Exception('ini_set("memory_limit", "512MB") return false', 500);
 		}
 
-		$app = Factory::getApplication();
-
-		/** @var CitiesUpdaterModel $citiesupdaterModel */
-		$citiesupdaterModel = $app->bootComponent('com_wishboxcdek')
+		/** @var CitiesUpdaterModel $citiesUpdaterModel */
+		$citiesUpdaterModel = $this->getMVCFactory()
 			->createModel(
 				'updater',
 				'Site\\Model\\Cities',
 				['ignore_request' => true]
 			);
 
-		if (!$citiesupdaterModel->update(5000))
+		if (!$citiesUpdaterModel->update(5000))
 		{
 			// Throw new Exception
 			throw new Exception('Update return false', 500);

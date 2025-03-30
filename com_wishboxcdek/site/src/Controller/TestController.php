@@ -40,12 +40,11 @@ class TestController extends BaseController
 			}
 
 			/** @var CitiesUpdaterModel $citiesupdaterModel */
-			$citiesupdaterModel = $this->app->bootComponent('com_wishboxcdek')
-				->createModel(
-					'updater',
-					'Site\\Model\\Cities',
-					['ignore_request' => true]
-				);
+			$citiesupdaterModel = $this->factory->createModel(
+				'updater',
+				'Site\\Model\\Cities',
+				['ignore_request' => true]
+			);
 
 			if (!$citiesupdaterModel->update(5000))
 			{
@@ -75,12 +74,11 @@ class TestController extends BaseController
 		try
 		{
 			/** @var OfficesUpdaterModel  $officesupdaterModel */
-			$officesupdaterModel = $this->app->bootComponent('com_wishboxcdek')
-				->createModel(
-					'updater',
-					'Site\\Model\\Offices',
-					['ignore_request' => true]
-				);
+			$officesupdaterModel = $this->factory->createModel(
+				'updater',
+				'Site\\Model\\Offices',
+				['ignore_request' => true]
+			);
 
 			if (!$officesupdaterModel->update())
 			{

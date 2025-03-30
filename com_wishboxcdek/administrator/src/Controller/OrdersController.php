@@ -1,12 +1,11 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\Controller;
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Router\Route;
@@ -20,7 +19,7 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Orders controller class.
+ * Orders` controller class.
  *
  * @since  1.0.0
  *
@@ -39,15 +38,12 @@ class OrdersController extends AdminController
 	 */
 	public function updateStatuses(): void
 	{
-		$app = Factory::getApplication();
-
 		/** @var OrderStatusupdaterModel $orderStatusUpdaterModel */
-		$orderStatusUpdaterModel = $app->bootComponent('com_wishboxcdek')
-			->createModel(
-				'OrderStatusupdater',
-				'Site\\Model',
-				['ignore_request' => true]
-			);
+		$orderStatusUpdaterModel = $this->factory->createModel(
+			'OrderStatusUpdater',
+			'Site\\Model',
+			['ignore_request' => true]
+		);
 
 		try
 		{

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
 namespace WishboxCdekSDK2;
@@ -25,6 +25,8 @@ use WishboxCdekSDK2\Model\Request\DeliveryPoints\DeliveryPointsGetRequest;
 use WishboxCdekSDK2\Model\Request\Location\CitiesGetRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatchRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPostRequest;
+use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksGetRequest;
+use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksPostRequest;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPostResponse;
 use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPointResponse;
 use WishboxCdekSDK2\Model\Response\Location\CitiesGet\CityResponse;
@@ -32,6 +34,8 @@ use WishboxCdekSDK2\Model\Response\Orders\OrdersDeleteResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersPatchResponse;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersPostResponse;
+use WishboxCdekSDK2\Model\Response\Webhooks\WebhooksGetResponse;
+use WishboxCdekSDK2\Model\Response\Webhooks\WebhooksPostResponse;
 use WishboxCdekSDK2\Model\ResponseData;
 
 /**
@@ -133,8 +137,9 @@ final class CdekClientV2
 	 *
 	 * @return TariffListPostResponse
 	 *
-	 * @since 1.0.0
+	 * @throws Exception
 	 *
+	 * @since 1.0.0
 	 */
 	public function calculateTariffList(TariffListPostRequest $request): TariffListPostResponse
 	{
@@ -444,9 +449,7 @@ final class CdekClientV2
 		$response = $this->getResponse(
 			Constants::ORDERS_URL,
 			OrdersPostResponse::class,
-			$requestData,
-			'POST',
-			true
+			$requestData
 		);
 
 		return $response;
@@ -485,7 +488,7 @@ final class CdekClientV2
 	 */
 	public function deleteOrder(string $uuid): OrdersDeleteResponse
 	{
-		/** @var OrdersPatchResponse $response */
+		/** @var OrdersDeleteResponse $response */
 		$response = $this->getResponse(
 			Constants::ORDERS_URL . '/' . $uuid,
 			OrdersDeleteResponse::class,
@@ -673,5 +676,51 @@ final class CdekClientV2
 		}
 
 		return $responseArray;
+	}
+
+	/**
+	 * Получение списка вебхуков.
+	 *
+	 * @param   WebhooksGetRequest  $request  Request
+	 *
+	 * @return WebhooksGetResponse[]
+	 *
+	 * @since 1.0.0
+	 */
+	public function getWebhooks(WebhooksGetRequest $request): array
+	{
+		/** @var CityResponse[] $responseArray */
+		$responseArray = $this->getResponseArray(
+			Constants::WEBHOOKS_URL,
+			CityResponse::class,
+			$request->prepareRequest(),
+			'GET',
+			true
+		);
+
+		return $responseArray;
+	}
+
+	/**
+	 * Создание Вебхука
+	 *
+	 * @param   WebhooksPostRequest  $request  Параметры заказа
+	 *
+	 * @return WebhooksPostResponse
+	 *
+	 * @since 1.0.0
+	 */
+	public function createWebhook(WebhooksPostRequest $request): WebhooksPostResponse
+	{
+		$requestData = $request->prepareRequest();
+
+		/** @var WebhooksPostResponse $response */
+		$response = $this->getResponse(
+			Constants::WEBHOOKS_URL,
+			WebhooksPostResponse::class,
+			$requestData
+		);
+
+		return $response;
 	}
 }

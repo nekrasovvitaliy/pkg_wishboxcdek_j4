@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model;
@@ -58,30 +58,27 @@ class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel
 
 		$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterBeforeUpdateAll', $eventBeforeUpdateAll);
 
-		foreach ($cdekNumbers as $componentName => $componentCdekNumbers)
+		foreach ($cdekNumbers as $cdekNumber)
 		{
-			foreach ($componentCdekNumbers as $cdekNumber)
+			try
 			{
-				try
-				{
-					$orderCdekStatuses = $this->getOrderCdekStatuses($cdekNumber);
+				$orderCdekStatuses = $this->getOrderCdekStatuses($cdekNumber);
 
-					/** @var UpdateOrderStatusEvent $event */
-					$event = AbstractEvent::create(
-						'onWishboxCdekOrderStatusUpdaterUpdateOrderStatus',
-						[
-							'subject'           => $this,
-							'cdekNumber'        => &$cdekNumber,
-							'orderCdekStatuses' => $orderCdekStatuses,
-							'eventClass'        => UpdateOrderStatusEvent::class
-						]
-					);
+				/** @var UpdateOrderStatusEvent $event */
+				$event = AbstractEvent::create(
+					'onWishboxCdekOrderStatusUpdaterUpdateOrderStatus',
+					[
+						'subject'           => $this,
+						'cdekNumber'        => &$cdekNumber,
+						'orderCdekStatuses' => $orderCdekStatuses,
+						'eventClass'        => UpdateOrderStatusEvent::class
+					]
+				);
 
-					$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterUpdateOrderStatus', $event);
-				}
-				catch (ApiException|ClientException $e)
-				{
-				}
+				$app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterUpdateOrderStatus', $event);
+			}
+			catch (ApiException|ClientException $e)
+			{
 			}
 		}
 
@@ -121,7 +118,7 @@ class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel
 
 		$eventResult = $app->getDispatcher()->dispatch('onWishboxCdekOrderStatusUpdaterGetCdekNumbers', $event);
 
-		return $eventResult->getResult();
+		return $eventResult->getCdekNumbers();
 	}
 
 	/**

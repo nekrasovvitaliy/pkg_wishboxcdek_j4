@@ -1,12 +1,11 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\Controller;
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Router\Route;
@@ -37,15 +36,12 @@ class CitiesController extends AdminController
 	 */
 	public function update(): void
 	{
-		$app = Factory::getApplication();
-
 		/** @var CitiesupdaterModel $citiesUpdaterModel */
-		$citiesUpdaterModel = $app->bootComponent('com_wishboxcdek')
-			->createModel(
-				'updater',
-				'Site\\Model\\Cities',
-				['ignore_request' => true]
-			);
+		$citiesUpdaterModel = $this->factory->createModel(
+			'updater',
+			'Site\\Model\\Cities',
+			['ignore_request' => true]
+		);
 
 		try
 		{

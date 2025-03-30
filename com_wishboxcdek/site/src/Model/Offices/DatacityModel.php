@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
@@ -9,7 +9,6 @@ use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
 use Joomla\Component\Wishboxcdek\Site\Entity\DimensionsEntity;
-use Joomla\Database\DatabaseDriver;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -27,7 +26,8 @@ class DatacityModel extends DataModel implements DataInterface
 	 *
 	 * @param   integer       $cityCode    City code
 	 * @param   boolean|null  $allowedCod  Allowed cod
-	 * @param   array|null    $packages    Min dimension
+	 * @param   string        $type        Type
+	 * @param   array|null    $packages    Packages
 	 *
 	 * @return    array
 	 *
@@ -35,7 +35,7 @@ class DatacityModel extends DataModel implements DataInterface
 	 *
 	 * @since 1.0.0
 	 */
-	public function getOffices(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array
+	public function getOffices(int $cityCode, ?bool $allowedCod = null, string $type = 'ALL', ?array $packages = null): array
 	{
 		if ($cityCode <= 0)
 		{
@@ -43,9 +43,9 @@ class DatacityModel extends DataModel implements DataInterface
 		}
 
 		$app = Factory::getApplication();
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 
-		$query = $db->getQuery(true)
+		$query = $db->createQuery()
 			->select(
 				[
 					'o.id AS id',
@@ -70,6 +70,16 @@ class DatacityModel extends DataModel implements DataInterface
 			->from('#__wishboxcdek_offices AS o')
 			->where('o.city_code = ' . $cityCode);
 
+		if ($allowedCod)
+		{
+			$query->where('o.allowed_cod = 1');
+		}
+
+		if ($type != 'ALL')
+		{
+			$query->where('o.type = ' . $type);
+		}
+
 		if ($packages && is_array($packages) && count($packages))
 		{
 			$volumeWeight = $this->getVolumeWeight($packages);
@@ -82,9 +92,7 @@ class DatacityModel extends DataModel implements DataInterface
 
 		if (count($offices))
 		{
-			$wishboxcdekcityTable = $app->bootComponent('com_wishboxcdek')
-				->getMVCFactory()
-				->createTable('city', 'Administrator');
+			$wishboxcdekcityTable = $this->getTable('city', 'Administrator');
 
 			$wishboxcdekcityTable->load(['code' => $cityCode]);
 
@@ -116,8 +124,6 @@ class DatacityModel extends DataModel implements DataInterface
 					if (is_array($offices[$k]->dimensions) && count($offices[$k]->dimensions))
 					{
 						$officeDimensions = DimensionsEntity::arrayFromAccos($offices[$k]->dimensions);
-
-
 
 						if (!DimensionsEntity::arrayInArray($packagesDimensions, $officeDimensions))
 						{

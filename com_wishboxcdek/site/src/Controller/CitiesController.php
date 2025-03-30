@@ -6,6 +6,7 @@
 namespace Joomla\Component\Wishboxcdek\Site\Controller;
 
 use Exception;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\Component\Wishboxcdek\Site\Model\CitiesModel;
@@ -24,78 +25,83 @@ class CitiesController extends BaseController
 	/**
 	 * @return void
 	 *
+	 * @throws Exception
+	 *
 	 * @since 1.0.0
 	 */
 	public function autocomplete(): void
 	{
+		$app = Factory::getApplication();
+
 		try
 		{
-			$nameStartswith = $this->app->input->getVar('name_startsWith', '');
+			$nameStartswith = $app->input->getVar('name_startsWith', '');
 			$nameStartswith = trim($nameStartswith);
 
 			/** @var CitiesModel $citiesModel */
-			$citiesModel = $this->app->bootComponent('com_wishboxcdek')
-				->createModel(
-					'cities',
-					'Site\\Model',
-					['ignore_request' => true]
-				);
+			$citiesModel = $this->factory->createModel(
+				'cities',
+				'Site\\Model',
+				['ignore_request' => true]
+			);
 
 			$data = $citiesModel->getCitiesDataForAutocomplete($nameStartswith);
 
-			$this->app->mimeType = 'application/json';
-			$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
-			$this->app->sendHeaders();
+			$app->mimeType = 'application/json';
+			$app->setHeader('Content-Type', $app->mimeType . '; charset=' . $app->charSet);
+			$app->sendHeaders();
 			echo new JsonResponse($data);
-			$this->app->close();
+			$app->close();
 		}
 		catch (Exception $e)
 		{
-			$this->app->mimeType = 'application/json';
-			$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
-			$this->app->sendHeaders();
+			$app->mimeType = 'application/json';
+			$app->setHeader('Content-Type', $app->mimeType . '; charset=' . $app->charSet);
+			$app->sendHeaders();
 			echo new JsonResponse($e);
-			$this->app->close();
+			$app->close();
 		}
 	}
 
 	/**
 	 * @return void
 	 *
-	 * @since 1.0.0
+	 * @throws Exception
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
 	public function searchAjax(): void
 	{
+		$app = Factory::getApplication();
+
 		try
 		{
-			$like = $this->app->input->getVar('like', '');
+			$like = $app->input->getVar('like', '');
 			$like = trim($like);
 
 			/** @var CitiesModel $citiesModel */
-			$citiesModel = $this->app->bootComponent('com_wishboxcdek')
-				->createModel(
-					'cities',
-					'Site\\Model',
-					['ignore_request' => true]
-				);
+			$citiesModel = $this->factory->createModel(
+				'cities',
+				'Site\\Model',
+				['ignore_request' => true]
+			);
 
 			$data = $citiesModel->getCitiesDataForAjaxSearch($like);
 
-			$this->app->mimeType = 'application/json';
-			$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
-			$this->app->sendHeaders();
+			$app->mimeType = 'application/json';
+			$app->setHeader('Content-Type', $app->mimeType . '; charset=' . $app->charSet);
+			$app->sendHeaders();
 			echo json_encode($data);
-			$this->app->close();
+			$app->close();
 		}
 		catch (Exception $e)
 		{
-			$this->app->mimeType = 'application/json';
-			$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
-			$this->app->sendHeaders();
+			$app->mimeType = 'application/json';
+			$app->setHeader('Content-Type', $app->mimeType . '; charset=' . $app->charSet);
+			$app->sendHeaders();
 			echo new JsonResponse($e);
-			$this->app->close();
+			$app->close();
 		}
 	}
 }

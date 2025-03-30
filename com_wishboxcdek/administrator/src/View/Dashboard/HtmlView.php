@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Administrator\View\Dashboard;
@@ -16,6 +16,7 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Wishboxcdek\Administrator\Helper\WishboxcdekHelper;
+use Joomla\Component\Wishboxcdek\Administrator\Model\DashboardModel;
 
 /**
  * View class for a dashboard.
@@ -42,8 +43,11 @@ class HtmlView extends BaseHtmlView
 		$this->addToolbar();
 		$this->sidebar = Sidebar::render();
 
-		$citiesCount = $this->get('CitiesCount');
-		$officesCount = $this->get('OfficesCount');
+		/** @var DashboardModel $model */
+		$model = $this->getModel();
+
+		$citiesCount = $model->getCitiesCount();
+		$officesCount = $model->getOfficesCount();
 
 		ToolbarHelper::custom(
 			'cities.update',

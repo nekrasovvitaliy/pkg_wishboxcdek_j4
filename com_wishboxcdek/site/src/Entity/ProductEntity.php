@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Entity;
@@ -48,7 +48,7 @@ class ProductEntity
 	public float $cost;
 
 	/**
-	 * @var integer $weight Weight
+	 * @var integer $weight Weight in grams
 	 *
 	 * @since 1.0.0
 	 */
@@ -67,7 +67,7 @@ class ProductEntity
 	 * @param   float    $price     Price
 	 * @param   float    $payment   Payment
 	 * @param   float    $cost      Cost
-	 * @param   integer  $weight    Weight
+	 * @param   integer  $weight    Weight in grams
 	 * @param   integer  $quantity  Quantity
 	 *
 	 * @since 1.0.0

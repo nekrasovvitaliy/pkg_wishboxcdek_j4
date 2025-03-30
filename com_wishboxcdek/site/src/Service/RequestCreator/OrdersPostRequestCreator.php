@@ -1,20 +1,17 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrsov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrsov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Service\RequestCreator;
 
 use Exception;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\Contact\PhoneRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ContactRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\MoneyRequest;
-use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\PackageRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\SellerRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPost\ToLocationRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPostRequest;
@@ -86,8 +83,24 @@ class OrdersPostRequestCreator
 			->setType(1)
 			->setComment($orderComment)
 			->setTariffCode($tariffCode)
-			->setDeliveryRecipientCost((new MoneyRequest)->setValue($deliveryRecipientCost['value']))
-			->setShipmentPoint($shipmentPoint);
+			->setDeliveryRecipientCost((new MoneyRequest)->setValue($deliveryRecipientCost['value']));
+
+		$senderName = $this->delegate->getSenderName();
+		$senderPhoneNumber = $this->delegate->getSenderPhoneNumber();
+		$senderPhoneAdditional = $this->delegate->getSenderPhoneAdditional();
+		$senderPhones = ['number' => $senderPhoneNumber];
+
+		if (!empty($senderPhoneAdditional))
+		{
+			$senderPhones['additional'] = $senderPhoneAdditional;
+		}
+
+		$sender = (new ContactRequest)
+			->setName($senderName)
+			->setPhones($senderPhones);
+		$ordersPostRequest->setSender($sender);
+
+		$ordersPostRequest->setShipmentPoint($shipmentPoint);
 
 		if (WishboxcdekHelper::isTariffToPoint($tariffCode))
 		{

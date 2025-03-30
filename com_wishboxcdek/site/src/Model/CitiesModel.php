@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model;
@@ -8,6 +8,7 @@ namespace Joomla\Component\Wishboxcdek\Site\Model;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Database\DatabaseDriver;
 use stdClass;
 
@@ -18,7 +19,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
+class CitiesModel extends BaseDatabaseModel
 {
 	/**
 	 * Constructor
@@ -33,7 +34,7 @@ class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
 	 */
 	public function getCitiesDataForAutocomplete(string $nameStartsWith): array
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 
 		$data = [];
 
@@ -49,7 +50,7 @@ class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
 				throw new Exception('SET SQL_BIG_SELECTS=1 FALSE', 500);
 			}
 
-			$query = $db->getQuery(true)
+			$query = $db->createQuery()
 				->select(
 					[
 						'city.code as id',
@@ -121,7 +122,7 @@ class CitiesModel extends \Joomla\CMS\MVC\Model\BaseModel
 				throw new Exception('SET SQL_BIG_SELECTS=1 FALSE', 500);
 			}
 
-			$query = $db->getQuery(true)
+			$query = $db->createQuery()
 				->select('city.code')
 				->select('city.cityname')
 				->select('city.sub_region')

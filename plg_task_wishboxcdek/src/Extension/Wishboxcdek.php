@@ -1,14 +1,13 @@
 <?php
 /**
- * @package     Joomla.Plugin
- * @subpackage  Task.Wishboxretailcrm
- * @copyright   (C) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (C) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Task\Wishboxcdek\Extension;
 
 use Error;
 use Exception;
+use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
 use Joomla\Component\Wishboxcdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
@@ -30,6 +29,7 @@ defined('_JEXEC') or die;
  */
 final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 {
+	use MVCFactoryAwareTrait;
 	use TaskPluginTrait;
 
 	/**
@@ -48,7 +48,13 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 			'langConstPrefix' => 'PLG_TASK_WISHBOXCDEK_UPDATE_CITIES',
 			'form'            => 'update_cities',
 			'method'          => 'updateCities'
-		]
+		],
+		'plg_task_wishboxcdek_update_webhooks' =>
+			[
+				'langConstPrefix' => 'PLG_TASK_WISHBOXCDEK_UPDATE_WEBHOOKS',
+				'form'            => 'update_webhooks',
+				'method'          => 'updateWebhooks'
+			]
 	];
 
 	/**
@@ -102,7 +108,7 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		try
 		{
 			/** @var OfficesUpdaterModel $officesupdaterModel */
-			$officesupdaterModel = $this->app->bootComponent('com_wishboxcdek')
+			$officesupdaterModel = $this->getMVCFactory()
 				->createModel(
 					'updater',
 					'Site\\Model\\Offices',
@@ -148,7 +154,7 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 			$limit = $params->limit;
 
 			/** @var CitiesUpdaterModel $citiesupdaterModel */
-			$citiesupdaterModel = $this->app->bootComponent('com_wishboxcdek')
+			$citiesupdaterModel = $this->getMVCFactory()
 				->createModel(
 					'updater',
 					'Site\\Model\\Cities',

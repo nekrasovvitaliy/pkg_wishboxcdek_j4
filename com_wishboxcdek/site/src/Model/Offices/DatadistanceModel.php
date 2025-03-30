@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
@@ -26,15 +26,16 @@ class DatadistanceModel extends DataModel implements DataInterface
 	 *
 	 * @param	integer       $cityCode    City code
 	 * @param	boolean|null  $allowedCod  Allowed cod
+	 * @param   string        $type        Type
 	 * @param	array|null    $packages    Packages
 	 *
 	 * @return    array     List of offices
 	 *
 	 * @since 1.0.0
 	 */
-	public function getOffices(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array
+	public function getOffices(int $cityCode, ?bool $allowedCod = null, string $type = 'ALL', ?array $packages = null): array
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 
 		if ($cityCode <= 0)
 		{
@@ -51,7 +52,7 @@ class DatadistanceModel extends DataModel implements DataInterface
 			// Получаем расстояние между самыми дальними офисами
 			$distance = $this->getDistance($cityCode);
 
-			$query = $db->getQuery(true)
+			$query = $db->createQuery()
 				->select(
 					[
 						'o.id AS id',
@@ -115,9 +116,9 @@ class DatadistanceModel extends DataModel implements DataInterface
 			throw new InvalidArgumentException('city_code must be greater than zero', 500);
 		}
 
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 
-		$query = $db->getQuery(true)
+		$query = $db->createQuery()
 			->select(
 				[
 					'CAST(AVG(location_latitude) AS DECIMAL(12,10)) AS location_latitude',
@@ -145,7 +146,7 @@ class DatadistanceModel extends DataModel implements DataInterface
 	{
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
 
-		$query = $db->getQuery(true)
+		$query = $db->createQuery()
 			->select('dist(MIN(location_longitude), MIN(location_latitude), MAX(location_longitude), MAX(location_latitude)) / 2')
 			->from('#__wishboxcdek_offices')
 			->where('city_code = ' . $cityCode);

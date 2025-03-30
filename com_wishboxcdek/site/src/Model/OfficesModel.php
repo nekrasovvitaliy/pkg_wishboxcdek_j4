@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Model;
@@ -43,12 +43,10 @@ class OfficesModel extends BaseDatabaseModel
 	{
 		parent::__construct($config, $factory);
 
-		$app = Factory::getApplication();
-
 		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
 		$officeListType = $componentParams->get('office_list_type', 'city');
 
-		$this->dataModel = $app->bootComponent('com_wishboxcdek')
+		$this->dataModel = $this->getMVCFactory()
 			->createModel(
 				'data' . $officeListType,
 				'Site\\Model\\Offices'
@@ -81,6 +79,8 @@ class OfficesModel extends BaseDatabaseModel
 
 		$shippingTariffData = $app->getInput()->getVar('shipping_tariff');
 		$this->setState('shipping_tariff_data', $shippingTariffData);
+
+		$this->setState('filter.type', 'ALL');
 
 		$packagesData = $app->getInput()->getVar('packages_data');
 		$this->setState('filter.packages_data', $packagesData);
@@ -188,9 +188,10 @@ class OfficesModel extends BaseDatabaseModel
 		}
 
 		$allowedCod = $this->getState('filter.allowed_cod');
+		$type = $this->getState('filter.type');
 		$packagesData = $this->getState('filter.packages_data');
 		$packages = json_decode($packagesData);
 
-		return $this->dataModel->getOffices($cityCode, $allowedCod, $packages);
+		return $this->dataModel->getOffices($cityCode, $allowedCod, $type, $packages);
 	}
 }

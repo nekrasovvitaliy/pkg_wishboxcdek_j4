@@ -9,9 +9,12 @@
     <namespace path="src">Joomla\Component\Wishboxcdek</namespace>
     <scriptfile>script.php</scriptfile>
     <files folder="site">
-        <folder>language</folder>
         <folder>src</folder>
     </files>
+    <languages folder="site">
+        <language tag="en-GB">language/en-GB/com_wishboxcdek.ini</language>
+        <language tag="ru-RU">language/ru-RU/com_wishboxcdek.ini</language>
+    </languages>
     <layouts destination="components/wishboxcdek" folder="layouts">
         <folder>changeoffice</folder>
         <folder>field</folder>
@@ -35,17 +38,27 @@
         <menu img="class:bookmark">com_wishboxcdek</menu>
         <submenu>
 
-		</submenu>
+        </submenu>
         <files folder="administrator">
             <filename>access.xml</filename>
             <filename>config.xml</filename>
-            <folder>language</folder>
             <folder>services</folder>
             <folder>sql</folder>
             <folder>src</folder>
             <folder>tmpl</folder>
         </files>
+        <languages folder="administrator">
+            <language tag="en-GB">language/en-GB/com_wishboxcdek.ini</language>
+            <language tag="en-GB">language/en-GB/com_wishboxcdek.sys.ini</language>
+            <language tag="ru-RU">language/ru-RU/com_wishboxcdek.ini</language>
+            <language tag="ru-RU">language/ru-RU/com_wishboxcdek.sys.ini</language>
+        </languages>
     </administration>
+    <api>
+        <files folder="api">
+            <folder>src</folder>
+        </files>
+    </api>
     <config>
         <fields name="params">
             <fieldset name="component">
@@ -54,6 +67,6 @@
         </fields>
     </config>
     <dashboards>
-		<dashboard title="COM_WISHBOXCDEK_DASHBOARD_TITLE" icon="icon-file-alt">content</dashboard>
-	</dashboards>
+        <dashboard title="COM_WISHBOXCDEK_DASHBOARD_TITLE" icon="icon-file-alt">content</dashboard>
+    </dashboards>
 </extension>
