@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\Wishboxcdek\Site\Service\RequestCreator;
@@ -9,7 +9,6 @@ use Exception;
 use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
 use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
-use WishboxCdekSDK2\Exception\Api\RequestError\EntityNotFoundImNumberException;
 use WishboxCdekSDK2\Exception\Api\RequestErrorException;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\Contact\PhoneRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatch\ContactRequest;
@@ -76,7 +75,7 @@ class OrdersPatchRequestCreator
 	protected function setOrderData(OrdersPatchRequest $ordersPatchRequest): void
 	{
 		$apiClient = $this->getApiClient();
-		$orderNumber            = $this->delegate->getOrderNumber();
+		$orderNumber = $this->delegate->getOrderNumber();
 
 		try
 		{
@@ -88,7 +87,6 @@ class OrdersPatchRequestCreator
 			$data = json_decode($e->getResponseData()->getBody());
 			$uuid = $data->entity->uuid;
 		}
-
 
 		$ordersPatchRequest->setUuid($uuid);
 

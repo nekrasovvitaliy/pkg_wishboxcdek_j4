@@ -58,7 +58,7 @@ class BaseTable extends Table
 		$app = Factory::getApplication();
 		$user = $app->getIdentity();
 
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$task = $input->getString('task', '');
 
 		if ($src['id'] == 0 && empty($array['created_by']))

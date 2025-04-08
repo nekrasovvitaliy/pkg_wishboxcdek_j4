@@ -1,17 +1,15 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Wishboxcdek\Tariff\Extension;
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Wishboxcdek\Administrator\Table\TariffTable;
 use Joomla\Database\DatabaseAwareTrait;
-use Joomla\Event\DispatcherInterface;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPostResponse;
@@ -27,19 +25,6 @@ class Tariff extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use DatabaseAwareTrait;
-
-	/**
-	 * @param   DispatcherInterface  $subject  The object to observe
-	 * @param   array                $config   An optional associative array of configuration settings.
-	 *                                           Recognized key values include 'name', 'group', 'params', 'language'
-	 *                                           (this list is not meant to be comprehensive).
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct(&$subject, $config = [])
-	{
-		parent::__construct($subject, $config);
-	}
 
 	/**
 	 * @return string[]
@@ -71,7 +56,7 @@ class Tariff extends CMSPlugin implements SubscriberInterface
 		/** @var TariffListPostResponse $response */
 		$response = $event->getArgument('response');
 
-		$app = Factory::getApplication();
+		$app = $this->getApplication();
 
 		$tariffCodeResponses = $response->getTariffCodes();
 

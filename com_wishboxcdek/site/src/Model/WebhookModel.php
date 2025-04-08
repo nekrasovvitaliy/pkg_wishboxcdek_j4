@@ -8,6 +8,7 @@ namespace Joomla\Component\Wishboxcdek\Site\Model;
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
+use Joomla\Component\Wishboxcdek\Site\Event\Model\Webhook\HandleOrderStatusEvent;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -27,19 +28,22 @@ class WebhookModel extends \Joomla\CMS\MVC\Model\BaseModel
 	 *
 	 * @since 1.0.0
 	 */
-	public function orderStatus(array $data): void
+	public function handleOrderStatus(array $data): void
 	{
 		$app = Factory::getApplication();
 
-		/** @var OrderStatusEvent $event */
+		// Trigger `onWishboxCdekWebhookHandleOrderStatus` event
+
+		/** @var HandleOrderStatusEvent $event */
 		$event = AbstractEvent::create(
-			'onWishboxCdekWebhookOrderStatus',
+			'onWishboxCdekWebhookHandleOrderStatus',
 			[
-				'subject'   => $this,
-				'data'      => $data
+				'subject'       => $this,
+				'data'          => $data,
+				'eventClass'    => HandleOrderStatusEvent::class
 			]
 		);
 
-		$app->getDispatcher()->dispatch('onWishboxCdekWebhookOrderStatus', $event);
+		$app->getDispatcher()->dispatch($event->getName(), $event);
 	}
 }

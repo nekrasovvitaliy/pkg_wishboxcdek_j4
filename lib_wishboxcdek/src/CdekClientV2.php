@@ -25,6 +25,7 @@ use WishboxCdekSDK2\Model\Request\DeliveryPoints\DeliveryPointsGetRequest;
 use WishboxCdekSDK2\Model\Request\Location\CitiesGetRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPatchRequest;
 use WishboxCdekSDK2\Model\Request\Orders\OrdersPostRequest;
+use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksDelRequest;
 use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksGetRequest;
 use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksPostRequest;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPostResponse;
@@ -251,9 +252,10 @@ final class CdekClientV2
 				}
 
 				$response = $this->http->get($uri, $headers);
+
 				break;
 			case 'DELETE':
-				$response = $this->http->delete($url, $headers, null, $params);
+				$response = $this->http->delete($uri, $headers);
 				break;
 			case 'POST':
 				$response = $this->http->post($url, json_encode($params), $headers);
@@ -692,7 +694,7 @@ final class CdekClientV2
 		/** @var CityResponse[] $responseArray */
 		$responseArray = $this->getResponseArray(
 			Constants::WEBHOOKS_URL,
-			CityResponse::class,
+			WebhooksGetResponse::class,
 			$request->prepareRequest(),
 			'GET',
 			true
@@ -719,6 +721,30 @@ final class CdekClientV2
 			Constants::WEBHOOKS_URL,
 			WebhooksPostResponse::class,
 			$requestData
+		);
+
+		return $response;
+	}
+
+	/**
+	 * Удаление Вебхука
+	 *
+	 * @param   WebhooksPostRequest  $request  Параметры заказа
+	 *
+	 * @return WebhooksPostResponse
+	 *
+	 * @since 1.0.0
+	 */
+	public function deleteWebhook(WebhooksDelRequest $request): WebhooksPostResponse
+	{
+		$requestData = $request->prepareRequest();
+
+		/** @var WebhooksPostResponse $response */
+		$response = $this->getResponse(
+			Constants::WEBHOOKS_URL . '/' . $request->getUuid(),
+			WebhooksPostResponse::class,
+			$requestData,
+			'DELETE'
 		);
 
 		return $response;

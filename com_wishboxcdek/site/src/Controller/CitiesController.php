@@ -35,7 +35,7 @@ class CitiesController extends BaseController
 
 		try
 		{
-			$nameStartswith = $app->input->getVar('name_startsWith', '');
+			$nameStartswith = $this->input->getVar('name_startsWith', '');
 			$nameStartswith = trim($nameStartswith);
 
 			/** @var CitiesModel $citiesModel */
@@ -77,7 +77,7 @@ class CitiesController extends BaseController
 
 		try
 		{
-			$like = $app->input->getVar('like', '');
+			$like = $this->input->getVar('like', '');
 			$like = trim($like);
 
 			/** @var CitiesModel $citiesModel */

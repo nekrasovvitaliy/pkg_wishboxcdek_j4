@@ -76,4 +76,25 @@
 				description="COM_WISHBOXCDEK_FIELD_SECURE_TEST_DESC"
 		/>
 	</fieldset>
+	<fieldset name="webhooks" label="COM_WISHBOXCDEK_FIELDSET_WEBHOOKS_LABEL">
+		<field
+				name="user_id"
+				type="user"
+				label="COM_WISHBOXCDEK_FIELD_USER_LABEL"
+		/>
+		<field
+				name="ip_addresses"
+				type="subform"
+				label="COM_WISHBOXCDEK_FIELD_IP_ADDRESSES_LABEL"
+				multiple="true"
+		>
+			<form>
+				<field
+						name="ip_address"
+						type="text"
+						label="COM_WISHBOXCDEK_FIELD_IP_ADDRESSE_LABEL"
+				/>
+			</form>
+		</field>
+	</fieldset>
 </config>

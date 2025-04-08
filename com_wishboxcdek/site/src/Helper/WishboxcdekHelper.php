@@ -57,7 +57,7 @@ abstract class WishboxcdekHelper
 
 		list(, $deliveryTariffMode) = explode('-', $tariffModeTable->title);
 
-		if ($deliveryTariffMode == 'склад')
+		if (in_array($deliveryTariffMode, ['склад', 'постаат', 'постамат']))
 		{
 			return true;
 		}

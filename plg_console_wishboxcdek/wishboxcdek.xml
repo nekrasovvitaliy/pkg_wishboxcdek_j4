@@ -10,7 +10,6 @@
     <namespace path="src">Joomla\Plugin\Console\Wishboxcdek</namespace>
     <scriptfile>script.php</scriptfile>
     <files>
-        <folder>language</folder>
         <folder plugin="wishboxcdek">services</folder>
         <folder>src</folder>
     </files>

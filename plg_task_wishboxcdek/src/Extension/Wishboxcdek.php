@@ -7,6 +7,7 @@ namespace Joomla\Plugin\Task\Wishboxcdek\Extension;
 
 use Error;
 use Exception;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
@@ -14,7 +15,7 @@ use Joomla\Component\Wishboxcdek\Site\Model\Offices\UpdaterModel as OfficesUpdat
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
 use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
-use Joomla\Event\DispatcherInterface;
+use Joomla\Component\Wishboxcdek\Site\Model\WebhooksModel;
 use Joomla\Event\SubscriberInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -79,19 +80,6 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	}
 
 	/**
-	 * Constructor.
-	 *
-	 * @param   DispatcherInterface  $dispatcher  The dispatcher
-	 * @param   array                $config      An optional associative array of configuration settings
-	 *
-	 * @since   1.0.0
-	 */
-	public function __construct(DispatcherInterface $dispatcher, array $config)
-	{
-		parent::__construct($dispatcher, $config);
-	}
-
-	/**
 	 * @param   ExecuteTaskEvent  $event Event
 	 *
 	 * @return integer
@@ -138,6 +126,7 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	 * @throws Exception
 	 *
 	 * @since 1.0.0
+	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function updateCities(ExecuteTaskEvent $event): int
@@ -166,6 +155,44 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 				// Throw new Exception
 				throw new Exception('update return false', 500);
 			}
+		}
+		catch (Exception | Error $e)
+		{
+			$this->logTask((string) $e, 'error');
+
+			return Status::KNOCKOUT;
+		}
+
+		return Status::OK;
+	}
+
+	/**
+	 * @param   ExecuteTaskEvent  $event  Event
+	 *
+	 * @return integer
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function updateWebhooks(ExecuteTaskEvent $event): int
+	{
+		$app = Factory::getApplication();
+
+		try
+		{
+			/** @var WebhooksModel $webhooksModel */
+			$webhooksModel = $app->bootComponent('com_wishboxcdek')
+				->getMVCFactory()
+				->createModel(
+					'webhooks',
+					'Site',
+					['ignore_request' => true]
+				);
+
+			$webhooksModel->update();
 		}
 		catch (Exception | Error $e)
 		{

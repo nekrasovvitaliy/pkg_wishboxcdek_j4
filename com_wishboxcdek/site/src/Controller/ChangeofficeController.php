@@ -1,17 +1,15 @@
 <?php
 /**
- * @copyright  2013-2024 Nekrasov Vitaliy
- * @license    GNU General Public License version 2 or later
+ * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license     GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Controller;
 
 use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
-use Joomla\Component\Jshopping\Site\Lib\JSFactory;
-use Joomla\Component\Jshopping\Site\Model\Wishbox\Cdek\OfficesModel;
-use Wishbox\JShopping\Controller\Base;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -26,7 +24,7 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class ChangeofficeController extends Base
+class ChangeofficeController extends BaseController
 {
 	/**
 	 * Method outputs JSON with offices on a map.
@@ -45,14 +43,14 @@ class ChangeofficeController extends Base
 
 		try
 		{
-			$cityCode = $app->input->getInt('city_code', 0);
+			$cityCode = $this->input->getInt('city_code', 0);
 
 			if (!$cityCode)
 			{
 				throw new InvalidArgumentException('city_code param must be greater than zero', 500);
 			}
 
-			$shPrMethodId = $app->input->getInt('shipping_method_id', 0);
+			$shPrMethodId = $this->input->getInt('shipping_method_id', 0);
 
 			if ($shPrMethodId <= 0)
 			{

@@ -8,9 +8,7 @@ namespace Joomla\Component\Wishboxcdek\Api\Controller;
 use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\ApiController;
-use Joomla\CMS\User\UserFactoryAwareInterface;
-use Joomla\CMS\User\UserFactoryAwareTrait;
-use Joomla\Component\Wishboxcdek\Site\Model\WebhooksModel;
+use Joomla\Component\Wishboxcdek\Site\Model\WebhookModel;
 use RuntimeException;
 use function defined;
 
@@ -21,10 +19,8 @@ defined('_JEXEC') or die;
 /**
  * @since  1.0.0
  */
-class WebhookController extends ApiController implements UserFactoryAwareInterface
+class WebhookController extends ApiController
 {
-	use UserFactoryAwareTrait;
-
 	/**
 	 * The default view for the display method.
 	 *
@@ -32,7 +28,7 @@ class WebhookController extends ApiController implements UserFactoryAwareInterfa
 	 *
 	 * @since  1.0
 	 */
-	protected $default_view = 'contacts';
+	protected $default_view = 'webhook'; // phpcs:ignore
 
 	/**
 	 * @return  static  A \JControllerLegacy object to support chaining.
@@ -40,11 +36,13 @@ class WebhookController extends ApiController implements UserFactoryAwareInterfa
 	 * @throws Exception
 	 *
 	 * @since   1.0.0
+	 *
+	 * @noinspection PhpUnused
 	 */
-	public function handle()
+	public function handleOrderStatus(): static
 	{
-		/** @var  WebhooksModel $model */
-		$model = $this->getModel('webhooks', 'Site');
+		/** @var  WebhookModel $model */
+		$model = $this->getModel('webhook', 'Site');
 
 		if (!$model)
 		{
@@ -52,7 +50,7 @@ class WebhookController extends ApiController implements UserFactoryAwareInterfa
 		}
 
 		$data = $this->input->get('data', json_decode($this->input->json->getRaw(), true), 'array');
-		$model->orderStatus($data);
+		$model->handleOrderStatus($data);
 
 		return $this;
 	}

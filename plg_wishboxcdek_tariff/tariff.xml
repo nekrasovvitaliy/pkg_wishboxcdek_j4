@@ -10,7 +10,6 @@
     <namespace path="src">Joomla\Plugin\Wishboxcdek\Tariff</namespace>
     <scriptfile>script.php</scriptfile>
     <files>
-        <folder>language</folder>
         <folder plugin="tariff">services</folder>
         <folder>src</folder>
     </files>

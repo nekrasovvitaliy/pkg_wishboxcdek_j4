@@ -8,6 +8,7 @@ namespace Joomla\Component\Wishboxcdek\Site\Model;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use WishboxCdekSDK2\CdekClientV2;
+use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksDelRequest;
 use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksGetRequest;
 use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksPostRequest;
 
@@ -30,19 +31,51 @@ class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel
 	public function update(): void
 	{
 		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
-		$gerWebhooksRequest = new WebhooksGetRequest;
+		$getWebhooksRequest = new WebhooksGetRequest;
 		$apiClient = new CdekClientV2(
 			$componentParams->get('account', ''),
 			$componentParams->get('secure', ''),
 			60.0
 		);
-		$getWebhookResponses = $apiClient->getWebhooks($gerWebhooksRequest);
+		$webhookResponses = $apiClient->getWebhooks($getWebhooksRequest);
 
 		$flag = false;
 
-		$webhookUrl = '';
+		$webhookUrl = 'https://radical-mart.ru/test.php';
 
-		foreach ($getWebhookResponses as $webhookResponse)
+		foreach ($webhookResponses as $webhookResponse)
+		{
+			//$uuid = $webhookResponse->getUuid();
+
+			//$deleteWebhooksRequest = (new WebhooksDelRequest)->setUuid($uuid);
+
+			//$apiClient->deleteWebhook($deleteWebhooksRequest);
+
+			$type = $webhookResponse->getType();
+			$url = $webhookResponse->getUrl();
+
+			if ($type == 'ORDER_MODIFIED' && $url == $webhookUrl)
+			{
+				$flag = true;
+
+				break;
+			}
+		}
+
+		if (!$flag)
+		{
+			$postWebhooksRequest = (new WebhooksPostRequest)
+				->setType('ORDER_MODIFIED')
+				->setUrl($webhookUrl);
+			$postWebhooksResponse = $apiClient->createWebhook($postWebhooksRequest);
+			$postWebhooksResponse2 = $postWebhooksResponse;
+		}
+
+		$flag = false;
+
+		$webhookUrl = 'https://radical-mart.ru/test.php';
+
+		foreach ($webhookResponses as $webhookResponse)
 		{
 			$type = $webhookResponse->getType();
 			$url = $webhookResponse->getUrl();
@@ -50,6 +83,8 @@ class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel
 			if ($type == 'ORDER_STATUS' && $url == $webhookUrl)
 			{
 				$flag = true;
+
+				break;
 			}
 		}
 
@@ -58,7 +93,8 @@ class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel
 			$postWebhooksRequest = (new WebhooksPostRequest)
 				->setType('ORDER_STATUS')
 				->setUrl($webhookUrl);
-			$apiClient->createWebhook($postWebhooksRequest);
+			$postWebhooksResponse = $apiClient->createWebhook($postWebhooksRequest);
+			$postWebhooksResponse2 = $postWebhooksResponse;
 		}
 	}
 }

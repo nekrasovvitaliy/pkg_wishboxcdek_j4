@@ -10,7 +10,6 @@ use Joomla\CMS\Event\Application\BeforeApiRouteEvent;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Database\DatabaseAwareTrait;
-use Joomla\Event\DispatcherInterface;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Router\Route;
 
@@ -25,21 +24,6 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use DatabaseAwareTrait;
-
-	/**
-	 * @param   DispatcherInterface  $subject  The object to observe
-	 * @param   array                $config   An optional associative array of configuration settings.
-	 *                                           Recognized key values include 'name', 'group', 'params', 'language'
-	 *                                           (this list is not meant to be comprehensive).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @noinspection PhpMissingParamTypeInspection
-	 */
-	public function __construct(&$subject, $config = [])
-	{
-		parent::__construct($subject, $config);
-	}
 
 	/**
 	 * @return string[]
@@ -69,11 +53,16 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		$router = $event->getRouter();
 
 		$route = new Route(
-			['POST'],
+			[
+				'POST'
+			],
 			'v1/wishboxcdek/webhook/order-status',
-			'webhook.orderStatus',
-			['id'        => '(\d+)'],
-			['component' => 'com_wishboxcdek']
+			'webhook.handleOrderStatus',
+			[],
+			[
+				'component' => 'com_wishboxcdek',
+				'public'    => false,
+			]
 		);
 
 		$router->addRoute($route);

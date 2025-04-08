@@ -14,7 +14,6 @@ use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Wishboxcdek\Site\Event\Model\Cities\Updater\AfterLoadCitiesEvent;
 use Joomla\Database\DatabaseAwareTrait;
-use Joomla\Event\DispatcherInterface;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Plugin\Console\Wishboxcdek\Console\UpdatecitiesCommand;
 use Joomla\Plugin\Console\Wishboxcdek\Console\UpdateofficesCommand;
@@ -40,19 +39,6 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	 * @since 1.0.0
 	 */
 	protected ?ConsoleSectionOutput $pageSection = null;
-
-	/**
-	 * @param   DispatcherInterface  $subject  The object to observe
-	 * @param   array                $config   An optional associative array of configuration settings.
-	 *                                           Recognized key values include 'name', 'group', 'params', 'language'
-	 *                                           (this list is not meant to be comprehensive).
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct(DispatcherInterface &$subject, array $config = [])
-	{
-		parent::__construct($subject, $config);
-	}
 
 	/**
 	 * @return string[]
@@ -117,7 +103,7 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		$page = $event->getPage();
 
 		/** @var ConsoleApplication $app */
-		$app = Factory::getApplication();
+		$app = $this->getApplication();
 
 		if (!$this->pageSection)
 		{

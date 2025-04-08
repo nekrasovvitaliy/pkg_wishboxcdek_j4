@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="api-authentication" method="upgrade">
+    <name>plg_api-authentication_wishboxcdek</name>
+    <author>Nekrasov Vitaliy</author>
+    <creationDate>March 2025</creationDate>
+    <license>GNU General Public License version 3 or later</license>
+    <authorEmail>nekrasov_vitaliy@list.ru</authorEmail>
+    <version>1.0.0</version>
+    <description>PLG_API-AUTHENTICATION_WISHBOXCDEK_XML_DESCRIPTION</description>
+    <namespace path="src">Joomla\Plugin\ApiAuthentication\Wishboxcdek</namespace>
+    <scriptfile>script.php</scriptfile>
+    <files>
+        <folder plugin="wishboxcdek">services</folder>
+        <folder>src</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_api-authentication_wishboxcdek.ini</language>
+        <language tag="en-GB">language/en-GB/plg_api-authentication_wishboxcdek.sys.ini</language>
+        <language tag="ru-RU">language/ru-RU/plg_api-authentication_wishboxcdek.ini</language>
+        <language tag="ru-RU">language/ru-RU/plg_api-authentication_wishboxcdek.sys.ini</language>
+    </languages>
+    <config>
+    </config>
+</extension>

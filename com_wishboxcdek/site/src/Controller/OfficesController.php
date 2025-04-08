@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright  2013-2024 Nekrasov Vitaliy
- * @license    GNU General Public License version 2 or later
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license     GNU General Public License version 2 or later
  */
 namespace Joomla\Component\Wishboxcdek\Site\Controller;
 
@@ -37,20 +37,19 @@ class OfficesController extends BaseController
 
 		try
 		{
-			$cityCode = $app->input->getInt('city_code', 0);
+			$cityCode = $this->input->getInt('city_code', 0);
 
 			if (!$cityCode)
 			{
 				throw new InvalidArgumentException('city_code param must not be 0', 500);
 			}
 
-			$shPrMethodId = $app->input->getInt('shipping_method_id', 0);
+			$shPrMethodId = $this->input->getInt('shipping_method_id', 0);
 
-			$shopName = $app->input->get('shop_name', '');
+			$shopName = $this->input->get('shop_name', '');
 
 			/** @var OfficesModel $officesModel */
-			$officesModel = $this->factory->getMVCFactory()
-				->createModel('Offices', 'Site');
+			$officesModel = $this->factory->createModel('Offices', 'Site');
 
 			$data = $officesModel->getOfficesDataForMap($shopName, $cityCode, $shPrMethodId);
 			$app->mimeType = 'application/json';

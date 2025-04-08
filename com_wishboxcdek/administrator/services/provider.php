@@ -51,7 +51,6 @@ return new class implements ServiceProviderInterface
 				$component = new WishboxcdekComponent($container->get(ComponentDispatcherFactoryInterface::class));
 				$component->setRegistry($container->get(Registry::class));
 				$component->setMVCFactory($container->get(MVCFactoryInterface::class));
-				$component->setMVCFactory($container->get(MVCFactoryInterface::class));
 				$component->setRouterFactory($container->get(RouterFactoryInterface::class));
 
 				return $component;

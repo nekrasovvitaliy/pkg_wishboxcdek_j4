@@ -89,6 +89,7 @@ class UpdatecitiesCommand extends AbstractCommand
 	 * @return  integer  Код возврата команды
 	 *
 	 * @throws Exception
+	 *
 	 * @since   1.0.0
 	 */
 	protected function doExecute(InputInterface $input, OutputInterface $output): int

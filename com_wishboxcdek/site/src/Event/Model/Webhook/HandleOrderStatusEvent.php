@@ -16,10 +16,10 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-abstract class OrderStatusEvent extends AbstractEvent
+abstract class HandleOrderStatusEvent extends AbstractEvent
 {
 	/**
-	 * Setter for the cdekNumbers argument.
+	 * Setter for the data argument.
 	 *
 	 * @param   string[]  $value  The value to set
 	 *
@@ -31,7 +31,7 @@ abstract class OrderStatusEvent extends AbstractEvent
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function onSetCdekNumbers(array $value): array
+	protected function onSetData(array $value): array
 	{
 		if (empty($value))
 		{
@@ -42,7 +42,7 @@ abstract class OrderStatusEvent extends AbstractEvent
 	}
 
 	/**
-	 * Getter for the cdekNumbers argument.
+	 * Getter for the data argument.
 	 *
 	 * @param   string[]  $value  Value
 	 *
@@ -52,7 +52,7 @@ abstract class OrderStatusEvent extends AbstractEvent
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function onGetCdekNumbers(array $value): array
+	protected function onGetData(array $value): array
 	{
 		return $value;
 	}
@@ -62,8 +62,8 @@ abstract class OrderStatusEvent extends AbstractEvent
 	 *
 	 * @since  1.0.0
 	 */
-	public function getCdekNumbers(): array
+	public function getData(): array
 	{
-		return $this->getArgument('cdekNumbers');
+		return $this->getArgument('data');
 	}
 }

@@ -6,10 +6,11 @@
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Plugin\Webservices\Wishboxcdek\Extension\Wishboxcdek;
+use Joomla\Plugin\ApiAuthentication\Wishboxcdek\Extension\Wishboxcdek;
 
 defined('_JEXEC') or die;
 
@@ -31,14 +32,15 @@ return new class implements ServiceProviderInterface
 			function (Container $container)
 			{
 				$dispatcher = $container->get(DispatcherInterface::class);
-				$config = (array) PluginHelper::getPlugin('webservices', 'wishboxcdek');
+				$config = (array) PluginHelper::getPlugin('api-authentication', 'wishboxcdek');
 
 				$plugin = new Wishboxcdek(
 					$dispatcher,
 					$config
 				);
-				$app = Factory::getApplication();
-				$plugin->setApplication($app);
+				$plugin->setApplication(Factory::getApplication());
+				$userFactory = $container->get(UserFactoryInterface::class);
+				$plugin->setUserFactory($userFactory);
 
 				return $plugin;
 			}
