@@ -14,6 +14,6 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-abstract class UpdateAllEvent extends UpdateEvent
+class BeforeUpdateEvent extends UpdateEvent
 {
 }

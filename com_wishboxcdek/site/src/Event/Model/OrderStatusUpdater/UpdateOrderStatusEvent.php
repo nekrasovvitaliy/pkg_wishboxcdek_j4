@@ -1,9 +1,9 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Event\Model\OrderStatusUpdater;
+namespace Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater;
 
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
