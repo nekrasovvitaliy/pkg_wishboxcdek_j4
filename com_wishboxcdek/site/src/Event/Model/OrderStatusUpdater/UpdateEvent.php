@@ -33,11 +33,42 @@ abstract class UpdateEvent extends AbstractEvent
 	 */
 	protected function onSetCdekNumbers(array $value): array
 	{
-		if (empty($value))
-		{
-			throw new Exception('Value must be not empty');
-		}
+		return $value;
+	}
 
+	/**
+	 * Setter for the component argument.
+	 *
+	 * @param   string  $value  The value to set
+	 *
+	 * @return  string
+	 *
+	 * @throws Exception
+	 *
+	 * @since  1.0.0
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function onSetComponent(string $value): string
+	{
+		return $value;
+	}
+
+	/**
+	 * Setter for the orderIds argument.
+	 *
+	 * @param   integer[]  $value  The value to set
+	 *
+	 * @return  integer[]
+	 *
+	 * @throws Exception
+	 *
+	 * @since  1.0.0
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function onSetOrderIds(array $value): array
+	{
 		return $value;
 	}
 
@@ -58,12 +89,44 @@ abstract class UpdateEvent extends AbstractEvent
 	}
 
 	/**
+	 * Getter for the comment argument.
+	 *
+	 * @param   string  $value  Value
+	 *
+	 * @return  string
+	 *
+	 * @since  1.0.0
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function onGetComponent(string $value): string
+	{
+		return $value;
+	}
+
+	/**
+	 * Getter for the orderIds argument.
+	 *
+	 * @param   integer[]  $value  Value
+	 *
+	 * @return  integer[]
+	 *
+	 * @since  1.0.0
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function onGetOrderIds(array $value): array
+	{
+		return $value;
+	}
+
+	/**
 	 * @return string[]
 	 *
 	 * @since  1.0.0
 	 */
 	public function getCdekNumbers(): array
 	{
-		return $this->getArgument('cdekNumbers');
+		return $this->arguments['cdekNumbers'];
 	}
 }

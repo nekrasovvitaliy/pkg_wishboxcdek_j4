@@ -38,6 +38,10 @@ class OrdersController extends AdminController
 	 */
 	public function updateStatuses(): void
 	{
+		$component = $this->input->get('component', '');
+		$orderIds = $this->input->get('cid', []);
+		$redirectUrl = $this->input->get('redirect_url', '', 'Raw');
+
 		/** @var OrderStatusupdaterModel $orderStatusUpdaterModel */
 		$orderStatusUpdaterModel = $this->factory->createModel(
 			'OrderStatusUpdater',
@@ -47,7 +51,7 @@ class OrdersController extends AdminController
 
 		try
 		{
-			$orderStatusUpdaterModel->updateAll();
+			$orderStatusUpdaterModel->update($component, $orderIds);
 		}
 		catch (ApiException | ClientException $e)
 		{
@@ -59,8 +63,13 @@ class OrdersController extends AdminController
 			return;
 		}
 
+		if (empty($redirectUrl))
+		{
+			$redirectUrl = 'index.php?option=com_wishboxcdek&view=dashboard';
+		}
+
 		$this->setRedirect(
-			Route::_('index.php?option=com_wishboxcdek&view=dashboard', false),
+			Route::_($redirectUrl, false),
 			Text::_('COM_WISHBOXCDEK_MESSAGE_ORDER_STATUSES_SUCCESSFULLY_UPDATED')
 		);
 	}

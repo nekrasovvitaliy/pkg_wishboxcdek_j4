@@ -50,11 +50,35 @@ class GetCdekNumbersEvent extends AbstractEvent implements ResultAwareInterface
 	}
 
 	/**
+	 * @param   string  $value  Component
+	 *
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 */
+	protected function onSetComponent(string $value): string
+	{
+		return $value;
+	}
+
+	/**
+	 * @param   integer[]  $value  Order ids
+	 *
+	 * @return array
+	 *
+	 * @since 1.0.0
+	 */
+	protected function onSetOrderIds(array $value): array
+	{
+		return $value;
+	}
+
+	/**
 	 * @param   OrderStatusUpdaterModel  $value  Subject
 	 *
 	 * @return OrderStatusUpdaterModel
 	 *
-	 * @since version
+	 * @since 1.0.0
 	 */
 	protected function onGetSubject(OrderStatusUpdaterModel $value): OrderStatusUpdaterModel
 	{
@@ -79,5 +103,25 @@ class GetCdekNumbersEvent extends AbstractEvent implements ResultAwareInterface
 	public function getCdekNumbers(): array
 	{
 		return $this->getArgument('result') ?? [];
+	}
+
+	/**
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 */
+	public function getComponent(): string
+	{
+		return $this->arguments['component'];
+	}
+
+	/**
+	 * @return integer[]
+	 *
+	 * @since 1.0.0
+	 */
+	public function getOrderIds(): array
+	{
+		return $this->arguments['orderIds'];
 	}
 }
