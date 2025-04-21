@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class Tariff extends CMSPlugin implements SubscriberInterface
+final class Tariff extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use DatabaseAwareTrait;

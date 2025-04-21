@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class Wishboxcdek extends CMSPlugin implements SubscriberInterface
+final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use DatabaseAwareTrait;
@@ -75,12 +75,16 @@ class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		{
 			Factory::getContainer()->share(
 				$commandClass,
-				function (ContainerInterface $container) use ($commandClass) {
-					return (new $commandClass)
-						->setMVCFactory($this->getMVCFactory());
+				function (ContainerInterface $container) use ($commandClass)
+				{
+					$command = new $commandClass;
+					$command->setMVCFactory($this->getMVCFactory());
+
+					return $command;
 				},
 				true
 			);
+
 			/** @noinspection PhpUndefinedMethodInspection */
 			Factory::getContainer()->get(WritableLoaderInterface::class)
 				->add($commandClass::getDefaultName(), $commandClass);

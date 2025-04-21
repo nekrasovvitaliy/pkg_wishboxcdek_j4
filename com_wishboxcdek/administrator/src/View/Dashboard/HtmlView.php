@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\HTML\Helpers\Sidebar;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Wishboxcdek\Administrator\Helper\WishboxcdekHelper;
 use Joomla\Component\Wishboxcdek\Administrator\Model\DashboardModel;
@@ -43,34 +44,6 @@ class HtmlView extends BaseHtmlView
 		$this->addToolbar();
 		$this->sidebar = Sidebar::render();
 
-		/** @var DashboardModel $model */
-		$model = $this->getModel();
-
-		$citiesCount = $model->getCitiesCount();
-		$officesCount = $model->getOfficesCount();
-
-		ToolbarHelper::custom(
-			'cities.update',
-			'refresh',
-			'refresh_f2.png',
-			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_CITIES') . '(' . $citiesCount . ')',
-			false
-		);
-		ToolbarHelper::custom(
-			'offices.update',
-			'refresh',
-			'refresh_f2.png',
-			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_OFFICES') . '(' . $officesCount . ')',
-			false
-		);
-		ToolbarHelper::custom(
-			'orders.updatestatuses',
-			'refresh',
-			'refresh_f2.png',
-			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_ORDER_STATUSES'),
-			false
-		);
-
 		parent::display($tpl);
 	}
 
@@ -86,9 +59,44 @@ class HtmlView extends BaseHtmlView
 	protected function addToolbar(): void
 	{
 		$app = Factory::getApplication();
+		$document = $this->getDocument();
+
+		/** @var Toolbar $toolbar */
+		$toolbar = $document->getToolbar();
+
 		$canDo = WishboxcdekHelper::getActions();
 		$option = strtolower($app->getInput()->get('option', ''));
 		ToolbarHelper::title(Text::_(mb_strtoupper($option)), 'generic');
+
+		/** @var DashboardModel $model */
+		$model = $this->getModel();
+
+		$citiesCount = $model->getCitiesCount();
+		$officesCount = $model->getOfficesCount();
+
+		$toolbar->standardButton(
+			'cities-update',
+			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_CITIES') . '(' . $citiesCount . ')',
+			'cities.update'
+		)
+			->icon('icon-refresh')
+			->listCheck(false);
+
+		$toolbar->standardButton(
+			'offices-update',
+			Text::_('COM_WISHBOXCDEK_TOOLBAR_UPDATE_OFFICES') . '(' . $officesCount . ')',
+			'offices.update'
+		)
+			->icon('icon-refresh')
+			->listCheck(false);
+
+		$toolbar->standardButton(
+			'orders-updatestatuses',
+			'COM_WISHBOXCDEK_TOOLBAR_UPDATE_ORDER_STATUSES',
+			'orders.updatestatuses'
+		)
+			->icon('icon-refresh')
+			->listCheck(false);
 
 		if ($canDo->get('core.admin'))
 		{

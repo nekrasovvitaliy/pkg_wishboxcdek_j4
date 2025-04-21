@@ -16,8 +16,10 @@
     <files>
         <file type="component" id="com_wishboxcdek">com_wishboxcdek.zip</file>
         <file type="library" id="wishboxcdek">lib_wishboxcdek.zip</file>
+        <file type="plugin" group="api-authentication" id="wishboxcdek">plg_api-authentication_wishboxcdek.zip</file>
         <file type="plugin" group="console" id="wishboxcdek">plg_console_wishboxcdek.zip</file>
         <file type="plugin" group="task" id="wishboxcdek">plg_task_wishboxcdek.zip</file>
+        <file type="plugin" group="webservices" id="wishboxcdek">plg_webservices_wishboxcdek.zip</file>
         <file type="plugin" group="wishboxcdek" id="tariff">plg_wishboxcdek_tariff.zip</file>
     </files>
 </extension>

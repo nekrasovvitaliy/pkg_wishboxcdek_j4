@@ -12,7 +12,7 @@
             </fileset>
         </delete>
 
-        <zip destfile="com_wishboxcdek/com_wishboxcdek.zip">
+        <zip destfile="com_wishboxcdek.zip">
             <fileset dir="./com_wishboxcdek">
                 <include name="administrator/**" />
                 <include name="api/**" />
@@ -23,7 +23,7 @@
             </fileset>
         </zip>
 
-        <zip destfile="lib_wishboxcdek/lib_wishboxcdek.zip">
+        <zip destfile="lib_wishboxcdek.zip">
             <fileset dir="./lib_wishboxcdek">
                 <include name="language/**" />
                 <include name="src/**" />
@@ -31,7 +31,17 @@
             </fileset>
         </zip>
 
-        <zip destfile="plg_console_wishboxcdek/plg_console_wishboxcdek.zip">
+        <zip destfile="plg_api-authentication_wishboxcdek.zip">
+            <fileset dir="./plg_api-authentication_wishboxcdek">
+                <include name="language/**" />
+                <include name="services/**" />
+                <include name="src/**" />
+                <include name="script.php" />
+                <include name="wishboxcdek.xml" />
+            </fileset>
+        </zip>
+
+        <zip destfile="plg_console_wishboxcdek.zip">
             <fileset dir="./plg_console_wishboxcdek">
                 <include name="language/**" />
                 <include name="services/**" />
@@ -41,7 +51,7 @@
             </fileset>
         </zip>
 
-        <zip destfile="plg_task_wishboxcdek/plg_task_wishboxcdek.zip">
+        <zip destfile="plg_task_wishboxcdek.zip">
             <fileset dir="./plg_task_wishboxcdek">
                 <include name="forms/**" />
                 <include name="language/**" />
@@ -52,7 +62,17 @@
             </fileset>
         </zip>
 
-        <zip destfile="plg_wishboxcdek_tariff/plg_wishboxcdek_tariff.zip">
+        <zip destfile="plg_webservices_wishboxcdek.zip">
+            <fileset dir="./plg_webservices_wishboxcdek">
+                <include name="language/**" />
+                <include name="services/**" />
+                <include name="src/**" />
+                <include name="script.php" />
+                <include name="wishboxcdek.xml" />
+            </fileset>
+        </zip>
+
+        <zip destfile="plg_wishboxcdek_tariff.zip">
             <fileset dir="./plg_wishboxcdek_tariff">
                 <include name="language/**" />
                 <include name="services/**" />
@@ -63,50 +83,27 @@
         </zip>
 
         <zip destfile="pkg_wishboxcdek_j4.zip">
-            <fileset dir="./com_wishboxcdek">
+            <fileset dir=".">
                 <include name="com_wishboxcdek.zip" />
-            </fileset>
-            <fileset dir="./lib_wishboxcdek">
                 <include name="lib_wishboxcdek.zip" />
-            </fileset>
-            <fileset dir="./plg_console_wishboxcdek">
+                <include name="plg_api-authentication_wishboxcdek.zip" />
                 <include name="plg_console_wishboxcdek.zip" />
-            </fileset>
-            <fileset dir="./plg_task_wishboxcdek">
                 <include name="plg_task_wishboxcdek.zip" />
-            </fileset>
-            <fileset dir="./plg_wishboxcdek_tariff">
+                <include name="plg_webservices_wishboxcdek.zip" />
                 <include name="plg_wishboxcdek_tariff.zip" />
-            </fileset>
-            <fileset dir="./">
                 <include name="language/**" />
                 <include name="pkg_wishboxcdek.xml" />
-                <include name="language/**" />
             </fileset>
         </zip>
         <delete quiet="yes">
             <fileset dir=".">
-                <include name="com_wishboxcdek/com_wishboxcdek.zip" />
-            </fileset>
-        </delete>
-        <delete quiet="yes">
-            <fileset dir=".">
-                <include name="lib_wishboxcdek/lib_wishboxcdek.zip" />
-            </fileset>
-        </delete>
-        <delete quiet="yes">
-            <fileset dir=".">
-                <include name="plg_console_wishboxcdek/plg_console_wishboxcdek.zip" />
-            </fileset>
-        </delete>
-        <delete quiet="yes">
-            <fileset dir=".">
-                <include name="plg_task_wishboxcdek/plg_task_wishboxcdek.zip" />
-            </fileset>
-        </delete>
-        <delete quiet="yes">
-            <fileset dir=".">
-                <include name="plg_wishboxcdek_tariff/plg_wishboxcdek_tariff.zip" />
+                <include name="com_wishboxcdek.zip" />
+                <include name="lib_wishboxcdek.zip" />
+                <include name="plg_api-authentication_wishboxcdek.zip" />
+                <include name="plg_console_wishboxcdek.zip" />
+                <include name="plg_task_wishboxcdek.zip" />
+                <include name="plg_webservices_wishboxcdek.zip" />
+                <include name="plg_wishboxcdek_tariff.zip" />
             </fileset>
         </delete>
     </target>

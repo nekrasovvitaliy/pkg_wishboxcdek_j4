@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2024 Nekrasov Vitaliy <nekrasov_vitaliy>
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy>
  * @license     GNU General Public License version 2 or later
  */
 namespace WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity;

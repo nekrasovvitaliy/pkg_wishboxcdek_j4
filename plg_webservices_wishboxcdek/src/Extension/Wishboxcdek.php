@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class Wishboxcdek extends CMSPlugin implements SubscriberInterface
+final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use DatabaseAwareTrait;
