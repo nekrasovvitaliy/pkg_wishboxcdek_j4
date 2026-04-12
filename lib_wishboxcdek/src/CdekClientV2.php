@@ -6,6 +6,8 @@
 namespace WishboxCdekSDK2;
 
 use Exception;
+use Joomla\CMS\Cache\CacheControllerFactoryAwareInterface;
+use Joomla\CMS\Cache\CacheControllerFactoryAwareTrait;
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Cache\Controller\CallbackController;
 use Joomla\CMS\Event\AbstractEvent;
@@ -17,6 +19,7 @@ use Joomla\Uri\Uri;
 use Psr\Http\Message\StreamInterface;
 use Joomla\CMS\Http\Http;
 use Joomla\CMS\Http\HttpFactory;
+use WishboxCdekSDK2\Event\AfterCalculateTariffListEvent;
 use WishboxCdekSDK2\Exception\Api\RequestError\EntityNotFoundImNumberException;
 use WishboxCdekSDK2\Factory\ResponsePipelineFactory;
 use WishboxCdekSDK2\Interface\ResponseInterface;
@@ -44,8 +47,10 @@ use WishboxCdekSDK2\Model\ResponseData;
  *
  * @since 1.0.0
  */
-final class CdekClientV2
+final class CdekClientV2 implements CdekClientV2Interface, CacheControllerFactoryAwareInterface
 {
+	use CacheControllerFactoryAwareTrait;
+
 	/**
 	 * Аккаунт сервиса интеграции.
 	 *
@@ -54,15 +59,6 @@ final class CdekClientV2
 	 * @since 1.0.0
 	 */
 	private string $account;
-
-	/**
-	 * Тип аккаунта.
-	 *
-	 * @var string
-	 *
-	 * @since 1.0.0
-	 */
-	private string $accountType;
 
 	/**
 	 * Секретный пароль сервиса интеграции.
@@ -155,13 +151,14 @@ final class CdekClientV2
 			$request->prepareRequest()
 		);
 
-		/** @var GenericEvent $event */
+		/** @var AfterCalculateTariffListEvent $event */
 		$event = AbstractEvent::create(
 			'onWishboxCdekClientV2AfterCalculateTariffList',
 			[
-				'subject'   => $this,
-				'request'   => $request,
-				'response'  => $response
+				'subject'       => $this,
+				'eventClass'    => AfterCalculateTariffListEvent::class,
+				'request'       => $request,
+				'response'      => $response,
 			]
 		);
 		$app->getDispatcher()->dispatch($event->getName(), $event);
@@ -180,7 +177,7 @@ final class CdekClientV2
 	 *
 	 * @noinspection PhpUnnecessaryLocalVariableInspection
 	 */
-	public function getResponseData(string $path, array $data = null, string $method = 'POST'): ResponseData
+	public function getResponseData(string $path, ?array $data = null, string $method = 'POST'): ResponseData
 	{
 		$response = $this->getHttpResponse($path, $data, $method);
 
@@ -265,7 +262,7 @@ final class CdekClientV2
 				break;
 		}
 
-		// Если запрос на файл pdf был успешным сразу отправляем его в ответ
+		// Если запрос на файл pdf был успешным, сразу отправляем его в ответ
 		if ($isPdfFileRequest)
 		{
 			if ($response->getStatusCode() == 200)
@@ -333,7 +330,7 @@ final class CdekClientV2
 		}
 
 		// Если не передан верный сохраненный массив данных для авторизации,
-		// но тип аккаунта не тот, который был при прошлой сохраненной авторизации - функция возвратит false
+		// но тип аккаунта не тот, который был при прошлой сохраненной авторизации, функция возвратит false
 		if ($checkMemory['account_type'] !== $this->accountType)
 		{
 			return false;
@@ -487,6 +484,8 @@ final class CdekClientV2
 	 * @return OrdersDeleteResponse
 	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnused
 	 */
 	public function deleteOrder(string $uuid): OrdersDeleteResponse
 	{
@@ -534,7 +533,7 @@ final class CdekClientV2
 				'response'  => $response
 			]
 		);
-		$app->getDispatcher()->dispatch('onWishboxCdekClientV2AfterGetOrderInfo', $event);
+		$app->getDispatcher()->dispatch($event->getName(), $event);
 
 		return $response;
 	}
@@ -603,7 +602,7 @@ final class CdekClientV2
 	private function getResponse(
 		string $path,
 		string $type,
-		array $data = null,
+		?array $data = null,
 		string $method = 'POST',
 		bool $cashing = false
 	): ResponseInterface|array
@@ -648,7 +647,7 @@ final class CdekClientV2
 	private function getResponseArray(
 		string $path,
 		string $type,
-		array $data = null,
+		?array $data = null,
 		string $method = 'POST',
 		bool $cashing = false
 	): array
@@ -729,11 +728,13 @@ final class CdekClientV2
 	/**
 	 * Удаление Вебхука
 	 *
-	 * @param   WebhooksPostRequest  $request  Параметры заказа
+	 * @param   WebhooksDelRequest  $request  Запрос
 	 *
 	 * @return WebhooksPostResponse
 	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnused
 	 */
 	public function deleteWebhook(WebhooksDelRequest $request): WebhooksPostResponse
 	{

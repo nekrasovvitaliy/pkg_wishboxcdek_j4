@@ -9,7 +9,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Plugin\Wishboxcdek\Tariff\Extension\Tariff;
+use Joomla\Plugin\WishboxCdek\Tariff\Extension\Tariff;
 
 defined('_JEXEC') or die;
 

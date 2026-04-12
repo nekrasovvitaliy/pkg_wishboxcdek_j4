@@ -3,22 +3,20 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Plugin\Console\Wishboxcdek\Extension;
+namespace Joomla\Plugin\Console\WishboxCdek\Extension;
 
 use Exception;
 use Joomla\Application\ApplicationEvents;
 use Joomla\CMS\Application\ConsoleApplication;
-use Joomla\CMS\Console\Loader\WritableLoaderInterface;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Component\Wishboxcdek\Site\Event\Model\Cities\Updater\AfterLoadCitiesEvent;
+use Joomla\Component\WishboxCdek\Site\Event\Model\Cities\Updater\AfterLoadCitiesEvent;
+use Joomla\Component\WishboxCdek\Site\Event\Model\Offices\Updater\AfterLoadOfficesEvent;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\SubscriberInterface;
-use Joomla\Plugin\Console\Wishboxcdek\Console\UpdatecitiesCommand;
-use Joomla\Plugin\Console\Wishboxcdek\Console\UpdateofficesCommand;
-use Joomla\Plugin\Console\Wishboxcdek\Console\UpdateOrderStatutesCommand;
-use Psr\Container\ContainerInterface;
+use Joomla\Plugin\Console\WishboxCdek\Console\Command\UpdateCitiesCommand;
+use Joomla\Plugin\Console\WishboxCdek\Console\Command\UpdateOfficesCommand;
+use Joomla\Plugin\Console\WishboxCdek\Console\Command\UpdateOrderStatutesCommand;
 use Symfony\Component\Console\Output\ConsoleSectionOutput;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -28,7 +26,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
+final class WishboxCdek extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use DatabaseAwareTrait;
@@ -51,7 +49,8 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	{
 		return [
 			ApplicationEvents::BEFORE_EXECUTE               => 'registerCommands',
-			'onWishboxCdekCitiesUpdaterAfterLoadCities'     => 'onWishboxCdekCitiesUpdaterAfterLoadCities'
+			'onWishboxCdekCitiesUpdaterAfterLoadCities'     => 'onWishboxCdekCitiesUpdaterAfterLoadCities',
+			'onWishboxCdekOfficesUpdaterAfterLoadOffices'     => 'onWishboxCdekOfficesUpdaterAfterLoadOffices',
 		];
 	}
 
@@ -61,33 +60,23 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 	 * @since 1.0.0
 	 *
 	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function registerCommands(): void
 	{
+		/** @var ConsoleApplication $app */
+		$app = $this->getApplication();
+
 		$commands = [
-			UpdatecitiesCommand::class,
-			UpdateofficesCommand::class,
+			UpdateCitiesCommand::class,
+			UpdateOfficesCommand::class,
 			UpdateOrderStatutesCommand::class
 		];
 
 		foreach ($commands as $commandClass)
 		{
-			Factory::getContainer()->share(
-				$commandClass,
-				function (ContainerInterface $container) use ($commandClass)
-				{
-					$command = new $commandClass;
-					$command->setMVCFactory($this->getMVCFactory());
-
-					return $command;
-				},
-				true
-			);
-
-			/** @noinspection PhpUndefinedMethodInspection */
-			Factory::getContainer()->get(WritableLoaderInterface::class)
-				->add($commandClass::getDefaultName(), $commandClass);
+			$command = new $commandClass;
+			$command->setMVCFactory($this->getMVCFactory());
+			$app->addCommand($command);
 		}
 	}
 
@@ -116,5 +105,33 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		}
 
 		$this->pageSection->overwrite('Page ' . $page . ' loaded');
+	}
+
+	/**
+	 * @param   AfterLoadOfficesEvent  $event  Event
+	 *
+	 * @return void
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function onWishboxCdekOfficesUpdaterAfterLoadOffices(AfterLoadOfficesEvent $event): void
+	{
+		$countryCode    = $event->getCountryCode();
+		$page           = $event->getPage();
+
+		/** @var ConsoleApplication $app */
+		$app = $this->getApplication();
+
+		if (!$this->pageSection)
+		{
+			$consoleOutput = $app->getConsoleOutput();
+			$this->pageSection = $consoleOutput->section();
+		}
+
+		$this->pageSection->overwrite('Country: ' . $countryCode . ' Page #' . $page . ' loaded');
 	}
 }

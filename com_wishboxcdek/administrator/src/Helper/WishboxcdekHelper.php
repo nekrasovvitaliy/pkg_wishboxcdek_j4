@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Helper;
+namespace Joomla\Component\WishboxCdek\Administrator\Helper;
 
 use Exception;
 use Joomla\CMS\Factory;
@@ -16,11 +16,11 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Wishboxcdek helper.
+ * WishboxCdek helper.
  *
  * @since  1.0.0
  */
-class WishboxcdekHelper
+class WishboxCdekHelper
 {
 	/**
 	 * Gets a list of the actions that can be performed.
@@ -66,7 +66,7 @@ class WishboxcdekHelper
 		$app = Factory::getApplication();
 		$options = [];
 		$db = Factory::getContainer()->get(DatabaseDriver::class);
-		$query = $db->getQuery(true)
+		$query = $db->createQuery()
 			->select(
 				[
 					$db->qn('code', 'value'),

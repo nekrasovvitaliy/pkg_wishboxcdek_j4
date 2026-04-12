@@ -1,15 +1,14 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy
+ * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxceilcalc\Site\Service;
+namespace Joomla\Component\WishboxCdek\Site\Service;
 
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Categories\CategoryFactoryInterface;
 use Joomla\CMS\Component\Router\RouterBase;
 use Joomla\CMS\Menu\AbstractMenu;
-use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Utilities\ArrayHelper;
 use function defined;
@@ -28,14 +27,14 @@ class Router extends RouterBase
 	/**
 	 * The db
 	 *
-	 * @var DatabaseDriver
+	 * @var DatabaseInterface
 	 *
 	 * @since  1.0.0
 	 */
-	private DatabaseDriver $db;
+	private DatabaseInterface $db;
 
 	/**
-	 * Tags Component router constructor
+	 * Tags' Component router constructor
 	 *
 	 * @param   SiteApplication                $app              The application object
 	 * @param   AbstractMenu                   $menu             The menu object to work with
@@ -73,7 +72,7 @@ class Router extends RouterBase
 
 		// Get a menu item based on Itemid or currently active
 
-		// We need a menu item.  Either the one specified in the query, or the current active one if none specified
+		// We need a menu item.  Either the one specified in the query or the current active one if none is specified
 		if (empty($query['Itemid']))
 		{
 			$menuItem = $this->menu->getActive();

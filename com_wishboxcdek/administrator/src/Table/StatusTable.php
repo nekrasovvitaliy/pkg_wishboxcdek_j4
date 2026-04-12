@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Table;
+namespace Joomla\Component\WishboxCdek\Administrator\Table;
 
 use Joomla\Database\DatabaseDriver;
 
@@ -21,12 +21,12 @@ defined('_JEXEC') or die;
 class StatusTable extends BaseTable
 {
 	/**
-	 * @param   DatabaseDriver $_db Database driver
+	 * @param   DatabaseDriver  $db  Database driver
 	 *
 	 * @since       1.0.0
 	 */
-	public function __construct(&$_db)
+	public function __construct(&$db)
 	{
-		parent::__construct('#__wishboxcdek_statuses', 'id', $_db);
+		parent::__construct('#__wishboxcdek_statuses', 'id', $db);
 	}
 }

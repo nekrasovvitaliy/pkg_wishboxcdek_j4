@@ -3,20 +3,20 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model;
+namespace Joomla\Component\WishboxCdek\Site\Model;
 
 use Exception;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater\AfterUpdateEvent;
-use Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater\BeforeUpdateEvent;
-use Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater\UpdateOrderStatusEvent;
-use Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater\GetCdekNumbersEvent;
-use WishboxCdekSDK2\CdekClientV2;
+use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\AfterUpdateEvent;
+use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\BeforeUpdateEvent;
+use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\UpdateOrderStatusEvent;
+use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\GetCdekNumbersEvent;
 use WishboxCdekSDK2\Exception\ApiException;
 use WishboxCdekSDK2\Exception\ClientException;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\StatusResponse;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -28,8 +28,10 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel
+class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel implements CdekClientV2FactoryAwareInterface
 {
+	use CdekClientV2FactoryAwareTrait;
+
 	/**
 	 * @param   string     $component  Component
 	 * @param   integer[]  $orderIds   Order ids
@@ -146,12 +148,7 @@ class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel
 	 */
 	private function getOrderCdekStatuses(string $cdekNumber): ?array
 	{
-		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
-		$apiClient = new CdekClientV2(
-			$componentParams->get('account', ''),
-			$componentParams->get('secure', ''),
-			60.0
-		);
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
 
 		$ordersGetResponse = $apiClient->getOrderInfoByCdekNumber($cdekNumber);
 		$entity = $ordersGetResponse->getEntity();

@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\View\Office;
+namespace Joomla\Component\WishboxCdek\Site\View\Office;
 
 use Exception;
 use Joomla\CMS\Factory;
@@ -12,7 +12,7 @@ use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\User\User;
-use Joomla\Component\Wishboxcdek\Site\Helper\WishboxcdekHelper;
+use Joomla\Component\WishboxCdek\Site\Helper\WishboxCdekHelper;
 use Joomla\Registry\Registry;
 use function defined;
 
@@ -81,7 +81,7 @@ class HtmlView extends BaseHtmlView
 		$this->state            = $this->get('State');
 		$this->item             = $this->get('Item');
 
-		$this->shippingTariff = WishboxcdekHelper::getShippingTariff(
+		$this->shippingTariff = WishboxCdekHelper::getShippingTariff(
 			$this->state->get('shopName'),
 			$this->state->get('shippingMethodId'),
 		);

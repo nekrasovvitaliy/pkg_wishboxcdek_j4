@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Plugin\Webservices\Wishboxcdek\Extension;
+namespace Joomla\Plugin\Webservices\WishboxCdek\Extension;
 
 use Exception;
 use Joomla\CMS\Event\Application\BeforeApiRouteEvent;
@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
+final class WishboxCdek extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use DatabaseAwareTrait;

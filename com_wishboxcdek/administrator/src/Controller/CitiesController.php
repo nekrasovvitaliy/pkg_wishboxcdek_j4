@@ -3,13 +3,13 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Controller;
+namespace Joomla\Component\WishboxCdek\Administrator\Controller;
 
 use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Router\Route;
-use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
 use WishboxCdekSDK2\Exception\ApiException;
 use WishboxCdekSDK2\Exception\ClientException;
 use function defined;

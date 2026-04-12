@@ -3,12 +3,12 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Plugin\Wishboxcdek\Tariff\Extension;
+namespace Joomla\Plugin\WishboxCdek\Tariff\Extension;
 
 use Exception;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Component\Wishboxcdek\Administrator\Table\TariffTable;
+use Joomla\Component\WishboxCdek\Administrator\Table\TariffTable;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;

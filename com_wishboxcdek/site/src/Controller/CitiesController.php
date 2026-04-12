@@ -3,13 +3,13 @@
  * @copyright 2023 Nekrasov Vitaliy
  * @license     GNU General Public License version 2 or later
  */
-namespace Joomla\Component\Wishboxcdek\Site\Controller;
+namespace Joomla\Component\WishboxCdek\Site\Controller;
 
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
-use Joomla\Component\Wishboxcdek\Site\Model\CitiesModel;
+use Joomla\Component\WishboxCdek\Site\Model\CitiesModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;

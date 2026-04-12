@@ -3,12 +3,12 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Component\Wishboxcdek\Api\Controller;
+namespace Joomla\Component\WishboxCdek\Api\Controller;
 
 use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\ApiController;
-use Joomla\Component\Wishboxcdek\Site\Model\WebhookModel;
+use Joomla\Component\WishboxCdek\Site\Model\WebhookModel;
 use RuntimeException;
 use function defined;
 

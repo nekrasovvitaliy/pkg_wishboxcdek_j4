@@ -3,13 +3,13 @@
  * @copyright 2023 Nekrasov Vitaliy
  * @license     GNU General Public License version 2 or later
  */
-namespace Joomla\Component\Wishboxcdek\Site\Controller;
+namespace Joomla\Component\WishboxCdek\Site\Controller;
 
 use Error;
 use Exception;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
-use Joomla\Component\Wishboxcdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;

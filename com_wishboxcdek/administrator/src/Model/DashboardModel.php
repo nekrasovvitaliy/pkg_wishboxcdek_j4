@@ -3,11 +3,9 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Model;
+namespace Joomla\Component\WishboxCdek\Administrator\Model;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\Database\DatabaseDriver;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -17,7 +15,7 @@ defined('_JEXEC') or die;
 /**
  * Methods supporting a list of article records.
  *
- * @since  1.6
+ * @since  1.0.0
  */
 class DashboardModel extends BaseDatabaseModel
 {
@@ -28,7 +26,7 @@ class DashboardModel extends BaseDatabaseModel
 	 */
 	public function getCitiesCount(): int
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 		$db->setQuery('SELECT COUNT(id) FROM #__wishboxcdek_cities');
 
 		return (int) $db->loadResult();
@@ -41,7 +39,7 @@ class DashboardModel extends BaseDatabaseModel
 	 */
 	public function getOfficesCount(): int
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 		$db->setQuery('SELECT COUNT(id) FROM #__wishboxcdek_offices');
 
 		return (int) $db->loadResult();

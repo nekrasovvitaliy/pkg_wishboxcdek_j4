@@ -3,7 +3,7 @@
  * @copyright (c) 2023 Nekrasov Vitaliy
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Controller;
+namespace Joomla\Component\WishboxCdek\Site\Controller;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;

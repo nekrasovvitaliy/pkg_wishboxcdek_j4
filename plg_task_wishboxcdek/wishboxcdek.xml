@@ -6,7 +6,7 @@
 	<authorEmail>nekrasov_vitaliy@list.ru</authorEmail>
 	<version>1.0.0</version>
 	<description>PLG_TASK_WISHBOXCDEK_XML_DESCRIPTION</description>
-	<namespace path="src">Joomla\Plugin\Task\Wishboxcdek</namespace>
+	<namespace path="src">Joomla\Plugin\Task\WishboxCdek</namespace>
 	<scriptfile>script.php</scriptfile>
 	<files>
 		<folder plugin="wishboxcdek">services</folder>

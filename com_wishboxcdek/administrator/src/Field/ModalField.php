@@ -3,13 +3,13 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Field;
+namespace Joomla\Component\WishboxCdek\Administrator\Field;
 
 use Exception;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Component\Wishboxcdek\Administrator\Table\OfficeTable;
+use Joomla\Component\WishboxCdek\Administrator\Table\OfficeTable;
 use SimpleXMLElement;
 use Wishbox\Field\ListField;
 use function defined;
@@ -94,8 +94,8 @@ class ModalField extends ListField
 		if ($return)
 		{
 			$this->shopName = (string) $this->element['shop_name'];
-			$this->cityCode = (int) $this->element['cityCode'];
-			$this->shippingMethodId = (int) $this->element['shippingMethodId'];
+			$this->cityCode = (int) $this->element['city_code'];
+			$this->shippingMethodId = (int) $this->element['shipping_method_id'];
 		}
 
 		return $return;

@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Interface;
+namespace Joomla\Component\WishboxCdek\Site\Interface;
 
 use Joomla\Database\DatabaseDriver;
 use WishboxCdekSDK2\Model\Request\Calculator\TariffListPost\PackageRequest;

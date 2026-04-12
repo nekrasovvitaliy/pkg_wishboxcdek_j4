@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Helper;
+namespace Joomla\Component\WishboxCdek\Site\Helper;
 
 use Exception;
 use Joomla\CMS\Factory;
@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
 /**
  * @since  1.0.0
  */
-abstract class WishboxcdekHelper
+abstract class WishboxCdekHelper
 {
 	/**
 	 * @param   integer  $tariffCode  Tariff code
@@ -77,7 +77,7 @@ abstract class WishboxcdekHelper
 	 */
 	public static function getShippingTariff(string $shopName, int $shippingMethodId): ?ShippingTariff
 	{
-		$className = '\\Joomla\\Plugin\\Wishboxcdek\\' . ucfirst($shopName) . '\\Helper\\ShippingTariffHelper';
+		$className = '\\Joomla\\Plugin\\WishboxCdek\\' . ucfirst($shopName) . '\\Helper\\ShippingTariffHelper';
 
 		return forward_static_call([$className, 'getShippingTariff'], $shippingMethodId);
 	}

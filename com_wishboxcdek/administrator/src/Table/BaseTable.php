@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Table;
+namespace Joomla\Component\WishboxCdek\Administrator\Table;
 
 use Exception;
 use InvalidArgumentException;
@@ -137,7 +137,7 @@ class BaseTable extends Table
 		$date = Factory::getDate()->toSql();
 		$user = $app->getIdentity();
 
-		// Set created date if not set.
+		// Set the created date if not set.
 		if (!(int) $this->created)
 		{
 			$this->created = $date;
@@ -146,7 +146,7 @@ class BaseTable extends Table
 		if ($this->id)
 		{
 			// Existing item
-			$this->modified_by = $user->get('id'); // phpcs:ignore
+			$this->modified_by = $user->id; // phpcs:ignore
 			$this->modified    = $date;
 		}
 		else
@@ -154,10 +154,10 @@ class BaseTable extends Table
 			// The user can set Field created_by, so we don't touch it if it's set.
 			if (empty($this->created_by)) // phpcs:ignore
 			{
-				$this->created_by = $user->get('id'); // phpcs:ignore
+				$this->created_by = $user->id; // phpcs:ignore
 			}
 
-			// Set modified to created date if not set
+			// Set modified to the created date if not set
 			if (!(int) $this->modified)
 			{
 				$this->modified = $this->created;
@@ -217,7 +217,6 @@ class BaseTable extends Table
 	 * @since 1.0.0
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
-	 *
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	protected function _getAssetParentId($table = null, $id = null)  // phpcs:ignore

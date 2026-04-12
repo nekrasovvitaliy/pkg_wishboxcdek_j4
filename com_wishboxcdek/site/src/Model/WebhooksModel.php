@@ -3,12 +3,11 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model;
+namespace Joomla\Component\WishboxCdek\Site\Model;
 
 use Exception;
-use Joomla\CMS\Component\ComponentHelper;
-use WishboxCdekSDK2\CdekClientV2;
-use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksDelRequest;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
 use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksGetRequest;
 use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksPostRequest;
 
@@ -19,8 +18,10 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel
+class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel implements CdekClientV2FactoryAwareInterface
 {
+	use CdekClientV2FactoryAwareTrait;
+
 	/**
 	 * @return void
 	 *
@@ -30,13 +31,8 @@ class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel
 	 */
 	public function update(): void
 	{
-		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
 		$getWebhooksRequest = new WebhooksGetRequest;
-		$apiClient = new CdekClientV2(
-			$componentParams->get('account', ''),
-			$componentParams->get('secure', ''),
-			60.0
-		);
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
 		$webhookResponses = $apiClient->getWebhooks($getWebhooksRequest);
 
 		$flag = false;
@@ -68,7 +64,6 @@ class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel
 				->setType('ORDER_MODIFIED')
 				->setUrl($webhookUrl);
 			$postWebhooksResponse = $apiClient->createWebhook($postWebhooksRequest);
-			$postWebhooksResponse2 = $postWebhooksResponse;
 		}
 
 		$flag = false;
@@ -94,7 +89,6 @@ class WebhooksModel extends \Joomla\CMS\MVC\Model\BaseModel
 				->setType('ORDER_STATUS')
 				->setUrl($webhookUrl);
 			$postWebhooksResponse = $apiClient->createWebhook($postWebhooksRequest);
-			$postWebhooksResponse2 = $postWebhooksResponse;
 		}
 	}
 }

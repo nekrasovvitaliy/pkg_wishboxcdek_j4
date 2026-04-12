@@ -3,10 +3,10 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Field;
+namespace Joomla\Component\WishboxCdek\Administrator\Field;
 
 use Exception;
-use Joomla\Component\Wishboxcdek\Administrator\Helper\WishboxcdekHelper;
+use Joomla\Component\WishboxCdek\Administrator\Helper\WishboxCdekHelper;
 use Joomla\Utilities\ArrayHelper;
 use SimpleXMLElement;
 use Wishbox\Field\ListField;
@@ -73,7 +73,7 @@ class TariffField extends ListField
 	 * @param   SimpleXMLElement   $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
 	 * @param   mixed              $value    The form field value to validate.
 	 * @param   string             $group    The field name group control value. This acts as an array container for the field.
-	 *                                       For example, if the field has name="foo" and the group value is set to "bar" then the
+	 *                                       For example, if the field has name="foo" and the group value is set to "bar," then the
 	 *                                       full field name would end up being "bar[foo]".
 	 *
 	 * @return  boolean  True on success.
@@ -90,7 +90,7 @@ class TariffField extends ListField
 
 		if ($return)
 		{
-			$this->filterCode = (int) $this->element['filterCode'];
+			$this->filterCode = (int) $this->element['filter_code'];
 
 			$allowedCodes = (string) $this->element['available_codes'];
 
@@ -162,7 +162,7 @@ class TariffField extends ListField
 	{
 		$options = parent::getOptions();
 
-		$tariffOptions = WishboxcdekHelper::getTariffOptions($this->filterCode);
+		$tariffOptions = WishboxCdekHelper::getTariffOptions($this->filterCode);
 
 		if ($this->allowedCodes)
 		{

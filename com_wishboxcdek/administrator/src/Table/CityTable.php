@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Table;
+namespace Joomla\Component\WishboxCdek\Administrator\Table;
 
 use Joomla\Database\DatabaseDriver;
 
@@ -12,8 +12,6 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @package     Joomla\Component\Jshopping\Site\Table
- *
  * @since       1.0.0
  *
  * @noinspection PhpUnused
@@ -28,14 +26,14 @@ class CityTable extends BaseTable
 	public ?string $cityname;
 
 	/**
-	 * @param   DatabaseDriver $_db Database driver
+	 * @param   DatabaseDriver $db Database driver
 	 *
 	 * @since 1.0.0
 	 *
 	 * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
 	 */
-	public function __construct(&$_db)
+	public function __construct(&$db)
 	{
-		parent::__construct('#__wishboxcdek_cities', 'id', $_db);
+		parent::__construct('#__wishboxcdek_cities', 'id', $db);
 	}
 }

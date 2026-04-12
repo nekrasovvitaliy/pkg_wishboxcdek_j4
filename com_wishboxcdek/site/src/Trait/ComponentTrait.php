@@ -3,11 +3,11 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Trait;
+namespace Joomla\Component\WishboxCdek\Site\Trait;
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\Component\Wishboxcdek\Administrator\Extension\WishboxcdekComponent;
+use Joomla\Component\WishboxCdek\Administrator\Extension\WishboxCdekComponent;
 
 /**
  * @since 1.0.0
@@ -19,7 +19,7 @@ trait ComponentTrait
 	/**
 	 * Method to get calendar data array.
 	 *
-	 * @return  WishboxcdekComponent
+	 * @return  WishboxCdekComponent
 	 *
 	 * @throws Exception
 	 *
@@ -27,11 +27,11 @@ trait ComponentTrait
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function getComponent(): WishboxcdekComponent
+	protected function getComponent(): WishboxCdekComponent
 	{
 		$app = Factory::getApplication();
 
-		/** @var WishboxcdekComponent $component */
+		/** @var WishboxCdekComponent $component */
 		$component = $app->bootComponent('com_wishboxcdek');
 
 		return $component;

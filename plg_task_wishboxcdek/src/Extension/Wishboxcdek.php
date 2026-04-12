@@ -3,19 +3,19 @@
  * @copyright   (C) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Plugin\Task\Wishboxcdek\Extension;
+namespace Joomla\Plugin\Task\WishboxCdek\Extension;
 
 use Error;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
-use Joomla\Component\Wishboxcdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
 use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
-use Joomla\Component\Wishboxcdek\Site\Model\WebhooksModel;
+use Joomla\Component\WishboxCdek\Site\Model\WebhooksModel;
 use Joomla\Event\SubscriberInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  *
  * @since  1.0.0
  */
-final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
+final class WishboxCdek extends CMSPlugin implements SubscriberInterface
 {
 	use MVCFactoryAwareTrait;
 	use TaskPluginTrait;

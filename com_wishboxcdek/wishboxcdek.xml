@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="4.4.1" method="upgrade">
+<extension type="component" method="upgrade">
     <name>com_wishboxcdek</name>
     <creationDate>December 2023</creationDate>
     <author>Nekrasov Vitaliy</author>
     <authorEmail>nekrasov_vitaliy@list.ru</authorEmail>
     <version>1.0.0</version>
     <description>COM_WISHBOXCDEK_XML_DESCRIPTION</description>
-    <namespace path="src">Joomla\Component\Wishboxcdek</namespace>
+    <namespace path="src">Joomla\Component\WishboxCdek</namespace>
     <scriptfile>script.php</scriptfile>
     <files folder="site">
         <folder>src</folder>

@@ -3,11 +3,11 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Plugin\Console\Wishboxcdek\Console;
+namespace Joomla\Plugin\Console\WishboxCdek\Console\Command;
 
 use Exception;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
-use Joomla\Component\Wishboxcdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
 use Joomla\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class UpdatecitiesCommand extends AbstractCommand
+class UpdateCitiesCommand extends AbstractCommand
 {
 	use MVCFactoryAwareTrait;
 

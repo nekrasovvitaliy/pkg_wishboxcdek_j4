@@ -3,17 +3,19 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
-namespace Joomla\Component\Wishboxcdek\Site\Service;
+namespace Joomla\Component\WishboxCdek\Site\Model;
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\Component\Wishboxcdek\Site\Exception\OrdersPatchRequestErrorsException;
-use Joomla\Component\Wishboxcdek\Site\Interface\RegistratorDelegateInterface;
-use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\OrdersPatchRequestCreator;
-use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\OrdersPostRequestCreator;
-use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Component\WishboxCdek\Administrator\Factory\RequestFactoryAwareInterface;
+use Joomla\Component\WishboxCdek\Administrator\Factory\RequestFactoryAwareTrait;
+use Joomla\Component\WishboxCdek\Site\Exception\OrdersPatchRequestErrorsException;
+use Joomla\Component\WishboxCdek\Site\Interface\RegistratorDelegateInterface;
 use WishboxCdekSDK2\Exception\Api\RequestError\EntityNotFoundImNumberException;
 use WishboxCdekSDK2\Exception\Api\RequestErrorException;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
 use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
 use function defined;
 
@@ -26,64 +28,52 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class Registrator
+class RegistratorModel extends BaseDatabaseModel implements CdekClientV2FactoryAwareInterface, RequestFactoryAwareInterface
 {
-	use ApiClientTrait;
-
-	/**
-	 * @var RegistratorDelegateInterface $delegate
-	 *
-	 * @since 1.0.0
-	 */
-	protected RegistratorDelegateInterface $delegate;
-
-	/**
-	 * @param   RegistratorDelegateInterface  $delegate Delegate
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct(RegistratorDelegateInterface $delegate)
-	{
-		$this->delegate = $delegate;
-	}
+	use CdekClientV2FactoryAwareTrait;
+	use RequestFactoryAwareTrait;
 
 	/**
 	 * Registers a new order or updates an existing one
 	 *
+	 * @param   RegistratorDelegateInterface  $delegate  Delegate
+	 *
 	 * @return void
 	 *
 	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */
-	public function register(): void
+	public function register(RegistratorDelegateInterface $delegate): void
 	{
-		$orderNumber = $this->delegate->getOrderNumber();
+		$orderNumber = $delegate->getOrderNumber();
 
 		if (!$this->isOrderExists($orderNumber))
 		{
-			$this->createOrder();
+			$this->createOrder($delegate);
 		}
 		else
 		{
-			$this->updateOrder();
+			$this->updateOrder($delegate);
 		}
 	}
 
 	/**
+	 * @param   RegistratorDelegateInterface  $delegate  Delegate
+	 *
 	 * @return void
 	 *
+	 * @throws OrdersPatchRequestErrorsException
 	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */
-	private function createOrder(): void
+	private function createOrder(RegistratorDelegateInterface $delegate): void
 	{
 		$app = Factory::getApplication();
 
-		$ordersPostRequestCreator = new OrdersPostRequestCreator($this->delegate);
-		$ordersPostRequest = $ordersPostRequestCreator->getRequest();
-		$apiClient = $this->getApiClient();
+		$ordersPostRequest = $this->getRequestFactory()->createOrdersPostRequest($delegate);
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
 		$ordersPostResponse = $apiClient->createOrder($ordersPostRequest);
 		$uuid = $ordersPostResponse->getEntity()->getUuid();
 
@@ -113,27 +103,28 @@ class Registrator
 
 			if (!$cdekNumber)
 			{
-				$this->delegate->setTrackingNumber('');
+				$delegate->setTrackingNumber('');
 				throw new Exception('CdekNumber is empty', 500);
 			}
 
-			$this->delegate->setTrackingNumber($cdekNumber);
+			$delegate->setTrackingNumber($cdekNumber);
 		}
 	}
 
 	/**
+	 * @param   RegistratorDelegateInterface  $delegate  Delegate
+	 *
 	 * @return void
 	 *
 	 * @throws Exception
+	 * @throws OrdersPatchRequestErrorsException
 	 *
 	 * @since 1.0.0
 	 */
-	private function updateOrder(): void
+	private function updateOrder(RegistratorDelegateInterface $delegate): void
 	{
-		$ordersPatchRequestCreator = new OrdersPatchRequestCreator($this->delegate);
-		$ordersPatchRequest = $ordersPatchRequestCreator->getRequest();
-
-		$apiClient = $this->getApiClient();
+		$ordersPatchRequest = $this->getRequestFactory()->createOrdersPatchRequest($delegate);
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
 		$ordersPatchResponse = $apiClient->updateOrder($ordersPatchRequest);
 		$uuid = $ordersPatchResponse->getEntity()->getUuid();
 		sleep(1);
@@ -143,7 +134,7 @@ class Registrator
 		{
 			if ($cdekNumber = $ordersGetResponse->getEntity()->getCdekNumber())
 			{
-				$this->delegate->setTrackingNumber($cdekNumber);
+				$delegate->setTrackingNumber($cdekNumber);
 			}
 		}
 	}
@@ -177,15 +168,16 @@ class Registrator
 	 * @return boolean
 	 *
 	 * @since 1.0.0
+	 *
+	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	protected function isOrderExists(string $orderNumber): bool
 	{
-		$apiClient = $this->getApiClient();
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
 
 		try
 		{
 			$ordersGetResponse = $apiClient->getOrderInfoByImNumber($orderNumber);
-
 			$statuses = $ordersGetResponse->getEntity()->getStatuses();
 
 			foreach ($statuses as $status)

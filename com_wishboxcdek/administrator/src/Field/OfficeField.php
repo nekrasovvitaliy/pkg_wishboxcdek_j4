@@ -3,13 +3,13 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Field;
+namespace Joomla\Component\WishboxCdek\Administrator\Field;
 
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Component\Wishboxcdek\Administrator\Table\OfficeTable;
-use Joomla\Component\Wishboxcdek\Site\Model\OfficesModel;
+use Joomla\Component\WishboxCdek\Administrator\Table\OfficeTable;
+use Joomla\Component\WishboxCdek\Site\Model\OfficesModel;
 use SimpleXMLElement;
 use Wishbox\Field\ListField;
 use function defined;
@@ -96,14 +96,10 @@ class OfficeField extends ListField
 
 		if ($return)
 		{
-			$this->cityCode = (int) $this->element['cityCode'];
+			$this->cityCode = (int) $this->element['city_code'];
 
 			$allowedCod = (string) $this->element['allowed_cod'];
-
-			if ($allowedCod)
-			{
-				$this->allowedCod = (bool) $allowedCod;
-			}
+			$this->allowedCod = ($allowedCod === 'true' || $allowedCod === '1');
 
 			$deliveryPointType = (string) $this->element['deliverypoint_type'];
 

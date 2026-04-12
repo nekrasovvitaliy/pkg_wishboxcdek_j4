@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Event\Model\Offices;
+namespace Joomla\Component\WishboxCdek\Site\Event\Model\Offices;
 
 use BadMethodCallException;
 use Joomla\CMS\Event\AbstractImmutableEvent;

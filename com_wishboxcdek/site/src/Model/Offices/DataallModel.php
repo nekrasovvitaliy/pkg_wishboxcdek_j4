@@ -3,11 +3,9 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
+namespace Joomla\Component\WishboxCdek\Site\Model\Offices;
 
 use Exception;
-use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseDriver;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -65,13 +63,13 @@ class DataallModel extends DataModel implements DataInterface
 		if ($packages && is_array($packages) && count($packages))
 		{
 			$volumeWeight = $this->getVolumeWeight($packages);
-			$query->where('weight_max >= ' . $volumeWeight);
+			$query->where('(weight_max = 0 OR weight_max >= ' . $volumeWeight . ')');
 		}
 
 		if ($packages && is_array($packages) && count($packages))
 		{
 			$volumeWeight = $this->getVolumeWeight($packages);
-			$query->where('weight_max >= ' . $volumeWeight);
+			$query->where('(weight_max = 0 OR weight_max >= ' . $volumeWeight . ')');
 		}
 
 		$query->order('o.address ASC');

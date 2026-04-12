@@ -170,7 +170,7 @@ return new class implements ServiceProviderInterface
 					$folder      = ((string) $element->attributes()->destination) ? '/' . $element->attributes()->destination : null;
 					$destination = Path::clean(JPATH_ROOT . '/layouts' . $folder);
 
-					// Get source
+					// Get the source
 					$folder = (string) $element->attributes()->folder;
 					$source = ($folder && file_exists($installer->getPath('source') . '/' . $folder))
 						? $installer->getPath('source') . '/' . $folder : $installer->getPath('source');
@@ -209,7 +209,7 @@ return new class implements ServiceProviderInterface
 				}
 
 				/**
-				 * Method to parse through a layouts element of the installation manifest and remove the files that were installed.
+				 * Method to parse through a layouts' element of the installation manifest and remove the files that were installed.
 				 *
 				 * @param   SimpleXMLElement|null  $element  The XML node to process.
 				 *
@@ -227,7 +227,7 @@ return new class implements ServiceProviderInterface
 					// Get the array of file nodes to process
 					$files = $element->children();
 
-					// Get source
+					// Get the source
 					$folder = ((string) $element->attributes()->destination) ? '/' . $element->attributes()->destination : null;
 					$source = Path::clean(JPATH_ROOT . '/layouts' . $folder);
 

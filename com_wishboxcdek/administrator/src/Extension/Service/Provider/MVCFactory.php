@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Component\Wishboxcdek\Site\CMS\Extension\Service\Provider;
+namespace Joomla\Component\WishboxCdek\Administrator\Extension\Service\Provider;
 
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Factory;
@@ -13,10 +13,13 @@ use Joomla\CMS\MVC\Factory\ApiMVCFactory;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\SiteRouter;
 use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Component\WishboxCdek\Administrator\Factory\RequestFactoryInterface;
 use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryInterface;
+use WishboxCdekSDK2\Service\Provider\CdekClientV2Factory;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -26,7 +29,7 @@ defined('_JEXEC') or die;
 /**
  * Service provider for the service MVC factory.
  *
- * @since  4.0.0
+ * @since  1.0.0
  */
 class MVCFactory extends \Joomla\CMS\Extension\Service\Provider\MVCFactory implements ServiceProviderInterface
 {
@@ -35,7 +38,9 @@ class MVCFactory extends \Joomla\CMS\Extension\Service\Provider\MVCFactory imple
 	 *
 	 * @var  string
 	 *
-	 * @since   4.0.0
+	 * @since   1.0.0
+	 *
+	 * @noinspection PhpMissingFieldTypeInspection
 	 */
 	private $namespace;
 
@@ -44,7 +49,7 @@ class MVCFactory extends \Joomla\CMS\Extension\Service\Provider\MVCFactory imple
 	 *
 	 * @param   string  $namespace  The namespace
 	 *
-	 * @since   4.0.0
+	 * @since   1.0.0
 	 */
 	public function __construct(string $namespace)
 	{
@@ -62,8 +67,11 @@ class MVCFactory extends \Joomla\CMS\Extension\Service\Provider\MVCFactory imple
 	 *
 	 * @since   1.0.0
 	 */
-	public function register(Container $container)
+	public function register(Container $container): void
 	{
+		$container->registerServiceProvider(new CdekClientV2Factory);
+		$container->registerServiceProvider(new RequestFactory);
+
 		$container->set(
 			MVCFactoryInterface::class,
 			function (Container $container)
@@ -74,7 +82,7 @@ class MVCFactory extends \Joomla\CMS\Extension\Service\Provider\MVCFactory imple
 				}
 				else
 				{
-					$factory = new \Joomla\Component\Wishboxcdek\Site\CMS\MVC\Factory\MVCFactory($this->namespace);
+					$factory = new \Joomla\Component\WishboxCdek\Administrator\MVC\Factory\MVCFactory($this->namespace);
 				}
 
 				$factory->setFormFactory($container->get(FormFactoryInterface::class));
@@ -84,6 +92,8 @@ class MVCFactory extends \Joomla\CMS\Extension\Service\Provider\MVCFactory imple
 				$factory->setCacheControllerFactory($container->get(CacheControllerFactoryInterface::class));
 				$factory->setUserFactory($container->get(UserFactoryInterface::class));
 				$factory->setMailerFactory($container->get(MailerFactoryInterface::class));
+				$factory->setCdekClientV2Factory($container->get(CdekClientV2FactoryInterface::class));
+				$factory->setRequestFactory($container->get(RequestFactoryInterface::class));
 
 				return $factory;
 			}

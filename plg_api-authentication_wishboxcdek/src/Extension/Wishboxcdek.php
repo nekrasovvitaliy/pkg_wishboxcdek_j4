@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Plugin\ApiAuthentication\Wishboxcdek\Extension;
+namespace Joomla\Plugin\ApiAuthentication\WishboxCdek\Extension;
 
 use Exception;
 use Joomla\CMS\Authentication\Authentication;
@@ -23,7 +23,7 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
+final class WishboxCdek extends CMSPlugin implements SubscriberInterface
 {
 	use DatabaseAwareTrait;
 	use UserFactoryAwareTrait;
@@ -97,7 +97,7 @@ final class Wishboxcdek extends CMSPlugin implements SubscriberInterface
 		$response->timezone      = $user->getParam('timezone', $app->get('offset', 'UTC'));
 		$response->language      = $user->getParam('language', $app->get('language'));
 
-		// Stop event propagation when status is STATUS_SUCCESS
+		// Stop event propagation when the status is STATUS_SUCCESS
 		$event->stopPropagation();
 	}
 }

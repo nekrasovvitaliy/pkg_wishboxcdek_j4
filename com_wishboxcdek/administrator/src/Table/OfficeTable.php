@@ -3,9 +3,8 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Table;
+namespace Joomla\Component\WishboxCdek\Administrator\Table;
 
-use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseDriver;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -13,8 +12,6 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @package     Joomla\Component\Jshopping\Site\Table
- *
  * @since       1.0.0
  *
  * @noinspection PhpUnused
@@ -33,7 +30,7 @@ class OfficeTable extends BaseTable
 	 *
 	 * @since 1.0.0
 	 */
-	public ?string $addres;
+	public ?string $address;
 
 	/**
 	 * @param   DatabaseDriver  $db  Database driver
@@ -56,7 +53,7 @@ class OfficeTable extends BaseTable
 	 */
 	public function getItems(int $cityCode, ?bool $allowedCod = null, ?array $packages = null): array
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDbo();
 
 		$query = $db->getQuery(true)
 			->select(
@@ -80,7 +77,7 @@ class OfficeTable extends BaseTable
 		if (is_array($packages) && count($packages))
 		{
 			$volumeWeight = $this->getVolumeWeight($packages);
-			$query->where('weight_max >= ' . $volumeWeight);
+			$query->where('(weight_max = 0 OR weight_max >= ' . $volumeWeight . ')');
 		}
 
 		$query->order('address');

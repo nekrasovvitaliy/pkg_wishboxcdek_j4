@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\View\Changeoffice;
+namespace Joomla\Component\WishboxCdek\Site\View\Changeoffice;
 
 use Exception;
 use Joomla\CMS\Factory;
@@ -77,9 +77,11 @@ class HtmlView extends BaseHtmlView
 	{
 		$user = $this->getCurrentUser();
 
-		$this->state            = $this->get('State');
-		$this->count            = $this->get('Count');
-		$this->center           = $this->get('Center');
+		$model = $this->getModel();
+
+		$this->state            = $model->getState();
+		$this->count            = $model->getCount();
+		$this->center           = $model->getCenter();
 
 		$this->cityCode         = $this->state->get('cityCode');
 		$this->shippingMethodId = $this->state->get('shippingMethodId');

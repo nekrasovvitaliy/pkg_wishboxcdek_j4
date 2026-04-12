@@ -3,12 +3,11 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
+namespace Joomla\Component\WishboxCdek\Site\Model\Offices;
 
 use Exception;
 use InvalidArgumentException;
-use Joomla\CMS\Factory;
-use Joomla\Component\Wishboxcdek\Site\Entity\DimensionsEntity;
+use Joomla\Component\WishboxCdek\Site\Entity\DimensionsEntity;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -22,7 +21,7 @@ defined('_JEXEC') or die;
 class DatacityModel extends DataModel implements DataInterface
 {
 	/**
-	 * Method returns array of offices use city
+	 * Method returns an array of offices uses city
 	 *
 	 * @param   integer       $cityCode    City code
 	 * @param   boolean|null  $allowedCod  Allowed cod
@@ -42,7 +41,6 @@ class DatacityModel extends DataModel implements DataInterface
 			throw new InvalidArgumentException('city_code must be greater than zero', 500);
 		}
 
-		$app = Factory::getApplication();
 		$db = $this->getDatabase();
 
 		$query = $db->createQuery()
@@ -83,7 +81,7 @@ class DatacityModel extends DataModel implements DataInterface
 		if ($packages && is_array($packages) && count($packages))
 		{
 			$volumeWeight = $this->getVolumeWeight($packages);
-			$query->where('weight_max >= ' . $volumeWeight);
+			$query->where('(weight_max = 0 OR weight_max >= ' . $volumeWeight . ')');
 		}
 
 		$query->order('o.address ASC');

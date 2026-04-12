@@ -3,18 +3,18 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later
  */
-namespace Joomla\Component\Wishboxcdek\Site\Service;
+namespace Joomla\Component\WishboxCdek\Site\Model;
 
 use Exception;
 use InvalidArgumentException;
-use Joomla\CMS\Factory;
-use Joomla\Component\Wishboxcdek\Administrator\Table\TariffTable;
-use Joomla\Component\Wishboxcdek\Site\Exception\NoAvailableTariffsException;
-use Joomla\Component\Wishboxcdek\Site\Interface\CalculatorDelegateInterface;
-use Joomla\Component\Wishboxcdek\Site\Service\RequestCreator\TariffListPostRequestCreator;
-use Joomla\Component\Wishboxcdek\Site\Trait\ApiClientTrait;
-use Joomla\Database\DatabaseDriver;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Component\WishboxCdek\Administrator\Factory\RequestFactoryAwareInterface;
+use Joomla\Component\WishboxCdek\Administrator\Factory\RequestFactoryAwareTrait;
+use Joomla\Component\WishboxCdek\Site\Exception\NoAvailableTariffsException;
+use Joomla\Component\WishboxCdek\Site\Interface\CalculatorDelegateInterface;
 use Wishbox\ShippingService\ShippingTariff;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
 use WishboxCdekSDK2\Model\Response\Calculator\TariffListPost\TariffCodeResponse;
 use function defined;
 
@@ -27,16 +27,10 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class Calculator
+class CalculatorModel extends BaseDatabaseModel implements RequestFactoryAwareInterface, CdekClientV2FactoryAwareInterface
 {
-	use ApiClientTrait;
-
-	/**
-	 * @var CalculatorDelegateInterface $delegate
-	 *
-	 * @since 1.0.0
-	 */
-	protected CalculatorDelegateInterface $delegate;
+	use CdekClientV2FactoryAwareTrait;
+	use RequestFactoryAwareTrait;
 
 	/**
 	 * @var array $tariffs
@@ -46,17 +40,9 @@ class Calculator
 	protected static array $tariffs;
 
 	/**
-	 * @param   CalculatorDelegateInterface  $delegate  Delegate
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct(CalculatorDelegateInterface $delegate)
-	{
-		$this->delegate = $delegate;
-	}
-
-	/**
 	 * Returns shipping price
+	 *
+	 * @param   CalculatorDelegateInterface  $delegate
 	 *
 	 * @return ShippingTariff|null
 	 *
@@ -64,11 +50,11 @@ class Calculator
 	 *
 	 * @since 1.0.0
 	 */
-	public function getTariff(): ?ShippingTariff
+	public function getTariff(CalculatorDelegateInterface $delegate): ?ShippingTariff
 	{
-		$shippingTariff = $this->getShippingTariff();
+		$shippingTariff = $this->getShippingTariff($delegate);
 
-		self::$tariffs[$this->delegate->getShippingMethodId()] = $shippingTariff;
+		self::$tariffs[$delegate->getShippingMethodId()] = $shippingTariff;
 
 		return $shippingTariff;
 	}
@@ -80,11 +66,11 @@ class Calculator
 	 *
 	 * @since 1.0.0
 	 */
-	public function getShippingTariffs(): array
+	public function getShippingTariffs(CalculatorDelegateInterface $delegate): array
 	{
 		$shippingTariffs = [];
 
-		$tariffs = $this->getTariffs();
+		$tariffs = $this->getTariffs($delegate);
 
 		if (count($tariffs))
 		{
@@ -110,7 +96,7 @@ class Calculator
 	}
 
 	/**
-	 * Returns tariff
+	 * @param   CalculatorDelegateInterface  $delegate
 	 *
 	 * @return ShippingTariff
 	 *
@@ -118,11 +104,10 @@ class Calculator
 	 *
 	 * @since 1.0.0
 	 */
-	private function getShippingTariff(): ShippingTariff
+	private function getShippingTariff(CalculatorDelegateInterface $delegate): ShippingTariff
 	{
 		$shippingTariff = new ShippingTariff(0, 0);
-
-		$tariffs = $this->getTariffs();
+		$tariffs = $this->getTariffs($delegate);
 
 		if (count($tariffs))
 		{
@@ -174,36 +159,36 @@ class Calculator
 	/**
 	 * Method
 	 *
+	 * @param   CalculatorDelegateInterface  $delegate
+	 *
 	 * @return array
 	 *
+	 * @throws NoAvailableTariffsException
 	 * @throws Exception
 	 *
 	 * @since 1.0.0
 	 */
-	private function getTariffs(): array
+	private function getTariffs(CalculatorDelegateInterface $delegate): array
 	{
-		$app = Factory::getApplication();
-		$tariffListPostRequestCreator = new TariffListPostRequestCreator($this->delegate);
-		$tariffListPostRequest = $tariffListPostRequestCreator->getRequest();
+		$tariffListPostRequest = $this->getRequestFactory()->createTariffListPostRequest($delegate);
 
-		$receiverCityCode = $this->delegate->getReceiverCityCode();
+		$receiverCityCode = $delegate->getReceiverCityCode();
 
 		if (!$receiverCityCode)
 		{
 			return [];
 		}
 
-		$apiClient = $this->getApiClient();
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
 
 		$tariffListPostResponse = $apiClient->calculateTariffList($tariffListPostRequest);
 		$responseTariffCodes = $tariffListPostResponse->getTariffCodes();
 
-		$requiredTariffCodes = $this->delegate->getTariffCodes();
+		$requiredTariffCodes = $delegate->getTariffCodes();
 
 		if (is_array($responseTariffCodes) && count($responseTariffCodes))
 		{
-			/** @var DatabaseDriver $db */
-			$db = Factory::getContainer()->get(DatabaseDriver::class);
+			$db = $this->getDatabase();
 
 			$query = $db->createQuery()
 				->select($db->qn('code'))

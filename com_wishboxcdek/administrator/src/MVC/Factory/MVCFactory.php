@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Component\Wishboxcdek\Site\CMS\MVC\Factory;
+namespace Joomla\Component\WishboxCdek\Administrator\MVC\Factory;
 
 use Exception;
 use Joomla\CMS\Cache\CacheControllerFactoryAwareInterface;
@@ -13,11 +13,14 @@ use Joomla\CMS\Form\FormFactoryAwareInterface;
 use Joomla\CMS\Form\FormFactoryAwareTrait;
 use Joomla\CMS\Mail\MailerFactoryAwareInterface;
 use Joomla\CMS\Mail\MailerFactoryAwareTrait;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ModelInterface;
 use Joomla\CMS\Router\SiteRouterAwareInterface;
 use Joomla\CMS\Router\SiteRouterAwareTrait;
 use Joomla\CMS\User\UserFactoryAwareInterface;
 use Joomla\CMS\User\UserFactoryAwareTrait;
+use Joomla\Component\WishboxCdek\Administrator\Factory\RequestFactoryAwareInterface;
+use Joomla\Component\WishboxCdek\Administrator\Factory\RequestFactoryAwareTrait;
 use Joomla\Database\DatabaseAwareInterface;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
@@ -25,6 +28,8 @@ use Joomla\Database\Exception\DatabaseNotFoundException;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Event\DispatcherAwareTrait;
 use UnexpectedValueException;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
 use function defined;
 use function sprintf;
 
@@ -35,10 +40,10 @@ defined('_JEXEC') or die;
 /**
  * Factory to create MVC objects based on a namespace.
  *
- * @since  3.10.0
+ * @since  1.0.0
  */
-class MVCFactory extends \Joomla\CMS\MVC\Factory\MVCFactory implements \Joomla\CMS\MVC\Factory\MVCFactoryInterface,
-	FormFactoryAwareInterface, SiteRouterAwareInterface, UserFactoryAwareInterface, MailerFactoryAwareInterface
+class MVCFactory extends \Joomla\CMS\MVC\Factory\MVCFactory implements MVCFactoryInterface,
+	FormFactoryAwareInterface, SiteRouterAwareInterface, UserFactoryAwareInterface, MailerFactoryAwareInterface, CdekClientV2FactoryAwareInterface
 {
 	use FormFactoryAwareTrait;
 	use DispatcherAwareTrait;
@@ -47,6 +52,8 @@ class MVCFactory extends \Joomla\CMS\MVC\Factory\MVCFactory implements \Joomla\C
 	use CacheControllerFactoryAwareTrait;
 	use UserFactoryAwareTrait;
 	use MailerFactoryAwareTrait;
+	use CdekClientV2FactoryAwareTrait;
+	use RequestFactoryAwareTrait;
 
 	/**
 	 * Method to load and return a model object.
@@ -205,6 +212,30 @@ class MVCFactory extends \Joomla\CMS\MVC\Factory\MVCFactory implements \Joomla\C
 			{
 				@trigger_error('Database must be set, this will not be caught anymore in 5.0.', E_USER_DEPRECATED);
 				$model->setDatabase(Factory::getContainer()->get(DatabaseInterface::class));
+			}
+		}
+
+		if ($model instanceof CdekClientV2FactoryAwareInterface)
+		{
+			try
+			{
+				$model->setCdekClientV2Factory($this->getCdekClientV2Factory());
+			}
+			catch (UnexpectedValueException $e)
+			{
+				// Ignore it
+			}
+		}
+
+		if ($model instanceof RequestFactoryAwareInterface)
+		{
+			try
+			{
+				$model->setRequestFactory($this->getRequestFactory());
+			}
+			catch (UnexpectedValueException $e)
+			{
+				// Ignore it
 			}
 		}
 

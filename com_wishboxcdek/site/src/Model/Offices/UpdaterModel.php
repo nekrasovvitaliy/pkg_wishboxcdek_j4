@@ -3,15 +3,19 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
+namespace Joomla\Component\WishboxCdek\Site\Model\Offices;
 
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Component\WishboxCdek\Site\Event\Model\Offices\Updater\AfterLoadOfficesEvent;
 use Joomla\Database\DatabaseDriver;
 use ReflectionException;
-use WishboxCdekSDK2\CdekClientV2;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
 use WishboxCdekSDK2\Model\Request\DeliveryPoints\DeliveryPointsGetRequest;
 use WishboxCdekSDK2\Model\Response\DeliveryPoints\DeliveryPointsGet\DeliveryPointResponse;
 
@@ -24,8 +28,10 @@ defined('_JEXEC') or die;
  *
  * @since 1.0.0
  */
-class UpdaterModel extends BaseDatabaseModel
+class UpdaterModel extends BaseDatabaseModel implements CdekClientV2FactoryAwareInterface
 {
+	use CdekClientV2FactoryAwareTrait;
+
 	/**
 	 * @param   integer  $limit  Limit
 	 *
@@ -40,19 +46,36 @@ class UpdaterModel extends BaseDatabaseModel
 	{
 		$this->deleteAll();
 
-		$page = 0;
+		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
+		$countryCodes = $componentParams->get('country_codes', []);
 
-		while (true)
+		if (!count($countryCodes))
 		{
-			$count = $this->loadOffices($page, $limit);
+			$countryCodes = [
+				'AM',
+				'BY',
+				'KZ',
+				'KG',
+				'RU'
+			];
+		}
 
-			if ($count == $limit)
+		foreach ($countryCodes as $countryCode)
+		{
+			$page = 0;
+
+			while (true)
 			{
-				$page++;
-			}
-			else
-			{
-				break;
+				$count = $this->loadOffices($countryCode, $page, $limit);
+
+				if ($count == $limit)
+				{
+					$page++;
+				}
+				else
+				{
+					break;
+				}
 			}
 		}
 
@@ -60,8 +83,9 @@ class UpdaterModel extends BaseDatabaseModel
 	}
 
 	/**
-	 * @param   integer  $page   Page
-	 * @param   integer  $limit  Limit
+	 * @param   string   $countryCode  Country code
+	 * @param   integer  $page         Page
+	 * @param   integer  $limit        Limit
 	 *
 	 * @return integer
 	 *
@@ -69,12 +93,13 @@ class UpdaterModel extends BaseDatabaseModel
 	 *
 	 * @since 1.0.0
 	 */
-	public function loadOffices(int $page = 0, int $limit = 1000): int
+	public function loadOffices(string $countryCode, int $page = 0, int $limit = 1000): int
 	{
 		$app = Factory::getApplication();
 		$db  = $this->getDatabase();
 
-		$deliveryPointResponses = $this->getDeliveryPointsResponses($page, $limit);
+		$deliveryPointResponses = $this->getDeliveryPointsResponses($countryCode, $page, $limit);
+
 
 		static $codes = [];
 		$query = $db->createQuery()
@@ -222,57 +247,66 @@ class UpdaterModel extends BaseDatabaseModel
 		}
 		catch (Exception $e)
 		{
-			echo str_replace('#__', $app->get('dbprefix'), (string) $query);
+			file_put_contents(
+				JPATH_SITE.'/1.sql',
+				str_replace('#__', $app->get('dbprefix'), (string) $query)
+			);
 
 			die;
 		}
+
+		PluginHelper::importPlugin('wishboxcdek');
+
+		/** @var AfterLoadOfficesEvent $event */
+		$event = AbstractEvent::create(
+			'onWishboxCdekOfficesUpdaterAfterLoadOffices',
+			[
+				'subject'                   => $this,
+				'deliveryPointResponses'    => $deliveryPointResponses,
+				'countryCode'               => $countryCode,
+				'page'                      => $page,
+				'limit'                     => $limit,
+				'eventClass'                => AfterLoadOfficesEvent::class,
+			]
+		);
+
+		$app->getDispatcher()->dispatch($event->getName(), $event);
 
 		return count($deliveryPointResponses);
 	}
 
 	/**
-	 * @param   integer  $page   Page
-	 * @param   integer  $limit  Limit
+	 * @param   string   $countryCode  Country code
+	 * @param   integer  $page         Page
+	 * @param   integer  $limit        Limit
 	 *
 	 * @return DeliveryPointResponse[]
 	 *
 	 * @throws ReflectionException|Exception
 	 *
 	 * @since 1.0.0
+	 * @noinspection PhpUnnecessaryLocalVariableInspection
 	 */
-	private function getDeliveryPointsResponses(int $page = 0, int $limit = 1000): array
+	private function getDeliveryPointsResponses(string $countryCode, int $page = 0, int $limit = 1000): array
 	{
-		$deliveryPointResponses = [];
-		$componentParams = ComponentHelper::getParams('com_wishboxcdek');
+		$totalDeliveryPointResponses = [];
 
-		$apiClient = new CdekClientV2(
-			$componentParams->get('account', ''),
-			$componentParams->get('secure', ''),
-			60.0
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
+
+		$requestPvz = (new DeliveryPointsGetRequest)
+			->setType('ALL')
+			->setCountryCode($countryCode)
+			->setPage($page)
+			->setSize($limit);
+
+		$deliveryPointResponses = $apiClient->getDeliveryPoints($requestPvz);
+
+		$totalDeliveryPointResponses = array_merge(
+			$totalDeliveryPointResponses,
+			$deliveryPointResponses
 		);
 
-		$countryCodes = $componentParams->get('country_codes', []);
-
-		if (!count($countryCodes))
-		{
-			throw new Exception('No country selected in component arameters.', 500);
-		}
-
-		foreach ($countryCodes as $countryCode)
-		{
-			$requestPvz = (new DeliveryPointsGetRequest)
-				->setType('ALL')
-				->setCountryCode($countryCode)
-				->setPage($page)
-				->setSize($limit);
-
-			$deliveryPointResponses = array_merge(
-				$deliveryPointResponses,
-				$apiClient->getDeliveryPoints($requestPvz)
-			);
-		}
-
-		return $deliveryPointResponses;
+		return $totalDeliveryPointResponses;
 	}
 
 	/**

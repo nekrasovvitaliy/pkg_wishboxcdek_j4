@@ -3,12 +3,12 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Field\Value;
+namespace Joomla\Component\WishboxCdek\Administrator\Field\Value;
 
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
-use Joomla\Component\Wishboxcdek\Administrator\Table\CityTable;
+use Joomla\Component\WishboxCdek\Administrator\Table\CityTable;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects

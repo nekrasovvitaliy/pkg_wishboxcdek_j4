@@ -3,10 +3,10 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Field;
+namespace Joomla\Component\WishboxCdek\Administrator\Field;
 
 use Exception;
-use Joomla\Component\Wishboxcdek\Administrator\Helper\WishboxcdekHelper;
+use Joomla\Component\WishboxCdek\Administrator\Helper\WishboxCdekHelper;
 use Wishbox\Field\ListField;
 use function defined;
 
@@ -43,7 +43,7 @@ class WishboxCdekStatusField extends ListField
 	{
 		$options = parent::getOptions();
 
-		$statusOptions = WishboxcdekHelper::getStatusOptions();
+		$statusOptions = WishboxCdekHelper::getStatusOptions();
 
 		return array_merge($options, $statusOptions);
 	}

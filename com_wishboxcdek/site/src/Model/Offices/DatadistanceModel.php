@@ -3,11 +3,9 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model\Offices;
+namespace Joomla\Component\WishboxCdek\Site\Model\Offices;
 
 use InvalidArgumentException;
-use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseDriver;
 use Wishbox\Map\Point;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -87,7 +85,7 @@ class DatadistanceModel extends DataModel implements DataInterface
 			if (is_array($packages) && count($packages))
 			{
 				$volumeWeight = $this->getVolumeWeight($packages);
-				$query->where('weight_max >= ' . $volumeWeight);
+				$query->where('(weight_max = 0 OR weight_max >= ' . $volumeWeight . ')');
 			}
 
 			$query->where(
@@ -144,7 +142,7 @@ class DatadistanceModel extends DataModel implements DataInterface
 	 */
 	private function getDistance(int $cityCode): int
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 
 		$query = $db->createQuery()
 			->select('dist(MIN(location_longitude), MIN(location_latitude), MAX(location_longitude), MAX(location_latitude)) / 2')

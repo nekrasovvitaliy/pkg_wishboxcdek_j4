@@ -7,12 +7,18 @@
     <authorEmail>nekrasov_vitaliy@list.ru</authorEmail>
     <version>1.0.0</version>
     <description>PLG_CONSOLE_WISHBOXCDEK_XML_DESCRIPTION</description>
-    <namespace path="src">Joomla\Plugin\Console\Wishboxcdek</namespace>
+    <namespace path="src">Joomla\Plugin\Console\WishboxCdek</namespace>
     <scriptfile>script.php</scriptfile>
     <files>
         <folder plugin="wishboxcdek">services</folder>
         <folder>src</folder>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_console_wishboxcdek.ini</language>
+        <language tag="en-GB">language/en-GB/plg_console_wishboxcdek.sys.ini</language>
+        <language tag="ru-RU">language/ru-RU/plg_console_wishboxcdek.ini</language>
+        <language tag="ru-RU">language/ru-RU/plg_console_wishboxcdek.sys.ini</language>
+    </languages>
     <config>
     </config>
 </extension>

@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model\Cities;
+namespace Joomla\Component\WishboxCdek\Site\Model\Cities;
 
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
@@ -11,9 +11,10 @@ use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\Component\Wishboxcdek\Site\Event\Model\Cities\Updater\AfterLoadCitiesEvent;
+use Joomla\Component\WishboxCdek\Site\Event\Model\Cities\Updater\AfterLoadCitiesEvent;
 use Joomla\Database\DatabaseDriver;
-use WishboxCdekSDK2\CdekClientV2;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
 use WishboxCdekSDK2\Model\Request\Location\CitiesGetRequest;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -25,8 +26,10 @@ defined('_JEXEC') or die;
  *
  * @since 1.0.0
  */
-class UpdaterModel extends BaseDatabaseModel
+class UpdaterModel extends BaseDatabaseModel implements CdekClientV2FactoryAwareInterface
 {
+	use CdekClientV2FactoryAwareTrait;
+
 	/**
 	 * @param   integer  $limit  Limit
 	 *
@@ -87,11 +90,7 @@ class UpdaterModel extends BaseDatabaseModel
 			->setPage($page)
 			->setSize($limit);
 
-		$apiClient = new CdekClientV2(
-			$componentParams->get('account', ''),
-			$componentParams->get('secure', ''),
-			60.0
-		);
+		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
 
 		$cityResponses = $apiClient->getCities($request);
 
@@ -139,7 +138,7 @@ class UpdaterModel extends BaseDatabaseModel
 
 				$subRegion = trim($cityResponse->getSubRegion() ?? '');
 
-				// Если подрегион не совпадает с областью и не совпадает с городом
+				// Если подрегион совпадает с областью или совпадает с городом
 				if (mb_strtoupper($subRegion) == mb_strtoupper($oblname)
 					|| mb_strtoupper($subRegion) == mb_strtoupper(trim($cityResponse->getCity()))
 				)
@@ -154,8 +153,8 @@ class UpdaterModel extends BaseDatabaseModel
 				$fullname = implode(', ', $fullname);
 				$nalsumlimit = 0;
 
-				$longitude = $cityResponse->getLongitude();
-				$latitude = $cityResponse->getLatitude();
+				$longitude = (float) $cityResponse->getLongitude();
+				$latitude = (float) $cityResponse->getLatitude();
 				$codes[] = $code;
 				$query->values(
 					implode(
@@ -169,15 +168,26 @@ class UpdaterModel extends BaseDatabaseModel
 							$db->q($oblname),
 							$db->q($countrycode),
 							$db->q($nalsumlimit),
-							$longitude,
-							$latitude
+							$longitude, // float|null
+							$latitude   // float|null
 						]
 					)
 				);
 			}
 
-			$db->setQuery($query);
-			$db->execute();
+			try
+			{
+				$db->setQuery($query);
+				$db->execute();
+			}
+			catch (Exception $e)
+			{
+				$stringQuery = (string) $query;
+				$a = $stringQuery;
+
+				throw $e;
+			}
+
 			PluginHelper::importPlugin('wishboxcdek');
 
 			/** @var AfterLoadCitiesEvent $event */
@@ -192,7 +202,7 @@ class UpdaterModel extends BaseDatabaseModel
 				]
 			);
 
-			$app->getDispatcher()->dispatch('onWishboxCdekCitiesUpdaterAfterLoadCities', $event);
+			$app->getDispatcher()->dispatch($event->getName(), $event);
 		}
 
 		return count($cityResponses);
@@ -205,7 +215,7 @@ class UpdaterModel extends BaseDatabaseModel
 	 */
 	private function deleteAll(): void
 	{
-		$db = Factory::getContainer()->get(DatabaseDriver::class);
+		$db = $this->getDatabase();
 		$query = 'TRUNCATE #__wishboxcdek_cities;';
 		$db->setQuery($query);
 		$db->execute();

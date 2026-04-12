@@ -3,7 +3,7 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Model;
+namespace Joomla\Component\WishboxCdek\Site\Model;
 
 use Exception;
 use InvalidArgumentException;
@@ -12,7 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\Component\Wishboxcdek\Site\Model\Offices\DataInterface;
+use Joomla\Component\WishboxCdek\Site\Model\Offices\DataInterface;
 use Wishbox\ShippingService\ShippingTariff;
 
 // phpcs:disable PSR1.Files.SideEffects

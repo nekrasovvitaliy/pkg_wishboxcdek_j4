@@ -7,12 +7,18 @@
     <authorEmail>nekrasov_vitaliy@list.ru</authorEmail>
     <version>1.0.0</version>
     <description>PLG_WISHBOXCDEK_TARIFF_XML_DESCRIPTION</description>
-    <namespace path="src">Joomla\Plugin\Wishboxcdek\Tariff</namespace>
+    <namespace path="src">Joomla\Plugin\WishboxCdek\Tariff</namespace>
     <scriptfile>script.php</scriptfile>
     <files>
         <folder plugin="tariff">services</folder>
         <folder>src</folder>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_wishboxcdek_tariff.ini</language>
+        <language tag="en-GB">language/en-GB/plg_wishboxcdek_tariff.sys.ini</language>
+        <language tag="ru-RU">language/ru-RU/plg_wishboxcdek_tariff.ini</language>
+        <language tag="ru-RU">language/ru-RU/plg_wishboxcdek_tariff.sys.ini</language>
+    </languages>
     <config>
     </config>
 </extension>

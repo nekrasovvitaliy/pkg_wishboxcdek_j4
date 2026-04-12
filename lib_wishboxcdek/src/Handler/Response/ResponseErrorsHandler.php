@@ -23,6 +23,7 @@ class ResponseErrorsHandler extends AbstractResponseHandler
 	 * @throws ApiExceptionInterface
 	 *
 	 * @since 1.0.0
+	 *
 	 * @noinspection PhpUnnecessaryLocalVariableInspection
 	 */
 	protected function handleResponse(string $path, ResponseData $responseData): bool

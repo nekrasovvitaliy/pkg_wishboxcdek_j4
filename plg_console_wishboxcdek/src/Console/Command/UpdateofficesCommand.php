@@ -3,18 +3,15 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace Joomla\Plugin\Console\Wishboxcdek\Console;
+namespace Joomla\Plugin\Console\WishboxCdek\Console\Command;
 
 use Exception;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
-use Joomla\Component\Wishboxcdek\Site\Model\OrderStatusUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
 use Joomla\Console\Command\AbstractCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use WishboxCdekSDK2\Exception\ApiException;
-use WishboxCdekSDK2\Exception\ClientException;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -23,16 +20,16 @@ defined('_JEXEC') or die;
 /**
  * @since 1.0.0
  */
-class UpdateOrderStatutesCommand extends AbstractCommand
+class UpdateOfficesCommand extends AbstractCommand
 {
 	use MVCFactoryAwareTrait;
 
 	/**
-	 * @var string
+	 * @var   string
 	 *
 	 * @since 1.0.0
 	 */
-	protected static $defaultName = 'wishboxcdek:update-order-statuses';
+	protected static $defaultName = 'wishboxcdek:update-offices';
 
 	/**
 	 * @var InputInterface
@@ -59,6 +56,7 @@ class UpdateOrderStatutesCommand extends AbstractCommand
 	 * @return void
 	 *
 	 * @since 1.0.0
+	 *
 	 */
 	private function configureIO(InputInterface $input, OutputInterface $output): void
 	{
@@ -67,16 +65,18 @@ class UpdateOrderStatutesCommand extends AbstractCommand
 	}
 
 	/**
+	 * Инициализация команды.
+	 *
 	 * @return  void
 	 *
-	 * @since   1.0.0
+	 * @since 1.0.0
 	 */
 	protected function configure(): void
 	{
-		$help = "<info>%command.name%</info> Updates cities
+		$help = "<info>%command.name%</info> Updates offices
                         \nUsage: <info>php %command.full_name%</info>";
 
-		$this->setDescription('Update order statuses');
+		$this->setDescription('Update offices');
 		$this->setHelp($help);
 
 	}
@@ -91,36 +91,30 @@ class UpdateOrderStatutesCommand extends AbstractCommand
 	 *
 	 * @throws Exception
 	 *
-	 * @since   1.0.0
+	 * @since 1.0.0
 	 */
 	protected function doExecute(InputInterface $input, OutputInterface $output): int
 	{
 		$this->configureIO($input, $output);
-
-		$this->ioStyle->title('Updating order statuses');
 
 		if (!ini_set('memory_limit', '256000000'))
 		{
 			throw new Exception('ini_set("memory_limit", "512MB") return false', 500);
 		}
 
-		/** @var OrderStatusupdaterModel $orderStatusUpdaterModel */
-		$orderStatusUpdaterModel = $this->getMVCFactory()
+		/** @var OfficesUpdaterModel $officesupdaterModel */
+		$officesupdaterModel = $this->getMVCFactory()
 			->createModel(
-				'OrderStatusUpdater',
-				'Site\\Model',
+				'updater',
+				'Site\\Model\\Offices',
 				['ignore_request' => true]
 			);
 
-		try
+		if (!$officesupdaterModel->update(1000))
 		{
-			$orderStatusUpdaterModel->updateAll();
-		}
-		catch (ApiException | ClientException $e)
-		{
-			return Command::FAILURE;
+			throw new Exception('Update return false', 500);
 		}
 
-		return Command::SUCCESS;
+		return 1;
 	}
 }

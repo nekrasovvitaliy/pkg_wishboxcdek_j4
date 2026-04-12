@@ -3,13 +3,13 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Site\Event\Model\OrderStatusUpdater;
+namespace Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater;
 
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Event\Result\ResultAware;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomla\CMS\Event\Result\ResultTypeStringAware;
-use Joomla\Component\Wishboxcdek\Site\Model\OrderStatusUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\OrderStatusUpdaterModel;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects

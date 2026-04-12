@@ -3,13 +3,13 @@
  * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
-namespace Joomla\Component\Wishboxcdek\Administrator\Field;
+namespace Joomla\Component\WishboxCdek\Administrator\Field;
 
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
-use Joomla\Component\Wishboxcdek\Administrator\Table\CityTable;
-use Joomla\Component\Wishboxcdek\Administrator\Table\OfficeTable;
+use Joomla\Component\WishboxCdek\Administrator\Table\CityTable;
+use Joomla\Component\WishboxCdek\Administrator\Table\OfficeTable;
 use SimpleXMLElement;
 use function defined;
 
@@ -74,7 +74,7 @@ class OfficeGoogleMapField extends FormField
 	 * @param   SimpleXMLElement   $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
 	 * @param   mixed              $value    The form field value to validate.
 	 * @param   string             $group    The field name group control value. This acts as an array container for the field.
-	 *                                       For example, if the field has name="foo" and the group value is set to "bar" then the
+	 *                                       For example, if the field has name="foo" and the group value is set to "bar," then the
 	 *                                       full field name would end up being "bar[foo]".
 	 *
 	 * @return  boolean  True on success.
@@ -91,7 +91,7 @@ class OfficeGoogleMapField extends FormField
 
 		if ($return)
 		{
-			$this->cityCode = (int) $this->element['cityCode'];
+			$this->cityCode = (int) $this->element['city_code'];
 
 			$allowedCod = (string) $this->element['allowed_cod'];
 
