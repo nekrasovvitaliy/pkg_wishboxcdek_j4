@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Administrator\Table;
@@ -23,21 +23,182 @@ class OfficeTable extends BaseTable
 	 *
 	 * @since 1.0.0
 	 */
-	public ?string $code;
+	public ?string $code = null;
 
 	/**
-	 * @var string|null
+	 * @var string|null $country_code Country code
 	 *
 	 * @since 1.0.0
 	 */
-	public ?string $address;
+	public ?string $country_code = null;
+
+	/**
+	 * @var integer|null $region_code Region code
+	 *
+	 * @since 1.0.0
+	 */
+	public ?int $region_code = null;
+
+	/**
+	 * @var integer|null $city_code City code
+	 *
+	 * @since 1.0.0
+	 */
+	public ?int $city_code = null;
+
+	/**
+	 * @var string|null $city City name
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $city = null;
+
+	/**
+	 * @var string|null $work_time Work time
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $work_time = null;
+
+	/**
+	 * @var string|null $address Address
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $address = null;
+
+	/**
+	 * @var string|null $address_full Full address
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $address_full = null;
+
+	/**
+	 * @var string|null $phone Phone
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $phone = null;
+
+	/**
+	 * @var string|null $note Note
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $note = null;
+
+	/**
+	 * @var float|null $location_longitude Location longitude
+	 *
+	 * @since 1.0.0
+	 */
+	public ?float $location_longitude = null;
+
+	/**
+	 * @var float|null $location_latitude Location latitude
+	 *
+	 * @since 1.0.0
+	 */
+	public ?float $location_latitude = null;
+
+	/**
+	 * @var string|null $type Delivery point type
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $type = null;
+
+	/**
+	 * @var string|null $owner_code Owner code
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $owner_code = null;
+
+	/**
+	 * @var string|null $is_dressing_room Dressing room flag
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $is_dressing_room = null;
+
+	/**
+	 * @var string|null $have_cashless Cashless payment flag
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $have_cashless = null;
+
+	/**
+	 * @var string|null $allowed_cod Allowed cash on delivery flag
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $allowed_cod = null;
+
+	/**
+	 * @var string|null $nearest_station Nearest station
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $nearest_station = null;
+
+	/**
+	 * @var string|null $nearest_metro_station Nearest metro station
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $nearest_metro_station = null;
+
+	/**
+	 * @var string|null $site Site
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $site = null;
+
+	/**
+	 * @var string|null $office_images_list Office images list
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $office_images_list = null;
+
+	/**
+	 * @var string|null $work_time_list Work time list
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $work_time_list = null;
+
+	/**
+	 * @var float|null $weight_min Minimum weight
+	 *
+	 * @since 1.0.0
+	 */
+	public ?float $weight_min = null;
+
+	/**
+	 * @var float|null $weight_max Maximum weight
+	 *
+	 * @since 1.0.0
+	 */
+	public ?float $weight_max = null;
+
+	/**
+	 * @var string|null $dimensions Dimensions
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $dimensions = null;
 
 	/**
 	 * @param   DatabaseDriver  $db  Database driver
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct(&$db)
+	public function __construct(DatabaseDriver $db)
 	{
 		parent::__construct('#__wishboxcdek_offices', 'id', $db);
 	}
@@ -69,7 +230,7 @@ class OfficeTable extends BaseTable
 			->from('#__wishboxcdek_offices AS o')
 			->where('o.city_code = ' . $cityCode);
 
-		if ($allowedCod)
+		if ($allowedCod !== null)
 		{
 			$query->where('allowed_cod = ' . (int) $allowedCod);
 		}
@@ -83,7 +244,7 @@ class OfficeTable extends BaseTable
 		$query->order('address');
 		$db->setQuery($query);
 
-		$list = $db->loadObjectList();
+		$list = $db->loadObjectList() ?: [];
 
 		if (is_array($packages) && count($packages))
 		{
@@ -94,10 +255,15 @@ class OfficeTable extends BaseTable
 					$deliveryPointDimensions = [];
 					$itemDimensions          = json_decode($item->dimensions);
 
+					if (!is_array($itemDimensions))
+					{
+						continue;
+					}
+
 					foreach ($itemDimensions as $itemDimension)
 					{
 						$arr = array_values((array) $itemDimension);
-						arsort($arr);
+						rsort($arr);
 						$deliveryPointDimensions[] = $arr;
 					}
 
@@ -110,7 +276,7 @@ class OfficeTable extends BaseTable
 							$package->height,
 							$package->length
 						];
-						arsort($arr);
+						rsort($arr);
 						$packageDimensions[] = $arr;
 					}
 

@@ -1,11 +1,13 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Administrator\Model;
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use WishboxCdekLibrary\Service\CdekClientAwareInterface;
+use WishboxCdekLibrary\Service\CdekClientAwareTrait;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -17,8 +19,10 @@ defined('_JEXEC') or die;
  *
  * @since  1.0.0
  */
-class DashboardModel extends BaseDatabaseModel
+class DashboardModel extends BaseDatabaseModel implements CdekClientAwareInterface
 {
+	use CdekClientAwareTrait;
+
 	/**
 	 * @return integer
 	 *

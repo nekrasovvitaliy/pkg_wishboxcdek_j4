@@ -1,15 +1,17 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
- * @license     GNU General Public License version 2 or later;
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license         GNU General Public License version 2 or later;
  */
+
 namespace Joomla\Component\WishboxCdek\Administrator\Table;
 
 use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Asset;
+use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -19,7 +21,7 @@ defined('_JEXEC') or die;
 /**
  * Class Base
  *
- * @since 1.0.0
+ * @since        1.0.0
  *
  * @noinspection PhpUnused
  */
@@ -49,24 +51,27 @@ class BaseTable extends Table
 	 *
 	 * @throws  InvalidArgumentException|Exception
 	 *
-	 * @since   1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
 	 */
 	public function bind($src, $ignore = '')
 	{
-		$app = Factory::getApplication();
+		$app  = Factory::getApplication();
 		$user = $app->getIdentity();
 
 		$input = Factory::getApplication()->getInput();
-		$task = $input->getString('task', '');
+		$task  = $input->getString('task', '');
 
-		if ($src['id'] == 0 && empty($array['created_by']))
+		$src = (array) $src;
+		$id  = (int) ($src['id'] ?? 0);
+
+		if ($id === 0 && empty($src['created_by']))
 		{
 			$src['created_by'] = $user->id;
 		}
 
-		if ($src['id'] == 0 && empty($src['modified_by']))
+		if ($id === 0 && empty($src['modified_by']))
 		{
 			$src['modified_by'] = $user->id;
 		}
@@ -127,18 +132,18 @@ class BaseTable extends Table
 	 *
 	 * @throws Exception
 	 *
-	 * @since   1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
 	 */
 	public function store($updateNulls = true)
 	{
-		$app = Factory::getApplication();
+		$app  = Factory::getApplication();
 		$date = Factory::getDate()->toSql();
 		$user = $app->getIdentity();
 
 		// Set the created date if not set.
-		if (!(int) $this->created)
+		if (property_exists($this, 'created') && !(int) $this->created)
 		{
 			$this->created = $date;
 		}
@@ -146,25 +151,34 @@ class BaseTable extends Table
 		if ($this->id)
 		{
 			// Existing item
-			$this->modified_by = $user->id; // phpcs:ignore
-			$this->modified    = $date;
+			if (property_exists($this, 'modified_by'))
+			{
+				$this->modified_by = $user->id; // phpcs:ignore
+			}
+
+			if (property_exists($this, 'modified'))
+			{
+				$this->modified = $date;
+			}
 		}
 		else
 		{
 			// The user can set Field created_by, so we don't touch it if it's set.
-			if (empty($this->created_by)) // phpcs:ignore
+			if (property_exists($this, 'created_by') && empty($this->created_by)) // phpcs:ignore
 			{
 				$this->created_by = $user->id; // phpcs:ignore
 			}
 
 			// Set modified to the created date if not set
-			if (!(int) $this->modified)
+			if (property_exists($this, 'modified') && property_exists($this, 'created') && !(int) $this->modified)
 			{
 				$this->modified = $this->created;
 			}
 
 			// Set modified_by to created_by user if not set
-			if (empty($this->modified_by)) // phpcs:ignore
+			if (property_exists($this, 'modified_by')
+				&& property_exists($this, 'created_by')
+				&& empty($this->modified_by)) // phpcs:ignore
 			{
 				$this->modified_by = $this->created_by; // phpcs:ignore
 			}
@@ -212,17 +226,18 @@ class BaseTable extends Table
 	 *
 	 * @return mixed The id on success, false on failure.
 	 *
-	 * @see Table::_getAssetParentId
+	 * @see          Table::_getAssetParentId
 	 *
-	 * @since 1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
-	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	protected function _getAssetParentId($table = null, $id = null)  // phpcs:ignore
 	{
+		$db = $this->getDatabase();
+
 		// We will retrieve the parent-asset from the Asset-table
-		$assetParent = Table::getInstance('Asset');
+		$assetParent = new Asset($db);
 
 		// Default: if no asset-parent can be found, we take the global asset
 		$assetParentId = $assetParent->getRootId();
@@ -244,7 +259,7 @@ class BaseTable extends Table
 	 *
 	 * @return  boolean  True if the instance is correct and able to be stored in the database.
 	 *
-	 * @since 1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
 	 */
@@ -253,7 +268,7 @@ class BaseTable extends Table
 		// If there is an ordering column and this is a new row, then get the next ordering value
 		if (property_exists($this, 'ordering') && $this->id == 0)
 		{
-			$this->ordering = self::getNextOrder();
+			$this->ordering = $this->getNextOrder();
 		}
 
 		return parent::check();
@@ -264,8 +279,8 @@ class BaseTable extends Table
 	 *
 	 * @return string The asset name
 	 *
-	 * @see Table::_getAssetName
-	 * @since 1.0.0
+	 * @see          Table::_getAssetName
+	 * @since        1.0.0
 	 * @noinspection PhpMissingReturnTypeInspection
 	 */
 	protected function _getAssetName() // phpcs:ignore
@@ -281,7 +296,7 @@ class BaseTable extends Table
 	 * @param   mixed  $pk  Primary key value to delete. Optional
 	 *
 	 * @return boolean
-	 * @since 1.0.0
+	 * @since        1.0.0
 	 * @noinspection PhpMissingReturnTypeInspection
 	 */
 	public function delete($pk = null)

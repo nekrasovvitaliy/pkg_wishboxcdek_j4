@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="15ec6629-b092-43f4-9ea6-496911410796" name="joomla6.test">
+        <fileTransfer rootFolder="/var/www/siteuser/www/joomla6.test" accessType="SFTP" host="joomla6.test" port="22" sshConfigId="4bd767a0-7e38-431b-8db8-e803470802bc" sshConfig="root@joomla6.test:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="1c8b0d46-a8d0-4e82-a930-2ce4d1c8275d" name="watt-shop.com">
+        <fileTransfer rootFolder="/var/www/siteuser/www/watt-shop.com" accessType="SFTP" host="joomla6.test" port="22" sshConfigId="4bd767a0-7e38-431b-8db8-e803470802bc" sshConfig="root@joomla6.test:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

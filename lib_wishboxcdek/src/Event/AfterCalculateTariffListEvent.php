@@ -1,15 +1,16 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
- * @license     GNU General Public License version 2 or later;
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license         GNU General Public License version 2 or later;
  */
-namespace WishboxCdekSDK2\Event;
+
+namespace WishboxCdekLibrary\Event;
 
 use Exception;
 use Joomla\CMS\Event\AbstractEvent;
-use WishboxCdekSDK2\CdekClientV2;
-use WishboxCdekSDK2\Model\Request\Calculator\TariffListPostRequest;
-use WishboxCdekSDK2\Model\Response\Calculator\TariffListPostResponse;
+use WishboxCdek\CdekClient;
+use WishboxCdek\Request\Calculator\CalculateTariffListRequest;
+use WishboxCdek\Response\Calculator\CalculateTariffListResponse;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -24,17 +25,17 @@ class AfterCalculateTariffListEvent extends AbstractEvent
 	/**
 	 * Setter for the request argument.
 	 *
-	 * @param   TariffListPostRequest  $value  The value to set
+	 * @param   CalculateTariffListRequest  $value  The value to set
 	 *
-	 * @return  TariffListPostRequest
+	 * @return  CalculateTariffListRequest
 	 *
 	 * @throws Exception
 	 *
-	 * @since  1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function onSetRequest(TariffListPostRequest $value): TariffListPostRequest
+	protected function onSetRequest(CalculateTariffListRequest $value): CalculateTariffListRequest
 	{
 		return $value;
 	}
@@ -42,17 +43,17 @@ class AfterCalculateTariffListEvent extends AbstractEvent
 	/**
 	 * Setter for the responce argument.
 	 *
-	 * @param   TariffListPostResponse  $value  The value to set
+	 * @param   CalculateTariffListResponse  $value  The value to set
 	 *
-	 * @return  TariffListPostResponse
+	 * @return  CalculateTariffListResponse
 	 *
 	 * @throws Exception
 	 *
-	 * @since  1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function onSetResponce(TariffListPostResponse $value): TariffListPostResponse
+	protected function onSetResponce(CalculateTariffListResponse $value): CalculateTariffListResponse
 	{
 		return $value;
 	}
@@ -60,15 +61,15 @@ class AfterCalculateTariffListEvent extends AbstractEvent
 	/**
 	 * Getter for the request argument.
 	 *
-	 * @param   TariffListPostRequest  $value  Value
+	 * @param   CalculateTariffListRequest  $value  Value
 	 *
-	 * @return  TariffListPostRequest
+	 * @return  CalculateTariffListRequest
 	 *
-	 * @since  1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function onGetRequest(TariffListPostRequest $value): TariffListPostRequest
+	protected function onGetRequest(CalculateTariffListRequest $value): CalculateTariffListRequest
 	{
 		return $value;
 	}
@@ -76,45 +77,45 @@ class AfterCalculateTariffListEvent extends AbstractEvent
 	/**
 	 * Getter for the response argument.
 	 *
-	 * @param   TariffListPostResponse  $value  Value
+	 * @param   CalculateTariffListResponse  $value  Value
 	 *
-	 * @return  TariffListPostResponse
+	 * @return  CalculateTariffListResponse
 	 *
-	 * @since  1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function onGetResponse(TariffListPostResponse $value): TariffListPostResponse
+	protected function onGetResponse(CalculateTariffListResponse $value): CalculateTariffListResponse
 	{
 		return $value;
 	}
 
 	/**
-	 * @return  CdekClientV2
+	 * @return  CdekClient
 	 *
 	 * @since  1.0.0
 	 */
-	public function getApiClient(): CdekClientV2
+	public function getApiClient(): CdekClient
 	{
 		return $this->getArgument('subject');
 	}
 
 	/**
-	 * @return  TariffListPostRequest
+	 * @return  CalculateTariffListRequest
 	 *
 	 * @since  1.0.0
 	 */
-	public function getRequest(): TariffListPostRequest
+	public function getRequest(): CalculateTariffListRequest
 	{
 		return $this->getArgument('request');
 	}
 
 	/**
-	 * @return TariffListPostResponse
+	 * @return CalculateTariffListResponse
 	 *
 	 * @since  1.0.0
 	 */
-	public function getResponse(): TariffListPostResponse
+	public function getResponse(): CalculateTariffListResponse
 	{
 		return $this->getArgument('response');
 	}

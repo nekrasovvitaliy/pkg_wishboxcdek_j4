@@ -1,23 +1,16 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Site\Model;
 
 use Exception;
-use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\AfterUpdateEvent;
-use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\BeforeUpdateEvent;
-use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\UpdateOrderStatusEvent;
-use Joomla\Component\WishboxCdek\Site\Event\Model\OrderStatusUpdater\GetCdekNumbersEvent;
-use WishboxCdekSDK2\Exception\ApiException;
-use WishboxCdekSDK2\Exception\ClientException;
-use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
-use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGet\Entity\StatusResponse;
+use Joomla\CMS\MVC\Model\BaseModel;
+use WishboxCdek\CdekClient;
+use WishboxCdekLibrary\Service\Order\OrderStatusUpdaterService;
+use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -28,10 +21,8 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel implements CdekClientV2FactoryAwareInterface
+class OrderStatusUpdaterModel extends BaseModel
 {
-	use CdekClientV2FactoryAwareTrait;
-
 	/**
 	 * @param   string     $component  Component
 	 * @param   integer[]  $orderIds   Order ids
@@ -41,118 +32,38 @@ class OrderStatusUpdaterModel extends \Joomla\CMS\MVC\Model\BaseModel implements
 	 * @throws Exception
 	 *
 	 * @since 1.0.0
-	 *
 	 */
 	public function update(string $component = '', array $orderIds = []): void
 	{
-		$app = Factory::getApplication();
+		$this->getOrderStatusUpdaterService()->update($component, $orderIds);
+	}
 
-		$cdekNumbers = $this->getCdekNumbers($component, $orderIds);
+	/**
+	 * @return void
+	 *
+	 * @throws Exception
+	 *
+	 * @since 1.0.0
+	 */
+	public function updateAll(): void
+	{
+		$this->update();
+	}
 
-		$app->enqueueMessage('Found numbers ' . count($cdekNumbers));
+	/**
+	 * @return OrderStatusUpdaterService
+	 *
+	 * @since 1.0.0
+	 */
+	private function getOrderStatusUpdaterService(): OrderStatusUpdaterService
+	{
+		$container = Factory::getContainer();
 
-		/** @var BeforeUpdateEvent $beforeUpdateEvent */
-		$beforeUpdateEvent = AbstractEvent::create(
-			'onWishboxCdekOrderStatusUpdaterBeforeUpdate',
-			[
-				'subject'       => $this,
-				'cdekNumbers'   => &$cdekNumbers,
-				'eventClass'    => BeforeUpdateEvent::class,
-				'component'     => $component,
-				'orderIds'      => $orderIds,
-			]
-		);
-
-		$app->getDispatcher()->dispatch($beforeUpdateEvent->getName(), $beforeUpdateEvent);
-
-		foreach ($cdekNumbers as $cdekNumber)
+		if ($container->has(OrderStatusUpdaterService::class))
 		{
-			try
-			{
-				$orderCdekStatuses = $this->getOrderCdekStatuses($cdekNumber);
-
-				/** @var UpdateOrderStatusEvent $event */
-				$updateOrderStatusEvent = AbstractEvent::create(
-					'onWishboxCdekOrderStatusUpdaterUpdateOrderStatus',
-					[
-						'subject'           => $this,
-						'cdekNumber'        => &$cdekNumber,
-						'orderCdekStatuses' => $orderCdekStatuses,
-						'eventClass'        => UpdateOrderStatusEvent::class,
-						'component'         => $component,
-						'orderIds'          => $orderIds,
-					]
-				);
-
-				$app->getDispatcher()->dispatch($updateOrderStatusEvent->getName(), $updateOrderStatusEvent);
-			}
-			catch (ApiException | ClientException $e)
-			{
-			}
+			return $container->get(OrderStatusUpdaterService::class);
 		}
 
-		/** @var AfterUpdateEvent $afterUpdateEvent */
-		$afterUpdateEvent = AbstractEvent::create(
-			'onWishboxCdekOrderStatusUpdaterAfterUpdate',
-			[
-				'subject'       => $this,
-				'cdekNumbers'   => &$cdekNumbers,
-				'eventClass'    => AfterUpdateEvent::class,
-				'component'     => $component,
-				'orderIds'      => $orderIds,
-			]
-		);
-		$app->getDispatcher()->dispatch($afterUpdateEvent->getName(), $afterUpdateEvent);
-	}
-
-	/**
-	 * @param   string  $component   Component
-	 * @param   array   $orderIds    Array of order ids
-	 *
-	 * @return string[]
-	 *
-	 * @throws Exception
-	 *
-	 * @since 1.0.0
-	 */
-	private function getCdekNumbers(string $component = '', array $orderIds = []): array
-	{
-		$app = Factory::getApplication();
-
-		PluginHelper::importPlugin('wishboxcdek');
-
-		/** @var GetCdekNumbersEvent $getCdekNumbersEvent */
-		$getCdekNumbersEvent = AbstractEvent::create(
-			'onWishboxCdekOrderStatusUpdaterGetCdekNumbers',
-			[
-				'subject'       => $this,
-				'eventClass'    => GetCdekNumbersEvent::class,
-				'component'     => $component,
-				'orderIds'      => $orderIds
-			]
-		);
-
-		$eventResult = $app->getDispatcher()->dispatch($getCdekNumbersEvent->getName(), $getCdekNumbersEvent);
-
-		return $eventResult->getCdekNumbers();
-	}
-
-	/**
-	 * @param   string  $cdekNumber  Cdek number
-	 *
-	 * @return StatusResponse[]|null
-	 *
-	 * @throws Exception
-	 *
-	 * @since 1.0.0
-	 */
-	private function getOrderCdekStatuses(string $cdekNumber): ?array
-	{
-		$apiClient = $this->getCdekClientV2Factory()->getDefaultClient();
-
-		$ordersGetResponse = $apiClient->getOrderInfoByCdekNumber($cdekNumber);
-		$entity = $ordersGetResponse->getEntity();
-
-		return $entity->getStatuses();
+		return new OrderStatusUpdaterService($container->get(CdekClient::class));
 	}
 }

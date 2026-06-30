@@ -8,7 +8,7 @@ namespace Joomla\Component\WishboxCdek\Site\Controller;
 use Error;
 use Exception;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\Component\WishboxCdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Cities\Updater as CitiesUpdaterModel;
 use Joomla\Component\WishboxCdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
 
 // phpcs:disable PSR1.Files.SideEffects

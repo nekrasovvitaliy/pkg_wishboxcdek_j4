@@ -1,17 +1,17 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
- * @license     GNU General Public License version 2 or later;
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license         GNU General Public License version 2 or later;
  */
+
 namespace Joomla\Component\WishboxCdek\Administrator\Controller;
 
 use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Router\Route;
-use Joomla\Component\WishboxCdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
-use WishboxCdekSDK2\Exception\ApiException;
-use WishboxCdekSDK2\Exception\ClientException;
+use WishboxCdekLibrary\Service\Office\OfficesUpdaterServiceAwareInterface;
+use WishboxCdekLibrary\Service\Office\OfficesUpdaterServiceAwareTrait;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -21,12 +21,14 @@ defined('_JEXEC') or die;
 /**
  * Offices controller class.
  *
- * @since  1.0.0
+ * @since        1.0.0
  *
  * @noinspection PhpUnused
  */
-class OfficesController extends AdminController
+class OfficesController extends AdminController implements OfficesUpdaterServiceAwareInterface
 {
+	use OfficesUpdaterServiceAwareTrait;
+
 	/**
 	 * Method to toggle the featured setting of a list of articles.
 	 *
@@ -38,37 +40,15 @@ class OfficesController extends AdminController
 	 */
 	public function update(): void
 	{
-		$officesupdaterModel = $this->getModel(
-			'updater',
-			'Site\\Model\\Offices',
-			['ignore_request' => true]
-		);
-
-		/** @var OfficesUpdaterModel $officesupdaterModel */
-		/*
-		$officesupdaterModel = $this->factory->createModel(
-			'updater',
-			'Site\\Model\\Offices',
-			['ignore_request' => true]
-		);
-		*/
+		$officesUpdater = $this->getOfficesUpdaterService();
 
 		try
 		{
-			if (!$officesupdaterModel->update())
+			if (!$officesUpdater->update())
 			{
 				// Throw new Exception
 				throw new Exception('Update return false', 500);
 			}
-		}
-		catch (ApiException | ClientException $e)
-		{
-			$this->setRedirect(
-				Route::_('index.php?option=com_wishboxcdek', false),
-				$e->getMessage()
-			);
-
-			return;
 		}
 		catch (Exception $e)
 		{

@@ -1,13 +1,13 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Exception;
 
 use Exception;
 use Joomla\CMS\Language\Text;
-use WishboxCdekSDK2\Model\Response\Orders\OrdersGetResponse;
+use WishboxCdekLibrary\Model\Response\Orders\OrdersGetResponse;
 
 /**
  * @since 1.0.0

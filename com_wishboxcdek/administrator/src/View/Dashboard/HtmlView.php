@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Administrator\View\Dashboard;
@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Joomla\CMS\Document\HtmlDocument;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -59,6 +60,8 @@ class HtmlView extends BaseHtmlView
 	protected function addToolbar(): void
 	{
 		$app = Factory::getApplication();
+
+		/** @var HtmlDocument $document */
 		$document = $this->getDocument();
 
 		/** @var Toolbar $toolbar */

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Administrator\Table;
@@ -20,11 +20,32 @@ defined('_JEXEC') or die;
 class TariffModeTable extends Table
 {
 	/**
+	 * @var integer $id Id
+	 *
+	 * @since 1.0.0
+	 */
+	public int $id = 0;
+
+	/**
+	 * @var integer|null $code Tariff mode code
+	 *
+	 * @since 1.0.0
+	 */
+	public ?int $code = null;
+
+	/**
+	 * @var string|null $title Tariff mode title
+	 *
+	 * @since 1.0.0
+	 */
+	public ?string $title = null;
+
+	/**
 	 * @param   DatabaseDriver  $db  Database driver
 	 *
 	 * @since   1.0.0
 	 */
-	public function __construct(&$db)
+	public function __construct(DatabaseDriver $db)
 	{
 		parent::__construct('#__wishboxcdek_tariff_modes', 'id', $db);
 	}

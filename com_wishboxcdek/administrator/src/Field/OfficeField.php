@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Administrator\Field;
@@ -8,6 +8,7 @@ namespace Joomla\Component\WishboxCdek\Administrator\Field;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\WishboxCdek\Administrator\Extension\WishboxCdekComponent;
 use Joomla\Component\WishboxCdek\Administrator\Table\OfficeTable;
 use Joomla\Component\WishboxCdek\Site\Model\OfficesModel;
 use SimpleXMLElement;
@@ -134,11 +135,13 @@ class OfficeField extends ListField
 		$app = Factory::getApplication();
 		$options = [];
 
+		/** @var WishboxCdekComponent $component */
+		$component = $app->bootComponent('com_wishboxcdek');
+
 		if ($this->cityCode > 0)
 		{
 			/** @var OfficesModel $officesModel */
-			$officesModel = $app->bootComponent('com_wishboxcdek')
-				->getMVCFactory()
+			$officesModel = $component->getMVCFactory()
 				->createModel(
 					'offices',
 					'Site',
@@ -167,8 +170,7 @@ class OfficeField extends ListField
 			if (!count($options) && $this->value && $this->value !== '-1')
 			{
 				/** @var OfficeTable $officeTable */
-				$officeTable = $app->bootComponent('com_wishboxcdek')
-					->getMVCFactory()
+				$officeTable = $component->getMVCFactory()
 					->createTable('Office', 'Administrator', ['ignore_request' => true]);
 
 				if ($officeTable->load(['city_code' => $this->cityCode, 'code' => $this->value]))

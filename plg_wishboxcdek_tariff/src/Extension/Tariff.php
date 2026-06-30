@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\WishboxCdek\Tariff\Extension;
@@ -12,7 +12,7 @@ use Joomla\Component\WishboxCdek\Administrator\Table\TariffTable;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
-use WishboxCdekSDK2\Model\Response\Calculator\TariffListPostResponse;
+use WishboxCdekLibrary\Model\Response\Calculator\TariffListPostResponse;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;

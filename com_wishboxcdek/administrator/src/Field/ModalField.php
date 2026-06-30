@@ -1,14 +1,16 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
- * @license     GNU General Public License version 2 or later;
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @license         GNU General Public License version 2 or later;
  */
+
 namespace Joomla\Component\WishboxCdek\Administrator\Field;
 
 use Exception;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\WishboxCdek\Administrator\Extension\WishboxCdekComponent;
 use Joomla\Component\WishboxCdek\Administrator\Table\OfficeTable;
 use SimpleXMLElement;
 use Wishbox\Field\ListField;
@@ -19,7 +21,7 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @since 1.0.0
+ * @since        1.0.0
  *
  * @noinspection PhpUnused
  */
@@ -41,7 +43,7 @@ class ModalField extends ListField
 	 *
 	 * @since  1.0.0
 	 */
-	protected string $shopName;
+	protected string $shopName = '';
 
 	/**
 	 * City code.
@@ -50,7 +52,7 @@ class ModalField extends ListField
 	 *
 	 * @since  1.0.0
 	 */
-	protected int $cityCode;
+	protected int $cityCode = 0;
 
 	/**
 	 * Shipping method id
@@ -59,7 +61,7 @@ class ModalField extends ListField
 	 *
 	 * @since  1.0.0
 	 */
-	protected int $shippingMethodId;
+	protected int $shippingMethodId = 0;
 
 	/**
 	 * Name of the layout being used to render the field
@@ -73,9 +75,9 @@ class ModalField extends ListField
 	/**
 	 * Method to attach a Form object to the field.
 	 *
-	 * @param   SimpleXMLElement   $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
-	 * @param   mixed              $value    The form field value to validate.
-	 * @param   string             $group    The field name group control value. This acts as an array container for the field.
+	 * @param   SimpleXMLElement  $element   The SimpleXMLElement object representing the `<field>` tag for the form field object.
+	 * @param   mixed             $value     The form field value to validate.
+	 * @param   string            $group     The field name group control value. This acts as an array container for the field.
 	 *                                       For example, if the field has name="foo" and the group value is set to "bar" then the
 	 *                                       full field name would end up being "bar[foo]".
 	 *
@@ -83,9 +85,9 @@ class ModalField extends ListField
 	 *
 	 * @see     FormField::setup()
 	 *
-	 * @var   SimpleXMLElement $element Element
+	 * @var   SimpleXMLElement    $element   Element
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
 	 */
 	public function setup(SimpleXMLElement $element, $value, $group = null): bool
 	{
@@ -93,8 +95,8 @@ class ModalField extends ListField
 
 		if ($return)
 		{
-			$this->shopName = (string) $this->element['shop_name'];
-			$this->cityCode = (int) $this->element['city_code'];
+			$this->shopName         = (string) $this->element['shop_name'];
+			$this->cityCode         = (int) $this->element['city_code'];
 			$this->shippingMethodId = (int) $this->element['shipping_method_id'];
 		}
 
@@ -112,14 +114,16 @@ class ModalField extends ListField
 	 */
 	protected function getOptions(): array
 	{
-		$app = Factory::getApplication();
+		$app     = Factory::getApplication();
 		$options = [];
+
+		/** @var WishboxCdekComponent $component */
+		$component = $app->bootComponent('com_wishboxcdek');
 
 		if ($this->cityCode)
 		{
 			/** @var OfficeTable $officeTable */
-			$officeTable = $app->bootComponent('com_wishboxcdek')
-				->getMVCFactory()
+			$officeTable = $component->getMVCFactory()
 				->createTable('Office', 'Administrator');
 
 			$offices = $officeTable->getItems($this->cityCode);
@@ -140,23 +144,31 @@ class ModalField extends ListField
 		if (!count($options) && $this->value && $this->value !== '-1')
 		{
 			/** @var OfficeTable $officeTable */
-			$officeTable = $app->bootComponent('com_wishboxcdek')
-				->getMVCFactory()
+			$officeTable = $component->getMVCFactory()
 				->createTable('Office', 'Administrator');
 
-			if (!$officeTable->load(['code' => $this->value]))
+			$keys = ['code' => $this->value];
+
+			if ($this->cityCode > 0)
+			{
+				$keys['city_code'] = $this->cityCode;
+			}
+
+			if ($officeTable->load($keys))
+			{
+				$options[] = HTMLHelper::_(
+					'select.option',
+					$officeTable->code,
+					$officeTable->address
+				);
+			}
+			else
 			{
 				$app->enqueueMessage(
-					'Cdek office with code ' . $this->value . 'is not exists',
+					'Cdek office with code ' . $this->value . ' is not exists',
 					CMSApplicationInterface::MSG_CRITICAL
 				);
 			}
-
-			$options[] = HTMLHelper::_(
-				'select.option',
-				$officeTable->code,
-				$officeTable->name
-			);
 		}
 
 		// Merge any additional options in the XML definition.
@@ -168,7 +180,7 @@ class ModalField extends ListField
 	 *
 	 * @return  array
 	 *
-	 * @since 1.0.0
+	 * @since        1.0.0
 	 *
 	 * @noinspection PhpMissingReturnTypeInspection
 	 */
@@ -176,8 +188,8 @@ class ModalField extends ListField
 	{
 		$layoutData = parent::getLayoutData();
 
-		$layoutData['shopName'] = $this->shopName;
-		$layoutData['cityCode'] = $this->cityCode;
+		$layoutData['shopName']         = $this->shopName;
+		$layoutData['cityCode']         = $this->cityCode;
 		$layoutData['shippingMethodId'] = $this->shippingMethodId;
 
 		return $layoutData;

@@ -1,15 +1,15 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Site\Model;
 
 use Exception;
-use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareInterface;
-use WishboxCdekSDK2\Factory\CdekClientV2FactoryAwareTrait;
-use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksGetRequest;
-use WishboxCdekSDK2\Model\Request\Webhooks\WebhooksPostRequest;
+use WishboxCdekLibrary\Factory\CdekClientV2FactoryAwareInterface;
+use WishboxCdekLibrary\Factory\CdekClientV2FactoryAwareTrait;
+use WishboxCdekLibrary\Model\Request\Webhooks\WebhooksGetRequest;
+use WishboxCdekLibrary\Model\Request\Webhooks\WebhooksPostRequest;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;

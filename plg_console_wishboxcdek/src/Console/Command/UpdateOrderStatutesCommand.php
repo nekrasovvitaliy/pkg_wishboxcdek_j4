@@ -1,20 +1,18 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Console\WishboxCdek\Console\Command;
 
 use Exception;
-use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
-use Joomla\Component\WishboxCdek\Site\Model\OrderStatusUpdaterModel;
+use Joomla\CMS\Factory;
 use Joomla\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use WishboxCdekSDK2\Exception\ApiException;
-use WishboxCdekSDK2\Exception\ClientException;
+use WishboxCdekLibrary\Service\Order\OrderStatusUpdaterService;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die;
@@ -25,8 +23,6 @@ defined('_JEXEC') or die;
  */
 class UpdateOrderStatutesCommand extends AbstractCommand
 {
-	use MVCFactoryAwareTrait;
-
 	/**
 	 * @var string
 	 *
@@ -104,19 +100,13 @@ class UpdateOrderStatutesCommand extends AbstractCommand
 			throw new Exception('ini_set("memory_limit", "512MB") return false', 500);
 		}
 
-		/** @var OrderStatusupdaterModel $orderStatusUpdaterModel */
-		$orderStatusUpdaterModel = $this->getMVCFactory()
-			->createModel(
-				'OrderStatusUpdater',
-				'Site\\Model',
-				['ignore_request' => true]
-			);
+		$orderStatusUpdaterService = Factory::getContainer()->get(OrderStatusUpdaterService::class);
 
 		try
 		{
-			$orderStatusUpdaterModel->updateAll();
+			$orderStatusUpdaterService->update();
 		}
-		catch (ApiException | ClientException $e)
+		catch (Exception $e)
 		{
 			return Command::FAILURE;
 		}

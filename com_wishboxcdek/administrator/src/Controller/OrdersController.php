@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (c) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (c) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later;
  */
 namespace Joomla\Component\WishboxCdek\Administrator\Controller;
@@ -9,9 +9,8 @@ use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Router\Route;
-use Joomla\Component\WishboxCdek\Site\Model\OrderStatusUpdaterModel;
-use WishboxCdekSDK2\Exception\ApiException;
-use WishboxCdekSDK2\Exception\ClientException;
+use WishboxCdekLibrary\Service\Order\OrderStatusUpdaterServiceAwareInterface;
+use WishboxCdekLibrary\Service\Order\OrderStatusUpdaterServiceAwareTrait;
 use function defined;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -25,8 +24,10 @@ defined('_JEXEC') or die;
  *
  * @noinspection PhpUnused
  */
-class OrdersController extends AdminController
+class OrdersController extends AdminController implements OrderStatusUpdaterServiceAwareInterface
 {
+	use OrderStatusUpdaterServiceAwareTrait;
+
 	/**
 	 * @return  void
 	 *
@@ -42,18 +43,13 @@ class OrdersController extends AdminController
 		$orderIds = $this->input->get('cid', []);
 		$redirectUrl = $this->input->get('redirect_url', '', 'Raw');
 
-		/** @var OrderStatusupdaterModel $orderStatusUpdaterModel */
-		$orderStatusUpdaterModel = $this->factory->createModel(
-			'OrderStatusUpdater',
-			'Site\\Model',
-			['ignore_request' => true]
-		);
+		$orderStatusUpdaterService = $this->getOrderStatusUpdaterService();
 
 		try
 		{
-			$orderStatusUpdaterModel->update($component, $orderIds);
+			$orderStatusUpdaterService->update($component, $orderIds);
 		}
-		catch (ApiException | ClientException $e)
+		catch (Exception $e)
 		{
 			$this->setRedirect(
 				Route::_('index.php?option=com_wishboxcdek&view=dashboard', false),

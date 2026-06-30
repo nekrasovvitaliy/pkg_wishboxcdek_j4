@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   (C) 2013-2025 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
+ * @copyright   (C) 2013-2026 Nekrasov Vitaliy <nekrasov_vitaliy@list.ru>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 namespace Joomla\Plugin\Task\WishboxCdek\Extension;
@@ -10,7 +10,7 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\Component\WishboxCdek\Site\Model\Cities\UpdaterModel as CitiesUpdaterModel;
+use Joomla\Component\WishboxCdek\Site\Model\Cities\Updater as CitiesUpdaterModel;
 use Joomla\Component\WishboxCdek\Site\Model\Offices\UpdaterModel as OfficesUpdaterModel;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
